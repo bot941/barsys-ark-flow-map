@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARSYS — Navigation Map 2 · Dark</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+:root{
+  --bg:#050505;--s1:#0A0A0A;--s2:#111111;--s3:#191919;
+  --gold:#C8A97E;--gold-l:#E8D5B5;--gold-d:rgba(200,169,126,0.08);
+  --t1:#FFFFFF;--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.25);--t4:rgba(255,255,255,0.10);
+  --glass:rgba(255,255,255,0.025);--glass-b:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.06);
+  --unwind:#8A9490;--celebrate:#B8A67A;--impress:#9A7B7F;--explore:#7E8B96;
+  --success:#7A9A82;--warning:#B8A67A;--error:#A07272;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#000;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;color:var(--t1)}
+.device{width:1194px;height:834px;background:var(--bg);border-radius:22px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.03),0 80px 200px rgba(0,0,0,0.95)}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px 0;z-index:200;font-size:13px;font-weight:600}
+.status-icons{display:flex;gap:6px;align-items:center}
+.status-icons svg{width:auto;height:11px}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.5s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.screen.active{opacity:1;pointer-events:auto}
+@keyframes fadeScale{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.35}50%{transform:scale(1.05);opacity:0.65}}
+@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes sparkleFloat{0%{opacity:0;transform:translateY(0) scale(0)}20%{opacity:0.6;transform:translateY(-80px) scale(1)}80%{opacity:0.15;transform:translateY(-200px) scale(0.3)}100%{opacity:0;transform:translateY(-260px) scale(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,169,126,0.3)}50%{box-shadow:0 0 0 16px rgba(200,169,126,0)}}
+@keyframes typingDot{0%,60%,100%{opacity:0.2;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+.haptic{animation:haptic 0.15s ease!important}
+#create{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.cr-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px}
+.cr-title{font-size:40px;font-weight:200;letter-spacing:-1px}
+.cr-title strong{font-weight:700}
+.cr-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.cr-section-label{font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:12px}
+.cr-main-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.pro-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:32px;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.pro-card:active{background:rgba(255,255,255,0.04)}
+.pro-card::before{content:'';position:absolute;top:-20px;right:-20px;width:160px;height:160px;border-radius:50%;filter:blur(60px);opacity:0.05}
+.pro-card.gold::before{background:var(--gold);opacity:0.08}
+.pro-card.ai-card{border-color:rgba(200,169,126,0.15);background:rgba(200,169,126,0.02)}
+.pc-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:auto}
+.pro-card h3{font-size:18px;font-weight:600;letter-spacing:-0.2px;margin-top:16px}
+.pro-card p{font-size:12px;color:var(--t2);margin-top:5px;font-weight:300;line-height:1.8}
+.pc-action{display:inline-block;margin-top:14px;font-size:12px;color:var(--gold);font-weight:500}
+.cr-quick-cards{display:flex;flex-direction:column;gap:10px}
+.feat-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:background 0.3s}
+.feat-item:active{background:rgba(255,255,255,0.04)}
+.feat-thumb{width:44px;height:44px;border-radius:11px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.feat-thumb svg{width:18px;height:18px;stroke:currentColor;stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.feat-info{flex:1;min-width:0}
+.feat-info h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.feat-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300}
+#barbot-chat{background:var(--bg);padding:56px 0 0;overflow:hidden;display:flex;flex-direction:column}
+.bb-header{padding:0 64px 24px;display:flex;justify-content:space-between;align-items:flex-end}
+.bb-header h1{font-size:40px;font-weight:200;letter-spacing:-1px}
+.bb-header h1 strong{font-weight:700}
+.bb-header p{font-size:13px;color:var(--t3);font-weight:300;font-style:italic;margin-top:4px}
+.bb-body{flex:1;display:grid;grid-template-columns:320px 1fr;gap:0;min-height:0;padding:0 0 84px}
+.bb-sidebar{border-right:0.5px solid var(--border);padding:0 24px 0 64px;overflow-y:auto}
+.bb-sidebar-label{font-size:9px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:12px;padding-top:4px}
+.bb-conv{padding:16px;border-radius:14px;cursor:pointer;transition:background 0.3s;margin-bottom:4px}
+.bb-conv:active,.bb-conv.active{background:var(--glass)}
+.bb-conv h4{font-size:14px;font-weight:600;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-conv p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-conv-time{font-size:10px;color:var(--t4);margin-top:4px}
+.bb-chat{display:flex;flex-direction:column;min-height:0}
+.bb-messages{flex:1;overflow-y:auto;padding:0 64px 20px 32px;display:flex;flex-direction:column;gap:16px}
+.bb-msg{max-width:580px;display:flex;flex-direction:column;animation:slideUp 0.4s ease}
+.bb-msg.user{align-self:flex-end}
+.bb-msg.ai{align-self:flex-start}
+.bb-bubble{padding:18px 24px;border-radius:18px;font-size:14px;line-height:1.7;font-weight:300}
+.bb-msg.user .bb-bubble{background:rgba(200,169,126,0.12);border:0.5px solid rgba(200,169,126,0.15);border-bottom-right-radius:4px;color:var(--t1)}
+.bb-msg.ai .bb-bubble{background:var(--glass);border:0.5px solid var(--glass-b);border-bottom-left-radius:4px;color:var(--t2)}
+.bb-msg.ai .bb-bubble strong{color:var(--t1);font-weight:600}
+.bb-msg-label{font-size:10px;color:var(--t4);margin-bottom:4px;font-weight:500}
+.bb-msg.user .bb-msg-label{text-align:right}
+.bb-recipe-cards{display:flex;gap:12px;margin-top:8px}
+.bb-rc{width:200px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.25s;flex-shrink:0}
+.bb-rc:active{transform:scale(0.97)}
+.bb-rc-hero{height:100px;background:linear-gradient(160deg,var(--s2),var(--s1));display:flex;align-items:center;justify-content:center;position:relative}
+.bb-rc-hero svg{width:32px;height:32px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.15}
+.bb-rc-body{padding:14px 16px 16px}
+.bb-rc-body h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.bb-rc-body p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300}
+.bb-input-area{padding:12px 64px 12px 32px;display:flex;gap:8px;align-items:center}
+.bb-input{flex:1;display:flex;align-items:center;padding:6px 6px 6px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;height:52px}
+.bb-input span{flex:1;font-size:14px;color:var(--t4);font-weight:300}
+.bb-input-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;background:transparent;border:none;font-family:inherit}
+.bb-input-btn:hover{background:rgba(255,255,255,0.04)}
+.bb-input-btn svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.bb-input-btn.send-btn{background:var(--gold)}
+.bb-input-btn.send-btn svg{stroke:#000;width:16px;height:16px;stroke-width:2}
+#photo-scan{background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0}
+#photo-scan::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 50%);pointer-events:none}
+.photo-frame{position:relative;z-index:5;width:400px;height:300px;border:2px solid var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--s1);margin-bottom:32px;overflow:hidden}
+.photo-corner{position:absolute;width:30px;height:30px}
+.photo-corner.tl{top:-2px;left:-2px;border-top:3px solid var(--gold);border-left:3px solid var(--gold)}
+.photo-corner.tr{top:-2px;right:-2px;border-top:3px solid var(--gold);border-right:3px solid var(--gold)}
+.photo-corner.bl{bottom:-2px;left:-2px;border-bottom:3px solid var(--gold);border-left:3px solid var(--gold)}
+.photo-corner.br{bottom:-2px;right:-2px;border-bottom:3px solid var(--gold);border-right:3px solid var(--gold)}
+.photo-icon{width:80px;height:80px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.15}
+.detected-list{position:relative;z-index:5;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;padding:16px 28px;max-width:320px}
+.det-title{font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:12px}
+.det-item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;color:var(--t2);font-weight:300}
+.det-check{width:16px;height:16px;border-radius:3px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#000;font-size:10px;font-weight:700}
+#voice-input{background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0}
+#voice-input::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 50%);pointer-events:none}
+.voice-ring{position:relative;z-index:5;width:200px;height:200px;border-radius:50%;border:1px solid rgba(200,169,126,0.2);display:flex;align-items:center;justify-content:center;animation:recordPulse 2s ease-in-out infinite;margin-bottom:48px}
+.voice-mic{width:50px;height:50px;stroke:var(--gold);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.voice-label{position:relative;z-index:5;font-size:14px;color:var(--t2);font-weight:300;margin-bottom:16px}
+.voice-transcript{position:relative;z-index:5;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;padding:16px 24px;max-width:420px;font-size:14px;color:var(--t1);font-weight:300;line-height:1.7}
+#ai-recipe-card{background:var(--bg);display:flex;flex-direction:row}
+.det-visual{flex:1;position:relative;display:flex;align-items:center;justify-content:center}
+.det-visual::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--s2) 0%,var(--bg) 100%)}
+.det-icon{width:100px;height:100px;stroke:var(--t4);stroke-width:0.5;fill:none;opacity:0.12;position:relative;z-index:2}
+.det-info{width:460px;padding:72px 56px 56px 48px;overflow-y:auto;display:flex;flex-direction:column}
+.det-info h1{font-size:34px;font-weight:700;letter-spacing:-0.8px}
+.det-lore{font-size:14px;color:var(--t2);margin-top:8px;font-weight:300;font-style:italic;line-height:1.7}
+.det-tags{display:flex;gap:6px;margin-top:14px}
+.det-tag{padding:6px 14px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.det-sect-label{font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:600;margin-top:28px;margin-bottom:10px;text-transform:uppercase}
+.det-ing{display:flex;align-items:center;padding:13px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:11px;margin-bottom:5px;font-size:13px;color:var(--t2)}
+.det-ing .dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin-right:12px;flex-shrink:0}
+.det-craft-btn{margin-top:auto;padding-top:28px}
+.det-craft-btn button{width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s}
+.det-craft-btn button:active{transform:scale(0.97)}
+#recipe-builder{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.rb-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px}
+.rb-title{font-size:40px;font-weight:200;letter-spacing:-1px}
+.rb-title strong{font-weight:700}
+.rb-body{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.rb-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:28px;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;text-align:center}
+.rb-card:active{background:rgba(255,255,255,0.04);transform:scale(0.97)}
+.rb-icon-box{width:80px;height:80px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;margin-bottom:16px;flex-shrink:0}
+.rb-icon{width:36px;height:36px;stroke:var(--t4);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.rb-name{font-size:16px;font-weight:600;letter-spacing:-0.3px;margin-bottom:6px}
+.rb-origin{font-size:11px;color:var(--t3);font-weight:300;margin-bottom:8px}
+.rb-note{font-size:12px;color:var(--t2);font-weight:300;font-style:italic;line-height:1.5}
+#add-mixers{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.am-header{margin-bottom:28px}
+.am-title{font-size:38px;font-weight:200;letter-spacing:-0.5px}
+.am-title strong{font-weight:700}
+.am-body{flex:1;overflow-y:auto;padding-bottom:96px}
+.am-section{margin-bottom:32px}
+.am-section-label{font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:12px}
+.chip-group{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 18px;border-radius:100px;border:0.5px solid var(--border);font-size:12px;font-weight:500;color:var(--t3);background:transparent;cursor:pointer;transition:all 0.25s;font-family:inherit}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+.chip.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+#set-proportions{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.sp-header{margin-bottom:28px}
+.sp-title{font-size:38px;font-weight:200;letter-spacing:-0.5px}
+.sp-title strong{font-weight:700}
+.sp-body{display:grid;grid-template-columns:1fr 320px;gap:32px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.sp-sliders{display:flex;flex-direction:column;gap:20px}
+.slider-group{display:flex;flex-direction:column}
+.slider-label{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:8px}
+.slider-amount{font-size:11px;color:var(--t3);font-weight:300;margin-top:4px}
+.slider{width:100%;height:6px;border-radius:3px;background:var(--s2);appearance:none;cursor:pointer;accent-color:var(--gold)}
+.sp-viz{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;height:fit-content;position:sticky;top:0}
+.viz-glass{width:80px;height:160px;border:1px solid var(--gold);border-radius:20px;background:linear-gradient(to top,rgba(200,169,126,0.2) 30%,transparent 30%);display:flex;align-items:flex-end;justify-content:center;margin-bottom:16px}
+.viz-label{font-size:11px;color:var(--t3);font-weight:300;text-align:center}
+#name-creation{background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0}
+#name-creation::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 50%);pointer-events:none}
+.nc-content{position:relative;z-index:5;max-width:420px}
+.nc-label{font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.nc-title{font-size:48px;font-weight:200;letter-spacing:-1.5px;margin-bottom:28px}
+.nc-form{display:flex;flex-direction:column;gap:14px}
+.nc-input{width:100%;padding:14px 20px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px;font-size:14px;color:var(--t1);font-family:inherit;font-weight:300;outline:none}
+.nc-input:focus{border-color:var(--gold)}
+.nc-textarea{width:100%;padding:14px 20px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--t2);font-family:inherit;font-weight:300;outline:none;height:60px;resize:none}
+.nc-textarea:focus{border-color:var(--gold)}
+.nc-btn{padding:16px 48px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px;transition:transform 0.2s}
+.nc-btn:active{transform:scale(0.97)}
+#profile{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.pf-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:32px}
+.pf-left{display:flex;flex-direction:column;align-items:center}
+.pf-avatar{width:80px;height:80px;border-radius:50%;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;color:var(--gold);margin-bottom:16px}
+.pf-stats{display:flex;gap:20px;font-size:12px;text-align:center;margin-bottom:20px}
+.pf-stat{flex:1}
+.pf-stat-val{font-size:18px;font-weight:600;color:var(--gold)}
+.pf-stat-label{font-size:10px;color:var(--t3);margin-top:4px;font-weight:300}
+.pf-edit-btn{padding:10px 24px;background:var(--gold);color:#000;border:none;border-radius:12px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
+.pf-right{flex:1}
+.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pf-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:28px;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;text-align:center}
+.pf-card:active{background:rgba(255,255,255,0.04);transform:scale(0.97)}
+.pf-card-icon{width:40px;height:40px;background:var(--s2);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;flex-shrink:0}
+.pf-card-icon svg{width:18px;height:18px;stroke:var(--t4);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.pf-card h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.pf-card p{font-size:11px;color:var(--t3);margin-top:4px;font-weight:300}
+#avatar-edit{background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0}
+#avatar-edit::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 50%);pointer-events:none}
+.ae-content{position:relative;z-index:5;max-width:420px}
+.ae-avatar{width:120px;height:120px;border-radius:50%;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:600;color:var(--gold);margin:0 auto 28px}
+.ae-form{display:flex;flex-direction:column;gap:12px;text-align:left;margin-bottom:24px}
+.ae-label{font-size:11px;color:var(--t3);font-weight:500}
+.ae-input{width:100%;padding:12px 16px;background:var(--s1);border:0.5px solid var(--border);border-radius:10px;font-size:13px;color:var(--t1);font-family:inherit;font-weight:300;outline:none}
+.ae-input:focus{border-color:var(--gold)}
+.ae-input:disabled{color:var(--t4);background:var(--s2);cursor:not-allowed}
+.ae-buttons{display:flex;gap:12px}
+.ae-btn{flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:transform 0.2s}
+.ae-btn.gold{background:var(--gold);color:#000}
+.ae-btn.glass{background:var(--glass);color:var(--t2);border:0.5px solid var(--glass-b)}
+.ae-btn:active{transform:scale(0.97)}
+#taste-profile{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.tp-header{margin-bottom:28px}
+.tp-title{font-size:38px;font-weight:200;letter-spacing:-0.5px}
+.tp-title strong{font-weight:700}
+.tp-body{display:grid;grid-template-columns:1fr 1fr;gap:32px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.tp-section h3{font-size:14px;font-weight:600;margin-bottom:20px}
+.tp-sliders{display:flex;flex-direction:column;gap:24px}
+.tp-slider-group{display:flex;flex-direction:column}
+.tp-slider-label{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:8px}
+.tp-slider{width:100%;height:6px;border-radius:3px;background:var(--s2);appearance:none;cursor:pointer;accent-color:var(--gold)}
+.tp-preferences{display:flex;flex-direction:column;gap:12px}
+.tp-pref-label{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:8px}
+.ctx-bar{position:absolute;bottom:0;left:0;right:0;z-index:200;padding:0 32px 20px;background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.ctx-bar-inner{display:flex;align-items:center;justify-content:space-between;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:8px;backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px)}
+.ctx-nav{display:flex;gap:2px}
+.ctx-tab{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:14px;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);color:var(--t4);border:none;background:transparent;font-family:inherit}
+.ctx-tab svg{width:18px;height:18px;stroke:currentColor;stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ctx-tab span{font-size:12px;font-weight:500;display:none;letter-spacing:-0.2px}
+.ctx-tab.active{background:var(--gold);color:#000}
+.ctx-tab.active span{display:inline}
+.toast{position:absolute;top:52px;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(200,169,126,0.15);border:0.5px solid rgba(200,169,126,0.18);border-radius:14px;padding:10px 24px;z-index:500;font-size:13px;color:var(--gold-l);font-weight:500;white-space:nowrap;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.back-btn{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.back-btn svg{width:18px;height:18px;stroke:var(--t2);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.back-btn:active{background:rgba(255,255,255,0.04)}
+.ntf-row{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px}
+.ntf-info{flex:1;min-width:0}
+.ntf-name{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.ntf-desc{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300}
+.ntf-toggle{width:44px;height:24px;border-radius:12px;background:var(--s2);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0}
+.ntf-toggle.active{background:var(--gold)}
+.ntf-knob{width:18px;height:18px;border-radius:50%;background:var(--t1);position:absolute;top:3px;left:3px;transition:transform 0.25s}
+.ntf-toggle.active .ntf-knob{transform:translateX(20px)}
+.theme-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:20px;cursor:pointer;transition:all 0.3s;text-align:center}
+.theme-card.selected{border-color:var(--gold);background:rgba(200,169,126,0.04)}
+.theme-preview{width:100%;height:140px;border-radius:12px;margin-bottom:16px;position:relative;overflow:hidden}
+.theme-preview.dark{background:#0A0A0A}
+.theme-preview.light{background:#F0F0F0}
+.theme-bar{height:8px;margin:12px 12px 0;border-radius:4px;background:rgba(255,255,255,0.06)}
+.theme-preview.light .theme-bar{background:rgba(0,0,0,0.06)}
+.theme-content{padding:12px;display:flex;flex-direction:column;gap:8px}
+.theme-block{height:24px;border-radius:6px;background:rgba(255,255,255,0.04)}
+.theme-block.sm{height:16px;width:60%}
+.theme-preview.light .theme-block{background:rgba(0,0,0,0.04)}
+.theme-label{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.theme-desc{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300}
+.unit-btn{padding:12px 28px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;font-size:14px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit;transition:all 0.25s}
+.unit-btn.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+.unit-btn:active{transform:scale(0.97)}
+.centered-screen{display:flex;align-items:center;justify-content:center;text-align:center}
+.centered-screen::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 50%);pointer-events:none}
+.centered-content{position:relative;z-index:5}
+.det-story{font-size:13px;color:var(--t2);font-weight:300;line-height:1.7}
+.det-check svg{width:10px;height:10px;stroke:#000;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nc-btn:hover,.det-craft-btn button:hover{box-shadow:0 8px 32px rgba(200,169,126,0.15)}
+.pf-edit-btn:hover{box-shadow:0 4px 20px rgba(200,169,126,0.12)}
+#create::before{content:'';position:absolute;top:15%;right:10%;width:400px;height:300px;background:radial-gradient(ellipse,rgba(200,169,126,0.03) 0%,transparent 60%);pointer-events:none;animation:breathe 8s ease-in-out infinite}
+#barbot-chat::before{content:'';position:absolute;top:20%;right:20%;width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.025) 0%,transparent 55%);pointer-events:none}
+#recipe-builder::before{content:'';position:absolute;top:30%;left:20%;width:400px;height:300px;background:radial-gradient(ellipse,rgba(200,169,126,0.03) 0%,transparent 60%);pointer-events:none}
+#profile::before{content:'';position:absolute;top:10%;left:30%;width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.025) 0%,transparent 55%);pointer-events:none;animation:breathe 10s ease-in-out infinite}
+#party-dashboard::before{content:'';position:absolute;top:20%;right:15%;width:400px;height:300px;background:radial-gradient(ellipse,rgba(122,154,130,0.03) 0%,transparent 60%);pointer-events:none}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+  <div class="status-bar"><span>9:41</span><div class="status-icons"><svg viewBox="0 0 16 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="white" stroke-opacity="0.35"/><rect x="22.5" y="3.5" width="2" height="5" rx="0.5" fill="white" fill-opacity="0.3"/><rect x="2" y="2" width="18" height="8" rx="1" fill="white"/></svg></div></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- CREATE: Hub -->
+  <div class="screen active" id="create">
+    <div class="cr-header">
+      <div><div class="cr-title">Craft This <strong>Cocktail.</strong></div></div>
+    </div>
+    <div class="cr-body">
+      <div>
+        <div class="cr-section-label">AI MIXOLOGIST</div>
+        <div class="cr-main-cards">
+          <div class="pro-card ai-card" onclick="goTo('barbot-chat')">
+            <div class="pc-label">BarBot AI</div>
+            <h3>Ask Your Confidant</h3>
+            <p>Tell me what you feel. I will find the right one.</p>
+            <div class="pc-action">Start chat</div>
+          </div>
+          <div class="pro-card gold" onclick="goTo('recipe-builder')">
+            <div class="pc-label">Build Recipe</div>
+            <h3>Craft Your Own</h3>
+            <p>Your spirit. Your mixers. Your signature.</p>
+            <div class="pc-action">Start building</div>
+          </div>
+        </div>
+        <div class="cr-section-label">QUICK ACTIONS</div>
+        <div class="cr-quick-cards">
+          <div class="feat-item" onclick="goTo('photo-scan')">
+            <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+            <div class="feat-info"><h4>Scan Bottles</h4><p>Scan your bar</p></div>
+          </div>
+          <div class="feat-item" onclick="goTo('voice-input')">
+            <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg></div>
+            <div class="feat-info"><h4>Voice Search</h4><p>Speak freely</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-bar">
+      <div class="ctx-bar-inner">
+        <div class="ctx-nav">
+          <div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div>
+          <div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARBOT: Chat -->
+  <div class="screen" id="barbot-chat">
+    <div class="bb-header">
+      <div><h1>Bar<strong>Bot</strong></h1><p>Your confidant.</p></div>
+    </div>
+    <div class="bb-body">
+      <div class="bb-sidebar">
+        <div class="bb-sidebar-label">Today</div>
+        <div class="bb-conv active"><h4>What should I make?</h4><p>Based on your mood...</p><div class="bb-conv-time">Just now</div></div>
+        <div class="bb-conv"><h4>Bourbon recommendations</h4><p>With what is loaded...</p><div class="bb-conv-time">10 min ago</div></div>
+      </div>
+      <div class="bb-chat">
+        <div class="bb-messages">
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">What are you in the mood for?</div></div>
+          <div class="bb-msg user"><div class="bb-msg-label">You</div><div class="bb-bubble">Something bold.</div></div>
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">Something with <strong>depth</strong>. Three choices:</div>
+            <div class="bb-recipe-cards">
+              <div class="bb-rc" onclick="goTo('ai-recipe-card')"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="bb-rc-body"><h4>Negroni</h4><p>3 ingredients · 1 min</p></div></div>
+              <div class="bb-rc"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="bb-rc-body"><h4>Boulevardier</h4><p>3 ingredients · 1 min</p></div></div>
+              <div class="bb-rc"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="bb-rc-body"><h4>Sazerac</h4><p>4 ingredients · 2 min</p></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="bb-input-area"><div class="bb-input"><span>Ask BarBot anything...</span><div style="display:flex;gap:4px"><div class="bb-input-btn" onclick="goTo('voice-input')"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg></div><div class="bb-input-btn send-btn"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div></div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- PHOTO SCAN -->
+  <div class="screen" id="photo-scan">
+    <div class="photo-frame">
+      <div class="photo-corner tl"></div>
+      <div class="photo-corner tr"></div>
+      <div class="photo-corner bl"></div>
+      <div class="photo-corner br"></div>
+      <svg class="photo-icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </div>
+    <div class="detected-list">
+      <div class="det-title">DETECTED</div>
+      <div class="det-item"><svg class="det-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Maker is Mark</div>
+      <div class="det-item"><svg class="det-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Angostura</div>
+      <div class="det-item"><svg class="det-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Fresh Citrus</div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- VOICE INPUT -->
+  <div class="screen" id="voice-input">
+    <div class="voice-ring">
+      <svg class="voice-mic" viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    </div>
+    <div class="voice-label">Listening...</div>
+    <div class="voice-transcript">What is the occasion?</div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- AI RECIPE CARD -->
+  <div class="screen" id="ai-recipe-card">
+    <div class="det-visual">
+      <svg class="det-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg>
+    </div>
+    <div class="det-info">
+      <h1>Negroni</h1>
+      <div class="det-lore">Equal parts spirit, bitter, and sweet. A study in balance.</div>
+      <div class="det-tags"><div class="det-tag">Bold</div><div class="det-tag">Bitter</div><div class="det-tag">Classic</div></div>
+      <div class="det-sect-label">INGREDIENTS</div>
+      <div class="det-ing"><div class="dot"></div>Gin · 1 oz</div>
+      <div class="det-ing"><div class="dot"></div>Campari · 1 oz</div>
+      <div class="det-ing"><div class="dot"></div>Sweet Vermouth · 1 oz</div>
+      <div class="det-sect-label">METHOD</div>
+      <div class="det-story">Stir with ice. Strain over fresh ice. Orange twist. Balance is everything.</div>
+      <div class="det-craft-btn"><button onclick="goTo('recipe-builder')">Craft This Drink</button></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- RECIPE BUILDER: Spirit Selection -->
+  <div class="screen" id="recipe-builder">
+    <div class="rb-header">
+      <div><div class="rb-title">Choose Your <strong>Spirit.</strong></div></div>
+    </div>
+    <div class="rb-body">
+      <div class="rb-card" onclick="goTo('add-mixers')">
+        <div class="rb-icon-box"><svg class="rb-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="rb-name">Bourbon</div>
+        <div class="rb-origin">Kentucky, USA</div>
+        <div class="rb-note">Vanilla and oak. A little sweetness.</div>
+      </div>
+      <div class="rb-card" onclick="goTo('add-mixers')">
+        <div class="rb-icon-box"><svg class="rb-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="rb-name">Vodka</div>
+        <div class="rb-origin">Eastern Europe</div>
+        <div class="rb-note">Clean. Let other flavors lead.</div>
+      </div>
+      <div class="rb-card" onclick="goTo('add-mixers')">
+        <div class="rb-icon-box"><svg class="rb-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="rb-name">Gin</div>
+        <div class="rb-origin">London, England</div>
+        <div class="rb-note">Juniper-forward. Spice.</div>
+      </div>
+      <div class="rb-card" onclick="goTo('add-mixers')">
+        <div class="rb-icon-box"><svg class="rb-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="rb-name">Rum</div>
+        <div class="rb-origin">Caribbean</div>
+        <div class="rb-note">Molasses and tropical notes.</div>
+      </div>
+      <div class="rb-card" onclick="goTo('add-mixers')">
+        <div class="rb-icon-box"><svg class="rb-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="rb-name">Tequila</div>
+        <div class="rb-origin">Mexico</div>
+        <div class="rb-note">Agave brightness. Herbaceous.</div>
+      </div>
+      <div class="rb-card" onclick="goTo('add-mixers')">
+        <div class="rb-icon-box"><svg class="rb-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="rb-name">Scotch</div>
+        <div class="rb-origin">Scotland</div>
+        <div class="rb-note">Peat or silk. Every sip, complex.</div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- ADD MIXERS -->
+  <div class="screen" id="add-mixers">
+    <div class="am-header">
+      <div class="am-title">Add Your <strong>Mixers.</strong></div>
+    </div>
+    <div class="am-body">
+      <div class="am-section">
+        <div class="am-section-label">CITRUS</div>
+        <div class="chip-group">
+          <button class="chip active">Lemon Juice</button>
+          <button class="chip active">Lime Juice</button>
+          <button class="chip">Orange Juice</button>
+          <button class="chip">Grapefruit</button>
+        </div>
+      </div>
+      <div class="am-section">
+        <div class="am-section-label">SYRUPS</div>
+        <div class="chip-group">
+          <button class="chip active">Simple Syrup</button>
+          <button class="chip">Honey Syrup</button>
+          <button class="chip">Agave</button>
+          <button class="chip">Maple</button>
+        </div>
+      </div>
+      <div class="am-section">
+        <div class="am-section-label">BITTERS</div>
+        <div class="chip-group">
+          <button class="chip active">Angostura</button>
+          <button class="chip">Orange</button>
+          <button class="chip">Chocolate</button>
+          <button class="chip">Aromatic</button>
+        </div>
+      </div>
+      <div class="am-section">
+        <div class="am-section-label">SODAS & MIXERS</div>
+        <div class="chip-group">
+          <button class="chip">Soda Water</button>
+          <button class="chip active">Tonic Water</button>
+          <button class="chip">Ginger Beer</button>
+          <button class="chip">Club Soda</button>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- SET PROPORTIONS -->
+  <div class="screen" id="set-proportions">
+    <div class="sp-header">
+      <div class="sp-title">Balance The <strong>Flavor.</strong></div>
+    </div>
+    <div class="sp-body">
+      <div class="sp-sliders">
+        <div class="slider-group">
+          <div class="slider-label">Base Spirit</div>
+          <input type="range" class="slider" min="0" max="100" value="60">
+          <div class="slider-amount">1.5 oz</div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-label">Citrus</div>
+          <input type="range" class="slider" min="0" max="100" value="25">
+          <div class="slider-amount">0.75 oz</div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-label">Sweetener</div>
+          <input type="range" class="slider" min="0" max="100" value="15">
+          <div class="slider-amount">0.5 oz</div>
+        </div>
+      </div>
+      <div class="sp-viz">
+        <div class="viz-glass">
+          <div style="position:absolute;bottom:0;width:100%;height:60%;background:linear-gradient(to top,rgba(200,169,126,0.3),transparent);border-radius:20px"></div>
+        </div>
+        <div class="viz-label">2.75 oz total volume</div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- NAME CREATION -->
+  <div class="screen" id="name-creation">
+    <div class="nc-content">
+      <div class="nc-label">Your Creation</div>
+      <div class="nc-title">Name It.</div>
+      <div class="nc-form">
+        <input type="text" class="nc-input" placeholder="Cocktail name">
+        <textarea class="nc-textarea" placeholder="The story behind it."></textarea>
+        <button class="nc-btn" onclick="goTo('profile')">Save Recipe</button>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Create</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- PROFILE: Hub -->
+  <div class="screen" id="profile">
+    <div class="pf-header">
+      <div class="pf-left">
+        <div class="pf-avatar">AR</div>
+        <div class="pf-stats">
+          <div class="pf-stat"><div class="pf-stat-val">47</div><div class="pf-stat-label">Drinks Crafted</div></div>
+          <div class="pf-stat"><div class="pf-stat-val">12</div><div class="pf-stat-label">Saved Recipes</div></div>
+        </div>
+        <button class="pf-edit-btn" onclick="goTo('avatar-edit')">Edit Profile</button>
+      </div>
+      <div class="pf-right">
+        <div class="pf-grid">
+          <div class="pf-card" onclick="goTo('taste-profile')">
+            <div class="pf-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+            <h4>Taste Profile</h4>
+            <p>Your preferences</p>
+          </div>
+          <div class="pf-card">
+            <div class="pf-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+            <h4>App Settings</h4>
+            <p>Customize</p>
+          </div>
+          <div class="pf-card">
+            <div class="pf-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11z"/></svg></div>
+            <h4>Party Mode</h4>
+            <p>Host gatherings</p>
+          </div>
+          <div class="pf-card">
+            <div class="pf-card-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-2.18C17.71 4.57 16.37 3.5 14.82 3.5c-1.40 0-2.74.87-3.35 2.1-.61-1.23-1.95-2.1-3.35-2.1C7.63 3.5 6.29 4.57 5.18 6H4c-1.1 0-1.99.9-1.99 2v14c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-5.5-2c.82 0 1.5.67 1.5 1.5S15.32 7 14.5 7 13 6.33 13 5.5 13.68 4 14.5 4zm-4 0c.82 0 1.5.67 1.5 1.5S11.32 7 10.5 7 9 6.33 9 5.5 9.68 4 10.5 4zm7 20H5V8h2.18c.16.83.77 1.5 1.59 1.5.82 0 1.43-.67 1.59-1.5H16c.82 0 1.5.67 1.5 1.5v12.5z"/></svg></div>
+            <h4>Account</h4>
+            <p>Manage</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- AVATAR EDIT -->
+  <div class="screen" id="avatar-edit">
+    <div class="ae-content">
+      <div class="ae-avatar">AR</div>
+      <div class="ae-form">
+        <label class="ae-label">Full Name</label>
+        <input type="text" class="ae-input" value="Akshet Rao" placeholder="Your name">
+        <label class="ae-label">Email</label>
+        <input type="email" class="ae-input" value="akshet@barsys.com" placeholder="Email" disabled>
+      </div>
+      <div class="ae-buttons">
+        <button class="ae-btn gold" onclick="goTo('profile')">Save</button>
+        <button class="ae-btn glass" onclick="goTo('profile')">Cancel</button>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- TASTE PROFILE -->
+  <div class="screen" id="taste-profile">
+    <div class="tp-header">
+      <div class="tp-title">Your <strong>Taste.</strong></div>
+    </div>
+    <div class="tp-body">
+      <div>
+        <h3>Flavor Preferences</h3>
+        <div class="tp-sliders">
+          <div class="tp-slider-group">
+            <div class="tp-slider-label">Sweet</div>
+            <input type="range" class="tp-slider" min="0" max="100" value="35">
+          </div>
+          <div class="tp-slider-group">
+            <div class="tp-slider-label">Sour</div>
+            <input type="range" class="tp-slider" min="0" max="100" value="60">
+          </div>
+          <div class="tp-slider-group">
+            <div class="tp-slider-label">Bitter</div>
+            <input type="range" class="tp-slider" min="0" max="100" value="45">
+          </div>
+          <div class="tp-slider-group">
+            <div class="tp-slider-label">Spicy</div>
+            <input type="range" class="tp-slider" min="0" max="100" value="25">
+          </div>
+          <div class="tp-slider-group">
+            <div class="tp-slider-label">Herbal</div>
+            <input type="range" class="tp-slider" min="0" max="100" value="55">
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Dietary Preferences</h3>
+        <div class="tp-preferences">
+          <button class="chip active">Vegan</button>
+          <button class="chip active">Gluten-Free</button>
+          <button class="chip">Low Sugar</button>
+          <button class="chip">No Dairy</button>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div></div></div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="screen" id="notifications">
+    <div style="padding:56px 64px 0">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:44px"><button class="back-btn" onclick="goTo('profile')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div><div style="font-size:32px;font-weight:200;letter-spacing:-0.5px">Alert <strong>Preferences</strong></div><div style="font-size:13px;color:var(--t3);font-weight:300;margin-top:2px">Control your notifications</div></div></div>
+      <div style="height:calc(834px - 56px - 80px);overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:96px">
+        <div class="ntf-row"><div class="ntf-info"><div class="ntf-name">Drink Ready</div><div class="ntf-desc">Notify when your cocktail is ready</div></div><div class="ntf-toggle active" onclick="this.classList.toggle('active')"><div class="ntf-knob"></div></div></div>
+        <div class="ntf-row"><div class="ntf-info"><div class="ntf-name">Party Invitations</div><div class="ntf-desc">Receive party invite notifications</div></div><div class="ntf-toggle active" onclick="this.classList.toggle('active')"><div class="ntf-knob"></div></div></div>
+        <div class="ntf-row"><div class="ntf-info"><div class="ntf-name">New Recipes</div><div class="ntf-desc">Weekly curated recommendations</div></div><div class="ntf-toggle" onclick="this.classList.toggle('active')"><div class="ntf-knob"></div></div></div>
+        <div class="ntf-row"><div class="ntf-info"><div class="ntf-name">Station Status</div><div class="ntf-desc">Alerts when station needs attention</div></div><div class="ntf-toggle active" onclick="this.classList.toggle('active')"><div class="ntf-knob"></div></div></div>
+        <div class="ntf-row"><div class="ntf-info"><div class="ntf-name">Bottle Levels</div><div class="ntf-desc">Low bottle level warnings</div></div><div class="ntf-toggle active" onclick="this.classList.toggle('active')"><div class="ntf-knob"></div></div></div>
+        <div class="ntf-row"><div class="ntf-info"><div class="ntf-name">Marketing</div><div class="ntf-desc">Promotions and updates</div></div><div class="ntf-toggle" onclick="this.classList.toggle('active')"><div class="ntf-knob"></div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab" onclick="goTo('create')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></div></div></div></div>
+  </div>
+
+  <!-- APP THEME -->
+  <div class="screen" id="app-theme">
+    <div style="padding:56px 64px 0">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:44px"><button class="back-btn" onclick="goTo('profile')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div><div style="font-size:32px;font-weight:200;letter-spacing:-0.5px">App <strong>Theme</strong></div><div style="font-size:13px;color:var(--t3);font-weight:300;margin-top:2px">Choose your visual preference</div></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:600px">
+        <div class="theme-card selected" onclick="document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')"><div class="theme-preview dark"><div class="theme-bar"></div><div class="theme-content"><div class="theme-block"></div><div class="theme-block sm"></div></div></div><div class="theme-label">Dark</div><div class="theme-desc">Sophisticated evening mode</div></div>
+        <div class="theme-card" onclick="document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')"><div class="theme-preview light"><div class="theme-bar"></div><div class="theme-content"><div class="theme-block"></div><div class="theme-block sm"></div></div></div><div class="theme-label">Light</div><div class="theme-desc">Crisp daytime clarity</div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab" onclick="goTo('create')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></div></div></div></div>
+  </div>
+
+  <!-- UNITS -->
+  <div class="screen" id="units">
+    <div style="padding:56px 64px 0">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:44px"><button class="back-btn" onclick="goTo('profile')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div><div style="font-size:32px;font-weight:200;letter-spacing:-0.5px">Measurement <strong>Units</strong></div></div></div>
+      <div style="max-width:500px;display:flex;flex-direction:column;gap:24px">
+        <div><div style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:12px">Volume</div><div style="display:flex;gap:12px"><button class="unit-btn active" onclick="this.parentElement.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">oz</button><button class="unit-btn" onclick="this.parentElement.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">ml</button><button class="unit-btn" onclick="this.parentElement.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">cl</button></div></div>
+        <div><div style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:12px">Temperature</div><div style="display:flex;gap:12px"><button class="unit-btn active" onclick="this.parentElement.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">°F</button><button class="unit-btn" onclick="this.parentElement.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">°C</button></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab" onclick="goTo('create')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></div></div></div></div>
+  </div>
+
+  <!-- PARTY SETUP -->
+  <div class="screen centered-screen" id="party-setup">
+    <div class="centered-content" style="max-width:480px">
+      <div style="font-size:10px;letter-spacing:5px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px">HOST</div>
+      <div style="font-size:36px;font-weight:200;letter-spacing:-0.5px;margin-bottom:12px">Start a <strong>party.</strong></div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:40px;font-weight:300">Curate an unforgettable evening</div>
+      <div style="display:flex;flex-direction:column;gap:20px;text-align:left">
+        <div><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Event Name</label><input type="text" value="Saturday Soirée" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t1);font-family:inherit;font-size:14px;outline:none"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Date</label><input type="text" value="Mar 15, 2026" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t1);font-family:inherit;font-size:13px;outline:none"></div><div><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Time</label><input type="text" value="8:00 PM" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t1);font-family:inherit;font-size:13px;outline:none"></div></div>
+        <div><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Guest Limit</label><input type="text" value="20" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t1);font-family:inherit;font-size:13px;outline:none"></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:32px"><button style="flex:1;padding:16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit" onclick="goTo('profile')">Cancel</button><button style="flex:1;padding:16px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit" onclick="goTo('party-dashboard');showToast('Party created')">Launch Party</button></div>
+    </div>
+  </div>
+
+  <!-- PARTY DASHBOARD -->
+  <div class="screen" id="party-dashboard">
+    <div style="padding:56px 64px 0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px"><div><div style="font-size:10px;letter-spacing:4px;color:var(--success);font-weight:500;text-transform:uppercase;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulse 2s ease infinite"></span>Live</div><div style="font-size:36px;font-weight:200;letter-spacing:-0.5px;margin-top:4px">Saturday <strong>Soirée</strong></div></div><div style="display:flex;gap:8px"><button style="padding:10px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit" onclick="goTo('qr-share')">Share</button><button style="padding:10px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit" onclick="goTo('queue-mgmt')">Queue</button></div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:20px"><div style="font-size:28px;font-weight:200;color:var(--gold-l)">24</div><div style="font-size:10px;color:var(--t3);margin-top:4px;font-weight:300">Drinks Crafted</div></div>
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:20px"><div style="font-size:28px;font-weight:200;color:var(--gold-l)">12</div><div style="font-size:10px;color:var(--t3);margin-top:4px;font-weight:300">Active Guests</div></div>
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:20px"><div style="font-size:28px;font-weight:200;color:var(--gold-l)">3</div><div style="font-size:10px;color:var(--t3);margin-top:4px;font-weight:300">In Queue</div></div>
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:20px"><div style="font-size:28px;font-weight:200;color:var(--gold-l)">98%</div><div style="font-size:10px;color:var(--t3);margin-top:4px;font-weight:300">Satisfaction</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;height:calc(834px - 56px - 160px - 80px);overflow-y:auto;padding-bottom:96px">
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px"><div style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px">Popular Tonight</div><div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px"><div style="width:32px;height:32px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="1" stroke-linecap="round"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div style="flex:1"><div style="font-size:13px;font-weight:600">Old Fashioned</div><div style="font-size:10px;color:var(--t3);margin-top:1px">8 orders</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px"><div style="width:32px;height:32px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="1" stroke-linecap="round"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div style="flex:1"><div style="font-size:13px;font-weight:600">Margarita</div><div style="font-size:10px;color:var(--t3);margin-top:1px">6 orders</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px"><div style="width:32px;height:32px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="1" stroke-linecap="round"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div style="flex:1"><div style="font-size:13px;font-weight:600">Negroni</div><div style="font-size:10px;color:var(--t3);margin-top:1px">5 orders</div></div></div></div></div>
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px"><div style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px">Recent Activity</div><div style="display:flex;flex-direction:column;gap:10px"><div style="padding:12px;border-bottom:0.5px solid var(--border)"><div style="font-size:13px;font-weight:500">Sarah ordered a Mojito</div><div style="font-size:10px;color:var(--t4);margin-top:2px">2 min ago</div></div><div style="padding:12px;border-bottom:0.5px solid var(--border)"><div style="font-size:13px;font-weight:500">James joined the party</div><div style="font-size:10px;color:var(--t4);margin-top:2px">5 min ago</div></div><div style="padding:12px;border-bottom:0.5px solid var(--border)"><div style="font-size:13px;font-weight:500">Old Fashioned completed</div><div style="font-size:10px;color:var(--t4);margin-top:2px">8 min ago</div></div><div style="padding:12px"><div style="font-size:13px;font-weight:500">Emily rated Negroni 5 stars</div><div style="font-size:10px;color:var(--t4);margin-top:2px">12 min ago</div></div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab" onclick="goTo('create')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></div></div></div></div>
+  </div>
+
+  <!-- PARTY ANALYTICS -->
+  <div class="screen" id="party-analytics">
+    <div style="padding:56px 64px 0">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:44px"><button class="back-btn" onclick="goTo('party-dashboard')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div><div style="font-size:32px;font-weight:200;letter-spacing:-0.5px">Party <strong>Insights</strong></div><div style="font-size:13px;color:var(--t3);font-weight:300;margin-top:2px">Post-event analytics</div></div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:24px;text-align:center"><div style="font-size:36px;font-weight:200;color:var(--gold-l)">47</div><div style="font-size:10px;color:var(--t3);margin-top:4px">Total Drinks</div></div>
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:24px;text-align:center"><div style="font-size:36px;font-weight:200;color:var(--gold-l)">18</div><div style="font-size:10px;color:var(--t3);margin-top:4px">Unique Guests</div></div>
+        <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:24px;text-align:center"><div style="font-size:36px;font-weight:200;color:var(--gold-l)">4.8</div><div style="font-size:10px;color:var(--t3);margin-top:4px">Avg Rating</div></div>
+      </div>
+      <div style="background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px;height:calc(834px - 56px - 160px - 80px);overflow-y:auto"><div style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px">Top Drinks</div><div style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><div style="font-size:13px;font-weight:600;width:120px">Old Fashioned</div><div style="flex:1;height:6px;border-radius:3px;background:var(--s2);overflow:hidden"><div style="height:100%;width:85%;border-radius:3px;background:var(--gold)"></div></div><div style="font-size:11px;color:var(--t3);width:40px;text-align:right">12</div></div><div style="display:flex;align-items:center;gap:16px"><div style="font-size:13px;font-weight:600;width:120px">Margarita</div><div style="flex:1;height:6px;border-radius:3px;background:var(--s2);overflow:hidden"><div style="height:100%;width:65%;border-radius:3px;background:var(--gold)"></div></div><div style="font-size:11px;color:var(--t3);width:40px;text-align:right">9</div></div><div style="display:flex;align-items:center;gap:16px"><div style="font-size:13px;font-weight:600;width:120px">Negroni</div><div style="flex:1;height:6px;border-radius:3px;background:var(--s2);overflow:hidden"><div style="height:100%;width:50%;border-radius:3px;background:var(--gold)"></div></div><div style="font-size:11px;color:var(--t3);width:40px;text-align:right">7</div></div><div style="display:flex;align-items:center;gap:16px"><div style="font-size:13px;font-weight:600;width:120px">Mojito</div><div style="flex:1;height:6px;border-radius:3px;background:var(--s2);overflow:hidden"><div style="height:100%;width:40%;border-radius:3px;background:var(--gold)"></div></div><div style="font-size:11px;color:var(--t3);width:40px;text-align:right">6</div></div></div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab" onclick="goTo('create')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></div></div></div></div>
+  </div>
+
+  <!-- QR SHARE -->
+  <div class="screen centered-screen" id="qr-share">
+    <div class="centered-content" style="max-width:480px">
+      <div style="font-size:10px;letter-spacing:5px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px">INVITE</div>
+      <div style="font-size:36px;font-weight:200;letter-spacing:-0.5px;margin-bottom:12px">Share your <strong>party.</strong></div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:40px">Guests join via QR code or link</div>
+      <div style="width:200px;height:200px;border:1.5px solid var(--gold);border-radius:16px;margin:0 auto 32px;display:flex;align-items:center;justify-content:center;background:rgba(200,169,126,0.04)"><svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg></div>
+      <div style="margin-bottom:24px;text-align:left"><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Event Link</label><div style="display:flex;gap:8px"><input type="text" value="barsys.app/party/soiree24" style="flex:1;padding:12px 14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:10px;color:var(--t2);font-family:inherit;font-size:12px;outline:none" readonly><button style="padding:12px 20px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" onclick="showToast('Copied to clipboard')">Copy</button></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><button style="padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit" onclick="showToast('Sharing via Message...')">Message</button><button style="padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit" onclick="showToast('Sharing via Email...')">Email</button></div>
+    </div>
+  </div>
+
+  <!-- QUEUE MANAGEMENT -->
+  <div class="screen" id="queue-mgmt">
+    <div style="padding:56px 64px 0">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:44px"><button class="back-btn" onclick="goTo('party-dashboard')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div><div style="font-size:32px;font-weight:200;letter-spacing:-0.5px">Drink <strong>Queue</strong></div><div style="font-size:13px;color:var(--t3);font-weight:300;margin-top:2px">3 orders pending</div></div></div>
+      <div style="height:calc(834px - 56px - 80px);overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:96px">
+        <div style="display:flex;align-items:center;gap:16px;padding:20px;background:rgba(200,169,126,0.04);border:0.5px solid rgba(200,169,126,0.12);border-radius:16px"><div style="width:40px;height:40px;border-radius:10px;background:var(--gold-d);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gold)">1</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Margarita</div><div style="font-size:11px;color:var(--gold);margin-top:2px">Pouring now...</div></div><div style="font-size:10px;color:var(--t4)">Sarah K.</div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px"><div style="width:40px;height:40px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--t3)">2</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Old Fashioned</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Up next</div></div><div style="font-size:10px;color:var(--t4)">James M.</div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px"><div style="width:40px;height:40px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--t3)">3</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Negroni</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Waiting</div></div><div style="font-size:10px;color:var(--t4)">Emily R.</div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab" onclick="goTo('create')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></div></div></div></div>
+  </div>
+
+  <!-- LINKED ACCOUNTS -->
+  <div class="screen" id="linked-accounts">
+    <div style="padding:56px 64px 0">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:44px"><button class="back-btn" onclick="goTo('profile')"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div><div style="font-size:32px;font-weight:200;letter-spacing:-0.5px">Linked <strong>Accounts</strong></div></div></div>
+      <div style="max-width:600px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:16px;padding:20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px"><div style="width:40px;height:40px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:200;color:var(--t1)">A</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Apple ID</div><div style="font-size:11px;color:var(--success);margin-top:2px">Connected</div></div><button style="padding:8px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:8px;font-size:11px;color:var(--t3);cursor:pointer;font-family:inherit" onclick="showToast('Disconnecting...')">Disconnect</button></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px"><div style="width:40px;height:40px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:200;color:var(--t1)">G</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Google</div><div style="font-size:11px;color:var(--success);margin-top:2px">Connected</div></div><button style="padding:8px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:8px;font-size:11px;color:var(--t3);cursor:pointer;font-family:inherit" onclick="showToast('Disconnecting...')">Disconnect</button></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px"><div style="width:40px;height:40px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--t3)">IG</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Instagram</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Not connected</div></div><button style="padding:8px 16px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit" onclick="showToast('Connecting...')">Connect</button></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab" onclick="goTo('create')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></div></div></div></div>
+  </div>
+
+  <!-- DELETE ACCOUNT -->
+  <div class="screen centered-screen" id="delete-account">
+    <div class="centered-content" style="max-width:480px">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(160,114,114,0.12);margin:0 auto 24px;display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <div style="font-size:32px;font-weight:200;letter-spacing:-0.5px;margin-bottom:12px">Delete your <strong>account?</strong></div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:32px;line-height:1.6">This is permanent. All creations, party records, and preferences will be erased.</div>
+      <div style="padding:20px;background:rgba(160,114,114,0.08);border:0.5px solid rgba(160,114,114,0.15);border-radius:12px;margin-bottom:32px;text-align:left"><div style="font-size:9px;letter-spacing:2px;color:var(--error);font-weight:600;text-transform:uppercase;margin-bottom:8px">Irreversible</div><div style="font-size:12px;color:var(--t2);line-height:1.6">Your data cannot be recovered once deleted.</div></div>
+      <div style="margin-bottom:24px;text-align:left"><label style="font-size:9px;letter-spacing:3px;color:var(--error);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Type DELETE to confirm</label><input type="text" placeholder="DELETE" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid rgba(160,114,114,0.2);border-radius:12px;color:var(--t1);font-family:inherit;font-size:13px;outline:none"></div>
+      <div style="display:flex;gap:12px"><button style="flex:1;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit" onclick="goTo('profile')">Cancel</button><button style="flex:1;padding:14px;background:rgba(160,114,114,0.2);border:0.5px solid rgba(160,114,114,0.3);color:var(--error);border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit" onclick="showToast('Account deleted')">Delete Account</button></div>
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD -->
+  <div class="screen centered-screen" id="change-password">
+    <div class="centered-content" style="max-width:420px">
+      <div style="font-size:36px;font-weight:200;letter-spacing:-0.5px;margin-bottom:40px">Update your <strong>password.</strong></div>
+      <div style="display:flex;flex-direction:column;gap:20px;text-align:left">
+        <div><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Current Password</label><input type="password" value="........" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t1);font-family:inherit;font-size:14px;outline:none"></div>
+        <div><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">New Password</label><input type="password" placeholder="Enter new password" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t1);font-family:inherit;font-size:14px;outline:none"></div>
+        <div><label style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;display:block;margin-bottom:8px">Confirm Password</label><input type="password" placeholder="Confirm new password" style="width:100%;padding:14px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;color:var(--t1);font-family:inherit;font-size:14px;outline:none"></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:32px"><button style="flex:1;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit" onclick="goTo('profile')">Cancel</button><button style="flex:1;padding:14px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit" onclick="goTo('profile');showToast('Password updated')">Save</button></div>
+    </div>
+  </div>
+
+  <!-- GUEST JOIN -->
+  <div class="screen centered-screen" id="guest-join">
+    <div class="centered-content" style="max-width:500px">
+      <div style="font-size:10px;letter-spacing:5px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px">INVITATION</div>
+      <div style="font-size:36px;font-weight:200;letter-spacing:-0.5px;margin-bottom:12px">You're invited to a <strong>cocktail evening.</strong></div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:40px">Join Akshet's curated experience</div>
+      <div style="background:rgba(200,169,126,0.04);border:0.5px solid rgba(200,169,126,0.15);border-radius:20px;padding:32px;margin-bottom:32px">
+        <div style="font-size:20px;font-weight:600;margin-bottom:8px">Saturday Soirée</div>
+        <div style="font-size:13px;color:var(--t2);margin-bottom:24px">Hosted by Akshet Tewari</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:24px;border-top:0.5px solid var(--border)"><div><div style="font-size:10px;color:var(--t3);margin-bottom:4px">Time</div><div style="font-size:13px;font-weight:600">Saturday, 8 PM</div></div><div><div style="font-size:10px;color:var(--t3);margin-bottom:4px">Location</div><div style="font-size:13px;font-weight:600">Penthouse, SF</div></div><div><div style="font-size:10px;color:var(--t3);margin-bottom:4px">Guests</div><div style="font-size:13px;font-weight:600">20 attending</div></div><div><div style="font-size:10px;color:var(--t3);margin-bottom:4px">Menu</div><div style="font-size:13px;font-weight:600">12 cocktails</div></div></div>
+      </div>
+      <div style="margin-bottom:32px"><div style="font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px">Featured Drinks</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="padding:16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;text-align:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1" stroke-linecap="round" style="margin-bottom:6px"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div style="font-size:12px;font-weight:600">Old Fashioned</div></div><div style="padding:16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;text-align:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1" stroke-linecap="round" style="margin-bottom:6px"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div style="font-size:12px;font-weight:600">Margarita</div></div><div style="padding:16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;text-align:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1" stroke-linecap="round" style="margin-bottom:6px"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L2 21l6-7"/><path d="M2 12s2-2 7-2"/></svg><div style="font-size:12px;font-weight:600">Mojito</div></div><div style="padding:16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;text-align:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1" stroke-linecap="round" style="margin-bottom:6px"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg><div style="font-size:12px;font-weight:600">Negroni</div></div></div></div>
+      <div style="display:flex;gap:12px"><button style="flex:1;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit" onclick="showToast('Invitation declined')">Decline</button><button style="flex:1;padding:14px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit" onclick="goTo('create');showToast('Welcome to the party')">Accept</button></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const history=[];
+function goTo(id){const screens=document.querySelectorAll('.screen');const current=document.querySelector('.screen.active');if(current)history.push(current.id);screens.forEach(s=>s.classList.remove('active'));const t=document.getElementById(id);if(t)t.classList.add('active')}
+function goBack(){if(history.length){const prev=history.pop();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const t=document.getElementById(prev);if(t)t.classList.add('active')}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+</script>
+</body>
+</html>

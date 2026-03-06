@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARSYS — First Time User Experience</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050505;--s1:#0C0C0C;--s2:#141414;--s3:#1C1C1C;
+  --gold:#C8A97E;--gold-l:#E8D5B5;--gold-d:rgba(200,169,126,0.12);
+  --t1:#fff;--t2:rgba(255,255,255,0.65);--t3:rgba(255,255,255,0.38);--t4:rgba(255,255,255,0.18);
+  --glass:rgba(255,255,255,0.045);--glass-b:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.06);
+  --unwind:#8A9490;--celebrate:#B8A67A;--impress:#9A7B7F;--explore:#7E8B96;
+  --r:12px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#000;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased}
+
+/* ═══ DEVICE FRAME ═══ */
+.device{width:393px;height:852px;background:var(--bg);border-radius:50px;position:relative;overflow:hidden;box-shadow:0 0 0 2px rgba(255,255,255,0.08),0 40px 120px rgba(0,0,0,0.9);cursor:default}
+
+/* ═══ STATUS BAR ═══ */
+.status-bar{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:14px 28px 0;z-index:200;color:var(--t1);font-size:14px;font-weight:600}
+.status-bar .time{font-size:15px;font-weight:600}
+.status-icons{display:flex;gap:5px;align-items:center}
+.status-icons svg{width:auto;height:11px}
+
+/* ═══ DYNAMIC ISLAND ═══ */
+.island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:126px;height:36px;background:#000;border-radius:22px;z-index:300}
+
+/* ═══ HOME INDICATOR ═══ */
+.home-ind{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;background:rgba(255,255,255,0.2);border-radius:3px;z-index:200}
+
+/* ═══ SCREENS ═══ */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.4s ease;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{opacity:1;pointer-events:auto}
+
+/* Haptic tap feedback */
+@keyframes haptic{0%{transform:scale(1)}50%{transform:scale(0.96)}100%{transform:scale(1)}}
+.haptic{animation:haptic 0.15s ease!important}
+
+/* ═══ SPLASH ═══ */
+#splash{background:var(--bg);align-items:center;justify-content:center}
+#splash .logo{font-size:28px;font-weight:200;letter-spacing:12px;color:var(--t1);opacity:0;animation:fadeScale 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s forwards}
+#splash .logo-dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin:16px auto 0;opacity:0;animation:fadeIn 0.8s ease 1s forwards}
+@keyframes fadeScale{from{opacity:0;transform:scale(0.9) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.03);opacity:0.8}}
+
+/* ═══ ONBOARDING VIDEO SCREEN ═══ */
+#onboarding{background:var(--bg);position:relative}
+.ob-bg{position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(200,169,126,0.04) 40%,rgba(200,169,126,0.08) 60%,var(--bg) 100%)}
+.ob-content{position:absolute;bottom:0;left:0;right:0;padding:0 28px 52px;z-index:10}
+.ob-eyebrow{font-size:10px;letter-spacing:6px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:12px}
+.ob-title{font-size:36px;font-weight:200;line-height:1.1;letter-spacing:-1px;color:var(--t1)}
+.ob-title em{font-style:italic;color:var(--gold);font-weight:300}
+.ob-sub{font-size:14px;color:var(--t2);font-weight:300;line-height:1.7;margin-top:14px;max-width:300px}
+.ob-cta{width:100%;padding:16px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:28px;letter-spacing:-0.2px;transition:transform 0.2s,opacity 0.2s}
+.ob-cta:active{transform:scale(0.97);opacity:0.9}
+.ob-skip{text-align:center;margin-top:14px;font-size:13px;color:var(--t3);font-weight:400;cursor:pointer}
+
+/* ═══ MOOD SELECT ═══ */
+#mood{background:var(--bg);padding:72px 24px 40px}
+.mood-header{margin-bottom:32px}
+.mood-greet{font-size:14px;color:var(--gold);font-weight:500;margin-bottom:4px}
+.mood-q{font-size:32px;font-weight:200;line-height:1.15;letter-spacing:-0.5px}
+.mood-q strong{font-weight:700}
+.mood-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mood-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:20px;cursor:pointer;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);min-height:130px;display:flex;flex-direction:column;justify-content:flex-end}
+.mood-card::before{content:'';position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:140px;height:100px;border-radius:50%;filter:blur(40px);opacity:0.15;transition:opacity 0.4s}
+.mood-card:active{transform:scale(0.95)}
+.mood-card:hover::before{opacity:0.3}
+.mood-card.selected{border-color:var(--gold);background:rgba(200,169,126,0.06)}
+.mood-card.selected::before{opacity:0.35}
+.mood-card .mc-line{width:24px;height:2px;border-radius:1px;margin-bottom:auto}
+.mood-card h3{font-size:16px;font-weight:600;letter-spacing:-0.2px;position:relative;z-index:2}
+.mood-card p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:400;position:relative;z-index:2}
+.mood-card.unwind::before{background:var(--unwind)}.mood-card.unwind .mc-line{background:var(--unwind)}
+.mood-card.celebrate::before{background:var(--celebrate)}.mood-card.celebrate .mc-line{background:var(--celebrate)}
+.mood-card.impress::before{background:var(--impress)}.mood-card.impress .mc-line{background:var(--impress)}
+.mood-card.explore::before{background:var(--explore)}.mood-card.explore .mc-line{background:var(--explore)}
+
+/* Trending section on mood screen */
+.trending-sect{margin-top:24px}
+.trending-label{font-size:9px;letter-spacing:2px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:10px}
+.trending-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:background 0.3s}
+.trending-item:active{background:rgba(255,255,255,0.06)}
+.trending-icon{width:40px;height:40px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.trending-icon svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.trending-info h4{font-size:14px;font-weight:600;letter-spacing:-0.1px}
+.trending-info p{font-size:11px;color:var(--t4);margin-top:1px}
+
+/* ═══ PROMPT BAR (reusable) ═══ */
+.prompt-bar{display:flex;align-items:center;padding:4px 4px 4px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;margin-top:20px;height:48px}
+.prompt-bar span{flex:1;font-size:13px;color:var(--t4);font-weight:400}
+.prompt-bar .send{width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s}
+.prompt-bar .send:active{transform:scale(0.9)}
+.prompt-bar .send svg{width:14px;height:14px;stroke:#000;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ═══ RECIPE STREAM ═══ */
+#stream{background:var(--bg);padding:66px 0 0}
+.stream-head{padding:0 24px;margin-bottom:24px}
+.stream-mood-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;font-size:11px;font-weight:500;margin-bottom:14px;border:0.5px solid var(--glass-b)}
+.stream-mood-tag .dot{width:6px;height:6px;border-radius:50%}
+.stream-title{font-size:24px;font-weight:200;letter-spacing:-0.3px;line-height:1.25}
+.stream-title strong{font-weight:700}
+.stream-sub{font-size:13px;color:var(--t2);margin-top:6px;font-weight:300;line-height:1.6}
+
+/* Recipe cards carousel */
+.recipe-carousel{display:flex;gap:14px;padding:0 24px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+.recipe-carousel::-webkit-scrollbar{display:none}
+.recipe-card{min-width:280px;scroll-snap-align:start;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform 0.3s;flex-shrink:0}
+.recipe-card:active{transform:scale(0.97)}
+.recipe-card .rc-hero{height:180px;background:linear-gradient(135deg,var(--s2),var(--s1));display:flex;align-items:center;justify-content:center;color:var(--t4);position:relative;overflow:hidden}
+.recipe-card .rc-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(5,5,5,0.8),transparent)}
+.recipe-card .rc-hero svg{width:48px;height:48px;stroke:currentColor;stroke-width:1;fill:none;stroke-linecap:round;opacity:0.3}
+.recipe-card .rc-body{padding:18px}
+.recipe-card .rc-body h3{font-size:18px;font-weight:600;letter-spacing:-0.2px}
+.recipe-card .rc-body .rc-desc{font-size:12px;color:var(--t2);margin-top:4px;font-weight:300;font-style:italic;line-height:1.5}
+.recipe-card .rc-body .rc-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.recipe-card .rc-body .rc-tag{padding:4px 10px;border-radius:100px;font-size:10px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.recipe-card .rc-body .rc-meta{display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--t3);font-weight:400}
+
+/* ═══ RECIPE DETAIL ═══ */
+#detail{background:var(--bg)}
+.det-hero{height:280px;background:linear-gradient(180deg,var(--s2) 0%,var(--bg) 100%);display:flex;align-items:center;justify-content:center;position:relative}
+.det-hero svg{width:64px;height:64px;stroke:var(--t4);stroke-width:0.8;fill:none;stroke-linecap:round;opacity:0.25}
+.det-nav{position:absolute;top:58px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 24px;z-index:10}
+.det-nav svg{width:20px;height:20px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}
+.det-nav .det-save{font-size:13px;color:var(--gold);font-weight:500;cursor:pointer}
+.det-body{padding:0 24px 120px;margin-top:-20px;position:relative;z-index:5}
+.det-body h1{font-size:28px;font-weight:700;letter-spacing:-0.5px}
+.det-body .det-lore{font-size:13px;color:var(--t2);margin-top:6px;font-weight:300;font-style:italic;line-height:1.6}
+.det-tags{display:flex;gap:6px;margin-top:12px}
+.det-tag{padding:5px 12px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.det-sect-label{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:600;margin-top:28px;margin-bottom:10px;text-transform:uppercase}
+.det-ing{display:flex;align-items:center;padding:12px 14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:10px;margin-bottom:5px;font-size:13px;color:var(--t2);font-weight:400}
+.det-ing .dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin-right:10px;flex-shrink:0}
+.det-craft-btn{position:absolute;bottom:0;left:0;right:0;padding:16px 24px 40px;background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:100}
+.det-craft-btn button{width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;letter-spacing:-0.2px;transition:transform 0.2s}
+.det-craft-btn button:active{transform:scale(0.97)}
+
+/* ═══ AUTH ═══ */
+#auth{background:var(--bg);padding:72px 28px 40px;display:flex;flex-direction:column}
+.auth-top{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.auth-logo{font-size:20px;font-weight:200;letter-spacing:8px;color:var(--t1);margin-bottom:8px}
+.auth-title{font-size:28px;font-weight:200;letter-spacing:-0.5px;margin-top:24px;line-height:1.2}
+.auth-title strong{font-weight:700}
+.auth-sub{font-size:13px;color:var(--t2);margin-top:8px;font-weight:300;line-height:1.6}
+.auth-buttons{width:100%;margin-top:40px;display:flex;flex-direction:column;gap:10px}
+.auth-btn{width:100%;padding:16px;border-radius:14px;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform 0.2s;letter-spacing:-0.1px}
+.auth-btn:active{transform:scale(0.97)}
+.auth-btn.apple{background:#fff;color:#000;border:none}
+.auth-btn.google{background:transparent;color:var(--t1);border:0.5px solid var(--glass-b)}
+.auth-btn.phone{background:transparent;color:var(--t1);border:0.5px solid var(--glass-b)}
+.auth-btn svg{width:18px;height:18px}
+.auth-later{text-align:center;margin-top:20px;font-size:13px;color:var(--t3);cursor:pointer}
+
+/* ═══ WELCOME ═══ */
+#welcome{background:var(--bg);align-items:center;justify-content:center;text-align:center;position:relative}
+#welcome::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:300px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 60%);animation:breathe 4s ease-in-out infinite}
+.welcome-text{position:relative;z-index:2}
+.welcome-greet{font-size:14px;color:var(--gold);font-weight:500;letter-spacing:1px;margin-bottom:6px;opacity:0;animation:fadeUp 0.8s ease 0.3s forwards}
+.welcome-name{font-size:42px;font-weight:200;letter-spacing:-1px;opacity:0;animation:fadeUp 0.8s ease 0.6s forwards}
+.welcome-name strong{font-weight:700}
+.welcome-line{width:24px;height:1px;background:var(--gold);margin:20px auto;opacity:0;animation:fadeIn 0.8s ease 1s forwards}
+.welcome-sub{font-size:13px;color:var(--t3);font-weight:300;opacity:0;animation:fadeUp 0.8s ease 1.2s forwards}
+
+/* ═══ HOME SCREEN ═══ */
+#home{background:var(--bg);padding:66px 0 90px}
+.home-scroll{padding:0 24px}
+.home-greet{font-size:13px;color:var(--gold);font-weight:500;margin-bottom:3px}
+.home-title{font-size:28px;font-weight:200;letter-spacing:-0.3px;line-height:1.2;margin-bottom:20px}
+.home-title strong{font-weight:700}
+
+/* Proactive card */
+.pro-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:18px;padding:20px;margin-bottom:14px;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden}
+.pro-card:active{background:rgba(255,255,255,0.06)}
+.pro-card::before{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;filter:blur(50px);opacity:0.08}
+.pro-card.gold::before{background:var(--gold)}
+.pro-card .pc-label{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.pro-card h3{font-size:17px;font-weight:600;letter-spacing:-0.2px}
+.pro-card p{font-size:12px;color:var(--t2);margin-top:4px;font-weight:300;line-height:1.6}
+.pro-card .pc-action{display:inline-block;margin-top:12px;font-size:12px;color:var(--gold);font-weight:500}
+
+/* Featured recipes */
+.feat-label{font-size:10px;letter-spacing:2px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-top:28px;margin-bottom:12px}
+.feat-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:background 0.3s}
+.feat-item:active{background:rgba(255,255,255,0.06)}
+.feat-thumb{width:48px;height:48px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.feat-thumb svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.feat-info{flex:1;min-width:0}
+.feat-info h4{font-size:15px;font-weight:600;letter-spacing:-0.1px}
+.feat-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300}
+.feat-craft{padding:6px 14px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;flex-shrink:0}
+
+/* ═══ TAB BAR ═══ */
+.tab-bar{position:absolute;bottom:0;left:0;right:0;height:84px;display:flex;justify-content:space-around;align-items:flex-start;padding:10px 12px 0;background:linear-gradient(to top,var(--bg) 60%,transparent);z-index:200}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--t4);cursor:pointer;transition:color 0.3s;padding:4px 8px}
+.tab.active{color:var(--gold)}
+.tab svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tab span{font-size:10px;font-weight:500;letter-spacing:0.3px}
+
+/* ═══ CRAFTING SCREEN ═══ */
+#crafting{background:var(--bg);align-items:center;justify-content:center;text-align:center;position:relative}
+#crafting::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.05) 0%,transparent 55%);pointer-events:none}
+.craft-content{position:relative;z-index:2}
+.craft-status{font-size:10px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase}
+.craft-name{font-size:20px;font-weight:700;margin-top:6px;letter-spacing:-0.3px}
+.craft-desc{font-size:12px;color:var(--t3);margin-top:4px;font-weight:300;font-style:italic}
+.craft-ring{width:200px;height:200px;margin:32px auto;position:relative}
+.craft-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.craft-ring .bg{fill:none;stroke:rgba(255,255,255,0.04);stroke-width:2}
+.craft-ring .progress{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:565;stroke-linecap:round;transition:stroke-dashoffset 0.3s ease}
+.craft-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:200;color:var(--gold-l)}
+.craft-pct .pct-sign{font-size:20px;color:var(--t4);margin-left:2px}
+.craft-glass{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;margin-top:8px}
+.craft-glass .cg-dot{width:5px;height:5px;background:#7A9A82;border-radius:50%;animation:pulse 2s ease infinite}
+.craft-glass span{font-size:12px;color:var(--t2);font-weight:400}
+.craft-step{font-size:11px;color:var(--t4);margin-top:16px;font-weight:400;letter-spacing:0.5px;transition:opacity 0.4s}
+.craft-step-detail{display:flex;gap:20px;justify-content:center;margin-top:20px}
+.craft-step-detail .csd{text-align:center;opacity:0.3;transition:opacity 0.4s}
+.craft-step-detail .csd.active{opacity:1}
+.craft-step-detail .csd-dot{width:3px;height:3px;border-radius:50%;background:var(--gold);margin:0 auto 4px}
+.craft-step-detail .csd span{font-size:9px;letter-spacing:1px;color:var(--t3);text-transform:uppercase;font-weight:500}
+
+/* ═══ CHEERS SCREEN ═══ */
+#cheers{background:var(--bg);align-items:center;justify-content:center;text-align:center;position:relative}
+#cheers::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.07) 0%,transparent 50%);pointer-events:none}
+.cheers-content{position:relative;z-index:2;padding:0 40px}
+.cheers-heart{margin-bottom:12px;opacity:0.6}
+.cheers-heart svg{width:28px;height:28px;stroke:var(--gold);stroke-width:1.5;fill:none;stroke-linecap:round}
+.cheers-label{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.cheers-name{font-size:28px;font-weight:200;margin-top:6px;letter-spacing:-0.5px}
+.cheers-sub{font-size:12px;color:var(--t3);margin-top:4px;font-weight:300;font-style:italic}
+.cheers-divider{width:100px;height:1px;background:var(--border);margin:24px auto}
+.cheers-section{text-align:left;max-width:220px;margin:0 auto}
+.cheers-sect-label{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:600;margin-bottom:6px;text-transform:uppercase}
+.cheers-sect-text{font-size:13px;color:var(--t2);line-height:1.65;font-weight:300}
+.cheers-btn{margin-top:28px;padding:12px 32px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;color:var(--t2);letter-spacing:0.2px;transition:transform 0.2s}
+.cheers-btn:active{transform:scale(0.95)}
+
+/* ═══ GOLD SPARKLE ON CHEERS ═══ */
+.cheers-sparkle{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:1}
+.cheers-sparkle .sp{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:sparkleFloat 3s ease-in-out infinite}
+@keyframes sparkleFloat{0%{opacity:0;transform:translateY(0) scale(0)}20%{opacity:0.8;transform:translateY(-40px) scale(1)}80%{opacity:0.3;transform:translateY(-120px) scale(0.5)}100%{opacity:0;transform:translateY(-160px) scale(0)}}
+
+/* ═══ TOAST NOTIFICATION ═══ */
+.toast{position:absolute;top:60px;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(200,169,126,0.15);border:0.5px solid rgba(200,169,126,0.2);border-radius:14px;padding:10px 20px;z-index:500;font-size:13px;color:var(--gold-l);font-weight:500;white-space:nowrap;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="device" id="device">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 16 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
+      <svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="white" stroke-opacity="0.35"/><rect x="22.5" y="3.5" width="2" height="5" rx="0.5" fill="white" fill-opacity="0.3"/><rect x="2" y="2" width="18" height="8" rx="1" fill="white"/></svg>
+    </div>
+  </div>
+
+  <!-- Dynamic Island -->
+  <div class="island"></div>
+
+  <!-- Home Indicator -->
+  <div class="home-ind"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══ SCREEN 1: SPLASH ═══ -->
+  <div class="screen active" id="splash">
+    <div class="logo">BARSYS</div>
+    <div class="logo-dot"></div>
+  </div>
+
+  <!-- ═══ SCREEN 2: ONBOARDING ═══ -->
+  <div class="screen" id="onboarding">
+    <div class="ob-bg"></div>
+    <div class="ob-content">
+      <div class="ob-eyebrow">Welcome to</div>
+      <div class="ob-title">Your next drink<br>should make you<br><em>feel something.</em></div>
+      <p class="ob-sub">Not a recipe app. A moment machine.<br>Tell us the occasion — we'll handle the rest.</p>
+      <button class="ob-cta" onclick="goTo('mood')">What's the occasion?</button>
+      <div class="ob-skip" onclick="goTo('mood')">Skip intro</div>
+      <div style="display:flex;gap:6px;justify-content:center;margin-top:20px">
+        <div style="width:20px;height:3px;background:var(--gold);border-radius:2px"></div>
+        <div style="width:20px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px"></div>
+        <div style="width:20px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 3: MOOD SELECT ═══ -->
+  <div class="screen" id="mood">
+    <div class="mood-header">
+      <div class="mood-greet">Good evening,</div>
+      <div class="mood-q">What's the<br><strong>occasion?</strong></div>
+    </div>
+    <div class="mood-cards">
+      <div class="mood-card unwind" onclick="selectMood('unwind')">
+        <div class="mc-line"></div>
+        <h3>Unwind</h3>
+        <p>Smooth & slow</p>
+      </div>
+      <div class="mood-card celebrate" onclick="selectMood('celebrate')">
+        <div class="mc-line"></div>
+        <h3>Celebrate</h3>
+        <p>Bold & bright</p>
+      </div>
+      <div class="mood-card impress" onclick="selectMood('impress')">
+        <div class="mc-line"></div>
+        <h3>Impress</h3>
+        <p>Date night</p>
+      </div>
+      <div class="mood-card explore" onclick="selectMood('explore')">
+        <div class="mc-line"></div>
+        <h3>Explore</h3>
+        <p>Surprise me</p>
+      </div>
+    </div>
+    <div class="trending-sect">
+      <div class="trending-label">Trending tonight</div>
+      <div class="trending-item" onclick="goTo('detail')">
+        <div class="trending-icon"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="trending-info"><h4>Espresso Martini</h4><p>Most crafted this week</p></div>
+      </div>
+    </div>
+    <div class="prompt-bar">
+      <span>What are you in the mood for?</span>
+      <div class="send"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 4: RECIPE STREAM ═══ -->
+  <div class="screen" id="stream">
+    <div class="stream-head">
+      <div class="stream-mood-tag" id="stream-tag"><div class="dot" style="background:var(--unwind)"></div>Unwind</div>
+      <div class="stream-title" id="stream-title">Time to<br><strong>unwind.</strong></div>
+      <p class="stream-sub" id="stream-sub">BarBot picked these just for you. Aged spirits, low-proof sips — drinks meant to be nursed.</p>
+    </div>
+    <div class="recipe-carousel">
+      <div class="recipe-card" onclick="goTo('detail')">
+        <div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div>
+        <div class="rc-body">
+          <h3>Old Fashioned</h3>
+          <div class="rc-desc">Born in 1806. Still the king.</div>
+          <div class="rc-tags"><span class="rc-tag">Bourbon</span><span class="rc-tag">Classic</span><span class="rc-tag">Strong</span></div>
+          <div class="rc-meta"><span>4 ingredients</span><span>45 seconds</span></div>
+        </div>
+      </div>
+      <div class="recipe-card" onclick="goTo('detail')">
+        <div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div>
+        <div class="rc-body">
+          <h3>Whiskey Sour</h3>
+          <div class="rc-desc">Citrus takes the edge off.</div>
+          <div class="rc-tags"><span class="rc-tag">Whiskey</span><span class="rc-tag">Citrus</span></div>
+          <div class="rc-meta"><span>5 ingredients</span><span>50 seconds</span></div>
+        </div>
+      </div>
+      <div class="recipe-card" onclick="goTo('detail')">
+        <div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div>
+        <div class="rc-body">
+          <h3>Penicillin</h3>
+          <div class="rc-desc">Scotch, honey, ginger. Medicine.</div>
+          <div class="rc-tags"><span class="rc-tag">Scotch</span><span class="rc-tag">Honey</span></div>
+          <div class="rc-meta"><span>5 ingredients</span><span>55 seconds</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 24px">
+      <div class="prompt-bar">
+        <span>Tell me about your day.</span>
+        <div class="send"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 5: RECIPE DETAIL ═══ -->
+  <div class="screen" id="detail">
+    <div class="det-hero">
+      <div class="det-nav">
+        <svg viewBox="0 0 24 24" onclick="goBack()"><polyline points="15 18 9 12 15 6"/></svg>
+        <span class="det-save" onclick="showToast('Saved to favorites')">Save</span>
+      </div>
+      <svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/><path d="M10 18h4"/></svg>
+    </div>
+    <div class="det-body">
+      <h1>Old Fashioned</h1>
+      <div class="det-lore">Born in 1806. Survived Prohibition.<br>Still the most ordered cocktail on earth.</div>
+      <div class="det-tags">
+        <span class="det-tag">Bourbon</span>
+        <span class="det-tag">Classic</span>
+        <span class="det-tag">Strong</span>
+      </div>
+      <div class="det-sect-label">Ingredients</div>
+      <div class="det-ing"><div class="dot"></div>Bourbon — 60ml</div>
+      <div class="det-ing"><div class="dot"></div>Sugar cube — 1</div>
+      <div class="det-ing"><div class="dot"></div>Angostura bitters — 2 dashes</div>
+      <div class="det-ing"><div class="dot"></div>Orange peel</div>
+      <div class="det-sect-label" style="margin-top:20px">The Story</div>
+      <p style="font-size:13px;color:var(--t2);line-height:1.7;font-weight:300">The drink that started it all. When bartenders first began mixing spirits with sugar and bitters in the early 1800s, there was no name for it — it was just a cocktail. When newer, fancier recipes emerged, purists asked for their drinks made "the old-fashioned way." And so it stuck.</p>
+    </div>
+    <div class="det-craft-btn">
+      <button onclick="goTo('auth')">Craft This Cocktail</button>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 6: AUTH ═══ -->
+  <div class="screen" id="auth">
+    <div class="auth-top">
+      <div class="auth-logo">BARSYS</div>
+      <div style="width:4px;height:4px;background:var(--gold);border-radius:50%;margin:12px auto"></div>
+      <div class="auth-title">Join the<br><strong>ritual.</strong></div>
+      <p class="auth-sub">One tap. Then we'll craft your<br>Old Fashioned in 45 seconds.</p>
+      <div class="auth-buttons">
+        <button class="auth-btn apple" onclick="goTo('welcome')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Continue with Apple
+        </button>
+        <button class="auth-btn google" onclick="goTo('welcome')">
+          <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+        <button class="auth-btn phone" onclick="goTo('welcome')">
+          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          Sign in with Phone
+        </button>
+      </div>
+    </div>
+    <div class="auth-later" onclick="goTo('home')">Maybe later</div>
+  </div>
+
+  <!-- ═══ SCREEN 7: WELCOME ═══ -->
+  <div class="screen" id="welcome">
+    <div class="welcome-text">
+      <div class="welcome-greet">Welcome back,</div>
+      <div class="welcome-name">Akshet.</div>
+      <div class="welcome-line"></div>
+      <div class="welcome-sub">Let's make tonight matter.</div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 8: HOME ═══ -->
+  <div class="screen" id="home">
+    <div class="home-scroll">
+      <div class="home-greet">Good evening, Akshet</div>
+      <div class="home-title">What are we<br><strong>making tonight?</strong></div>
+
+      <div class="pro-card gold" onclick="goTo('mood')">
+        <div class="pc-label">Tonight's mood</div>
+        <h3>Set the occasion</h3>
+        <p>Tell us what's happening tonight and we'll curate the perfect cocktail menu.</p>
+        <div class="pc-action">Choose mood →</div>
+      </div>
+
+      <div class="pro-card" onclick="goTo('detail')">
+        <div class="pc-label">Last crafted</div>
+        <h3>Old Fashioned</h3>
+        <p>2 days ago · Unwind mood</p>
+        <div class="pc-action">Craft again →</div>
+      </div>
+
+      <div class="feat-label">Popular tonight</div>
+      <div class="feat-item" onclick="goTo('detail')">
+        <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="feat-info"><h4>Espresso Martini</h4><p>Coffee · Vodka · No sleep tonight</p></div>
+        <button class="feat-craft">Craft</button>
+      </div>
+      <div class="feat-item" onclick="goTo('detail')">
+        <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="feat-info"><h4>Negroni</h4><p>Campari · Gin · Confidence</p></div>
+        <button class="feat-craft">Craft</button>
+      </div>
+      <div class="feat-item" onclick="goTo('detail')">
+        <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div class="feat-info"><h4>French 75</h4><p>Champagne · Reckless · Perfect</p></div>
+        <button class="feat-craft">Craft</button>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+      <div class="tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div>
+      <div class="tab"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/><path d="M10 18h4"/></svg><span>BarBot</span></div>
+      <div class="tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Control</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 9: CRAFTING ═══ -->
+  <div class="screen" id="crafting">
+    <div class="craft-content">
+      <div class="craft-status">Crafting</div>
+      <div class="craft-name">Old Fashioned</div>
+      <div class="craft-ring">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="90" class="bg"/>
+          <circle cx="100" cy="100" r="90" class="progress" id="craftProgress" style="stroke-dashoffset:565"/>
+        </svg>
+        <div class="craft-pct"><span id="craftPct">0</span><span class="pct-sign">%</span></div>
+      </div>
+      <div class="craft-step" id="craftStep">Dispensing bourbon...</div>
+      <div class="craft-step-detail">
+        <div class="csd active" id="csd1"><div class="csd-dot"></div><span>Pour</span></div>
+        <div class="csd" id="csd2"><div class="csd-dot"></div><span>Mix</span></div>
+        <div class="csd" id="csd3"><div class="csd-dot"></div><span>Stir</span></div>
+        <div class="csd" id="csd4"><div class="csd-dot"></div><span>Finish</span></div>
+      </div>
+      <div class="craft-glass" style="margin-top:20px"><div class="cg-dot"></div><span>Glass detected</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 10: CHEERS ═══ -->
+  <div class="screen" id="cheers">
+    <div class="cheers-sparkle" id="cheersSparkle"></div>
+    <div class="cheers-content">
+      <div class="cheers-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <div class="cheers-label">Cheers</div>
+      <div class="cheers-name">Old Fashioned</div>
+      <div class="cheers-sub">Crafted just for you.</div>
+      <div class="cheers-divider"></div>
+      <div class="cheers-section">
+        <div class="cheers-sect-label">Garnish</div>
+        <div class="cheers-sect-text">Express an orange peel over the glass. Let the oils catch the light.</div>
+        <div class="cheers-sect-label" style="margin-top:18px">Tasting Note</div>
+        <div class="cheers-sect-text">Warm oak and vanilla up front. A whisper of citrus. Finishes like a good conversation.</div>
+      </div>
+      <button class="cheers-btn" onclick="goTo('home')">Make Another</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ SCREEN MANAGEMENT ═══
+let currentScreen = 'splash';
+let navHistory = [];
+
+function goTo(id) {
+  if (currentScreen === id) return;
+  navHistory.push(currentScreen);
+  document.getElementById(currentScreen).classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  currentScreen = id;
+  if (id === 'crafting') startCrafting();
+  document.getElementById(id).scrollTop = 0;
+}
+
+function goBack() {
+  if (navHistory.length === 0) return;
+  const prevId = navHistory.pop();
+  document.getElementById(currentScreen).classList.remove('active');
+  document.getElementById(prevId).classList.add('active');
+  currentScreen = prevId;
+}
+
+// ═══ HAPTIC TAP ═══
+function haptic(el) {
+  el.classList.add('haptic');
+  setTimeout(() => el.classList.remove('haptic'), 160);
+}
+
+// ═══ AUTO SPLASH → ONBOARDING ═══
+setTimeout(() => goTo('onboarding'), 2200);
+
+// ═══ MOOD SELECTION ═══
+function selectMood(mood) {
+  // Visual feedback — highlight selected card
+  document.querySelectorAll('.mood-card').forEach(c => c.classList.remove('selected'));
+  const card = document.querySelector('.mood-card.' + mood);
+  if (card) { card.classList.add('selected'); haptic(card); }
+
+  const colors = {unwind:'var(--unwind)',celebrate:'var(--celebrate)',impress:'var(--impress)',explore:'var(--explore)'};
+  const names = {unwind:'Unwind',celebrate:'Celebrate',impress:'Impress',explore:'Explore'};
+  const titles = {unwind:'Time to<br><strong>unwind.</strong>',celebrate:'Let\'s<br><strong>celebrate.</strong>',impress:'Time to<br><strong>impress.</strong>',explore:'Let\'s<br><strong>explore.</strong>'};
+  const subs = {
+    unwind:'BarBot picked these just for you. Aged spirits, low-proof sips — drinks meant to be nursed.',
+    celebrate:'BarBot knows this energy. Sparkling, citrusy, dangerously easy to drink.',
+    impress:'BarBot went sophisticated. Bitter aperitifs, complex stirred cocktails, drinks that look devastating.',
+    explore:'BarBot went off-script. Unusual ingredients, impossible pairings, drinks that scare you a little.'
+  };
+  document.getElementById('stream-tag').innerHTML = `<div class="dot" style="background:${colors[mood]}"></div>${names[mood]}`;
+  document.getElementById('stream-tag').style.borderColor = colors[mood].replace('var(','').replace(')','');
+  document.getElementById('stream-title').innerHTML = titles[mood];
+  document.getElementById('stream-sub').textContent = subs[mood];
+
+  // Brief delay to show selection before transitioning
+  setTimeout(() => goTo('stream'), 350);
+}
+
+// ═══ CRAFTING ANIMATION ═══
+function startCrafting() {
+  let pct = 0;
+  const ring = document.getElementById('craftProgress');
+  const pctEl = document.getElementById('craftPct');
+  const stepEl = document.getElementById('craftStep');
+  const steps = [
+    {at:0, text:'Dispensing bourbon...', active:1},
+    {at:25, text:'Adding sugar & bitters...', active:2},
+    {at:55, text:'Stirring over ice...', active:3},
+    {at:85, text:'Finishing touches...', active:4}
+  ];
+  let stepIdx = 0;
+
+  // Reset step indicators
+  for(let i=1;i<=4;i++){
+    const el = document.getElementById('csd'+i);
+    el.classList.remove('active');
+    if(i===1) el.classList.add('active');
+  }
+  stepEl.textContent = steps[0].text;
+
+  const interval = setInterval(() => {
+    pct += 1;
+    pctEl.textContent = pct;
+    ring.style.strokeDashoffset = 565 - (565 * pct / 100);
+
+    // Update step
+    if (stepIdx < steps.length - 1 && pct >= steps[stepIdx + 1].at) {
+      stepIdx++;
+      stepEl.style.opacity = '0';
+      setTimeout(() => {
+        stepEl.textContent = steps[stepIdx].text;
+        stepEl.style.opacity = '1';
+      }, 200);
+      for(let i=1;i<=4;i++){
+        const el = document.getElementById('csd'+i);
+        el.classList.toggle('active', i <= steps[stepIdx].active);
+      }
+    }
+
+    if (pct >= 100) {
+      clearInterval(interval);
+      setTimeout(() => { goTo('cheers'); spawnSparkles(); }, 600);
+    }
+  }, 38);
+}
+
+// ═══ TOAST ═══
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ═══ CRAFT BUTTON ON DETAIL → AUTH (first time) or CRAFTING (logged in) ═══
+let isLoggedIn = false;
+document.querySelector('.det-craft-btn button').onclick = function() {
+  if (!isLoggedIn) {
+    goTo('auth');
+  } else {
+    goTo('crafting');
+  }
+};
+
+// Override auth buttons to set logged in
+document.querySelectorAll('.auth-btn').forEach(btn => {
+  btn.onclick = function() {
+    isLoggedIn = true;
+    goTo('welcome');
+    setTimeout(() => goTo('home'), 2500);
+  };
+});
+
+// Override "Maybe later" on auth
+document.querySelector('.auth-later').onclick = function() {
+  goTo('home');
+};
+
+// Make home craft buttons go to crafting if logged in
+document.querySelectorAll('.feat-craft').forEach(btn => {
+  btn.onclick = function(e) {
+    e.stopPropagation();
+    if (isLoggedIn) goTo('crafting');
+    else goTo('detail');
+  };
+});
+
+// ═══ CHEERS SPARKLE PARTICLES ═══
+function spawnSparkles() {
+  const container = document.getElementById('cheersSparkle');
+  container.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const sp = document.createElement('div');
+    sp.className = 'sp';
+    sp.style.left = Math.random() * 100 + '%';
+    sp.style.bottom = Math.random() * 30 + '%';
+    sp.style.animationDelay = (Math.random() * 3) + 's';
+    sp.style.animationDuration = (2 + Math.random() * 2) + 's';
+    container.appendChild(sp);
+  }
+}
+
+// Cheers sparkles triggered from crafting completion
+
+// ═══ ADD HAPTIC TO KEY INTERACTIVE ELEMENTS ═══
+document.querySelectorAll('.ob-cta, .auth-btn, .cheers-btn, .feat-craft, .trending-item, .pro-card').forEach(el => {
+  el.addEventListener('click', () => haptic(el));
+});
+</script>
+
+</body>
+</html>

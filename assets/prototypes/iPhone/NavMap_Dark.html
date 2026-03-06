@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARSYS — Navigation Map · Dark</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+:root{
+  --bg:#050505;--s1:#0A0A0A;--s2:#111111;--s3:#191919;
+  --gold:#C8A97E;--gold-l:#E8D5B5;--gold-d:rgba(200,169,126,0.08);
+  --t1:#FFFFFF;--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.25);--t4:rgba(255,255,255,0.10);
+  --glass:rgba(255,255,255,0.025);--glass-b:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.06);
+  --unwind:#8A9490;--celebrate:#B8A67A;--impress:#9A7B7F;--explore:#7E8B96;
+  --success:#7A9A82;--warning:#B8A67A;--error:#A07272;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#000;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;color:var(--t1)}
+
+.device{width:390px;height:844px;background:var(--bg);border-radius:44px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.03),0 80px 200px rgba(0,0,0,0.95)}
+
+/* Status Bar */
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px 0;z-index:200;font-size:13px;font-weight:600}
+.status-icons{display:flex;gap:6px;align-items:center}
+.status-icons svg{width:auto;height:11px}
+
+/* Screens */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.5s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.screen.active{opacity:1;pointer-events:auto}
+
+/* Animations */
+@keyframes fadeScale{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.35}50%{transform:scale(1.05);opacity:0.65}}
+@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes sparkleFloat{0%{opacity:0;transform:translateY(0) scale(0)}20%{opacity:0.6;transform:translateY(-80px) scale(1)}80%{opacity:0.15;transform:translateY(-200px) scale(0.3)}100%{opacity:0;transform:translateY(-260px) scale(0)}}
+@keyframes haptic{0%{transform:scale(1)}50%{transform:scale(0.97)}100%{transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,169,126,0.3)}50%{box-shadow:0 0 0 16px rgba(200,169,126,0)}}
+@keyframes pour{0%{height:0}100%{height:100%}}
+.haptic{animation:haptic 0.15s ease!important}
+
+/* ═══ 1. HOME SCREEN ═══ */
+#home{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.home-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px}
+.home-header-left .home-greet{font-size:14px;color:var(--gold);font-weight:500;margin-bottom:4px}
+.home-header-left .home-title{font-size:36px;font-weight:200;letter-spacing:-0.5px;line-height:1.15}
+.home-header-left .home-title strong{font-weight:700}
+.home-header-right{display:flex;gap:12px;align-items:center}
+.home-avatar{width:40px;height:40px;border-radius:50%;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--gold)}
+.home-body{display:grid;grid-template-columns:1fr 1fr 340px;gap:16px;flex:1;min-height:0;padding-bottom:96px}
+.pro-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:28px;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.pro-card:active{background:rgba(255,255,255,0.04)}
+.pro-card::before{content:'';position:absolute;top:-20px;right:-20px;width:160px;height:160px;border-radius:50%;filter:blur(60px);opacity:0.05}
+.pro-card.gold::before{background:var(--gold)}
+.pro-card.ai-card{border-color:rgba(200,169,126,0.15);background:rgba(200,169,126,0.02)}
+.pro-card.ai-card::before{background:var(--gold);opacity:0.08}
+.pc-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:auto}
+.pro-card h3{font-size:18px;font-weight:600;letter-spacing:-0.2px;margin-top:16px}
+.pro-card p{font-size:12px;color:var(--t2);margin-top:5px;font-weight:300;line-height:1.7}
+.pc-action{display:inline-block;margin-top:14px;font-size:12px;color:var(--gold);font-weight:500}
+.home-popular{display:flex;flex-direction:column;gap:10px}
+.feat-label{font-size:9px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:4px}
+.feat-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:background 0.3s}
+.feat-item:active{background:rgba(255,255,255,0.04)}
+.feat-thumb{width:44px;height:44px;border-radius:11px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.feat-thumb svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.feat-info{flex:1;min-width:0}
+.feat-info h4{font-size:14px;font-weight:600}
+.feat-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300}
+.feat-craft{padding:7px 14px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;flex-shrink:0}
+.station-widget{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:20px;cursor:pointer;transition:background 0.3s}
+.station-widget:active{background:rgba(255,255,255,0.04)}
+.sw-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sw-header .sw-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.sw-header .sw-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--success);font-weight:500}
+.sw-header .sw-status .dot{width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulse 2s ease infinite}
+.sw-slot{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.sw-slot:last-child{border-bottom:none}
+.sw-slot-num{width:24px;height:24px;border-radius:6px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--t3);flex-shrink:0}
+.sw-slot-info{flex:1}
+.sw-slot-info h5{font-size:12px;font-weight:600}
+.sw-slot-info p{font-size:10px;color:var(--t4);margin-top:1px}
+.sw-slot-level{width:40px;height:4px;border-radius:2px;background:var(--s2);overflow:hidden;flex-shrink:0}
+.sw-slot-level div{height:100%;border-radius:2px;background:var(--gold)}
+
+/* ═══ 2. DISCOVER SCREEN ═══ */
+#discover{background:var(--bg);padding:56px 0 0;overflow:hidden}
+.disc-top{padding:0 64px}
+.disc-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+.disc-header h1{font-size:36px;font-weight:200;letter-spacing:-0.5px}
+.disc-header h1 strong{font-weight:700}
+.disc-header .disc-count{font-size:12px;color:var(--t4);font-weight:300}
+.disc-search-bar{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;margin-bottom:16px;transition:border-color 0.3s}
+.disc-search-bar svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.disc-search-bar span{flex:1;font-size:14px;color:var(--t4);font-weight:300}
+.disc-filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.disc-filter{padding:7px 16px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3);cursor:pointer;transition:all 0.25s;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.disc-filter.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+.disc-section-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin:20px 0 12px;display:flex;align-items:center;justify-content:space-between}
+.disc-section-label .disc-see-all{font-size:11px;color:var(--t3);letter-spacing:0;text-transform:none;font-weight:400;cursor:pointer}
+.disc-carousel{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px}
+.disc-ccard{width:180px;min-width:180px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.25s;flex-shrink:0}
+.disc-ccard:active{transform:scale(0.97)}
+.disc-ccard-hero{height:110px;background:linear-gradient(160deg,var(--s3),var(--s1));display:flex;align-items:center;justify-content:center;position:relative}
+.disc-ccard-hero svg{width:36px;height:36px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.12}
+.disc-ccard-body{padding:12px 14px 14px}
+.disc-ccard-body h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.disc-ccard-body p{font-size:10px;color:var(--t3);margin-top:3px;font-weight:300}
+.disc-ccard-tags{display:flex;gap:4px;margin-top:6px}
+.disc-ccard-tag{padding:2px 8px;border-radius:100px;font-size:9px;border:0.5px solid var(--border);color:var(--t4)}
+.disc-body{flex:1;overflow-y:auto;padding:0 64px 100px;min-height:0}
+.disc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.disc-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:all 0.3s;flex-shrink:0}
+.disc-item:active{background:rgba(255,255,255,0.04)}
+.disc-item-thumb{width:48px;height:48px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.disc-item-thumb svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.disc-item-info{flex:1;min-width:0}
+.disc-item-info h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.disc-item-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.disc-item-meta{text-align:right;flex-shrink:0}
+.disc-item-meta .dim-diff{font-size:10px;color:var(--gold);font-weight:500}
+.disc-item-meta .dim-time{font-size:10px;color:var(--t4);margin-top:2px}
+
+/* ═══ 3. MY BAR SCREEN ═══ */
+#mybar{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.mb-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px}
+.mb-header h1{font-size:36px;font-weight:200;letter-spacing:-0.5px}
+.mb-header h1 strong{font-weight:700}
+.mb-actions{display:flex;gap:8px}
+.mb-action-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit;transition:background 0.25s}
+.mb-action-btn:hover{background:rgba(255,255,255,0.04)}
+.mb-action-btn.gold{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+.mb-action-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mb-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.mb-section{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px;display:flex;flex-direction:column}
+.mb-sect-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.mb-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.mb-sect-see-all{font-size:11px;color:var(--t3);cursor:pointer;font-weight:400}
+.mb-drink-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:opacity 0.2s}
+.mb-drink-row:last-child{border-bottom:none}
+.mb-drink-row:active{opacity:0.7}
+.mb-drink-thumb{width:40px;height:40px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mb-drink-thumb svg{width:16px;height:16px;stroke:var(--t4);stroke-width:1.5;fill:none}
+.mb-drink-info{flex:1;min-width:0}
+.mb-drink-info h4{font-size:13px;font-weight:600;letter-spacing:-0.2px}
+.mb-drink-info p{font-size:10px;color:var(--t3);margin-top:2px;font-weight:300}
+.mb-drink-meta{font-size:10px;color:var(--t4);flex-shrink:0}
+.mb-station-card{background:var(--s1);border:0.5px solid var(--glass-b);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;transition:background 0.25s}
+.mb-station-card:active{background:var(--s2)}
+.mb-station-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mb-station-name{font-size:14px;font-weight:600}
+.mb-station-status{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:500}
+.mb-station-status.online{color:var(--success)}
+.mb-station-status.offline{color:var(--error)}
+.mb-station-status .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.mb-station-slots{display:flex;gap:6px}
+.mb-slot-pill{padding:4px 10px;border-radius:100px;font-size:9px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.mb-slot-pill.loaded{border-color:rgba(200,169,126,0.2);color:var(--gold-l);background:var(--gold-d)}
+
+/* ═══ 4. RECIPE DETAIL ═══ */
+#recipe-detail{background:var(--bg);flex-direction:row}
+.det-visual{flex:1;position:relative;display:flex;align-items:center;justify-content:center}
+.det-visual::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--s2) 0%,var(--s1) 100%)}
+.det-visual svg.det-icon{width:100px;height:100px;stroke:var(--t4);stroke-width:0.5;fill:none;opacity:0.12;position:relative;z-index:2}
+.det-nav{position:absolute;top:48px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 32px;z-index:10}
+.det-nav svg{width:22px;height:22px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}
+.det-nav .det-save{font-size:13px;color:var(--gold);font-weight:500;cursor:pointer}
+.det-info{width:460px;padding:72px 56px 56px 48px;overflow-y:auto;display:flex;flex-direction:column}
+.det-info h1{font-size:34px;font-weight:700;letter-spacing:-0.8px}
+.det-lore{font-size:14px;color:var(--t2);margin-top:8px;font-weight:300;font-style:italic;line-height:1.7}
+.det-tags{display:flex;gap:6px;margin-top:14px}
+.det-tag{padding:6px 14px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.det-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-top:28px;margin-bottom:10px;text-transform:uppercase}
+.det-ing{display:flex;align-items:center;padding:13px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:11px;margin-bottom:5px;font-size:13px;color:var(--t2)}
+.det-ing .dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin-right:12px;flex-shrink:0}
+.det-story{font-size:13px;color:var(--t2);line-height:1.8;font-weight:300}
+.det-craft-btn{margin-top:auto;padding-top:28px}
+.det-craft-btn button{width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s}
+.det-craft-btn button:active{transform:scale(0.97)}
+.det-similar{margin-top:24px}
+.det-similar-row{display:flex;gap:10px;margin-top:10px}
+.det-similar-card{flex:1;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:12px;padding:14px;cursor:pointer;transition:background 0.25s}
+.det-similar-card:active{background:rgba(255,255,255,0.04)}
+.det-similar-card h5{font-size:12px;font-weight:600}
+.det-similar-card p{font-size:10px;color:var(--t3);margin-top:2px;font-weight:300}
+
+/* ═══ 5. STATION DETAIL ═══ */
+#station-detail{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.sd-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.sd-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sd-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sd-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.sd-header-info h1 strong{font-weight:700}
+.sd-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.sd-body{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.sd-panel{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px}
+.sd-panel-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.sd-bottle-slot{display:flex;align-items:center;gap:14px;padding:14px;background:var(--s1);border:0.5px solid var(--border);border-radius:14px;margin-bottom:8px}
+.sd-bottle-num{width:32px;height:32px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0}
+.sd-bottle-info{flex:1}
+.sd-bottle-info h4{font-size:13px;font-weight:600}
+.sd-bottle-info p{font-size:10px;color:var(--t3);margin-top:2px}
+.sd-bottle-bar{width:80px;height:6px;border-radius:3px;background:var(--s2);overflow:hidden;flex-shrink:0}
+.sd-bottle-bar div{height:100%;border-radius:3px;background:var(--gold)}
+.sd-action-row{display:flex;gap:10px;margin-top:16px}
+.sd-action{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:background 0.25s;font-family:inherit}
+.sd-action:hover{background:rgba(255,255,255,0.04)}
+.sd-action svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sd-stat{display:flex;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--border)}
+.sd-stat:last-child{border-bottom:none}
+.sd-stat-label{font-size:12px;color:var(--t3);font-weight:300}
+.sd-stat-value{font-size:12px;font-weight:600}
+
+/* ═══ 6. CRAFT CONFIRMATION ═══ */
+#craft-confirm{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#craft-confirm::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 50%);pointer-events:none}
+.cc-content{position:relative;z-index:2;max-width:420px}
+.cc-eyebrow{font-size:10px;letter-spacing:5px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.cc-name{font-size:42px;font-weight:200;letter-spacing:-1px}
+.cc-name strong{font-weight:700}
+.cc-desc{font-size:14px;color:var(--t2);margin-top:10px;font-weight:300;line-height:1.7;font-style:italic}
+.cc-divider{width:40px;height:1px;background:rgba(200,169,126,0.2);margin:28px auto}
+.cc-ingredients{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cc-ing{padding:8px 18px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--glass-b);color:var(--t3);background:var(--glass)}
+.cc-station-info{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:24px}
+.cc-station-info .dot{width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulse 2s ease infinite}
+.cc-station-info span{font-size:12px;color:var(--t2);font-weight:300}
+.cc-buttons{display:flex;gap:12px;margin-top:32px;justify-content:center}
+.cc-btn{padding:16px 40px;border-radius:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s;border:none}
+.cc-btn:active{transform:scale(0.97)}
+.cc-btn.gold{background:var(--gold);color:#000}
+.cc-btn.glass{background:var(--glass);color:var(--t2);border:0.5px solid var(--glass-b)}
+.cc-time{font-size:11px;color:var(--t4);margin-top:16px}
+
+/* ═══ 7. ACTIVE POUR ═══ */
+#active-pour{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#active-pour::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:600px;height:450px;background:radial-gradient(ellipse,rgba(200,169,126,0.07) 0%,transparent 50%);pointer-events:none}
+.pour-content{position:relative;z-index:2}
+.pour-status{font-size:10px;letter-spacing:4px;color:var(--t4);font-weight:500;text-transform:uppercase}
+.pour-name{font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-0.4px}
+.pour-ring{width:240px;height:240px;margin:32px auto;position:relative}
+.pour-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.pour-ring .bg{fill:none;stroke:rgba(255,255,255,0.04);stroke-width:1.5}
+.pour-ring .progress{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:678;stroke-linecap:round;transition:stroke-dashoffset 0.3s ease}
+.pour-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;font-weight:200;color:var(--gold-l)}
+.pour-pct .pct-sign{font-size:22px;color:var(--t4);margin-left:2px}
+.pour-step{font-size:13px;color:var(--t3);margin-top:4px}
+.pour-steps{display:flex;gap:24px;justify-content:center;margin-top:20px}
+.pour-steps .ps{opacity:0.2;transition:opacity 0.4s}
+.pour-steps .ps.active{opacity:1}
+.pour-steps .ps-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin:0 auto 5px}
+.pour-steps .ps span{font-size:9px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;font-weight:500}
+.pour-glass{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;margin-top:24px}
+.pour-glass .cg-dot{width:5px;height:5px;background:var(--success);border-radius:50%;animation:pulse 2s ease infinite}
+.pour-glass span{font-size:12px;color:var(--t2)}
+
+/* ═══ 8. DRINK COMPLETE ═══ */
+#drink-complete{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#drink-complete::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:600px;height:450px;background:radial-gradient(ellipse,rgba(200,169,126,0.10) 0%,transparent 45%);pointer-events:none}
+.dc-sparkle{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.dc-sparkle .sp{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:sparkleFloat 3.5s ease-in-out infinite}
+.dc-center{position:relative;z-index:2;max-width:400px}
+.dc-heart{margin-bottom:16px;opacity:0.5}
+.dc-heart svg{width:36px;height:36px;stroke:var(--gold);stroke-width:1.2;fill:none;stroke-linecap:round}
+.dc-label{font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.dc-name{font-size:36px;font-weight:200;margin-top:8px;letter-spacing:-0.8px}
+.dc-sub{font-size:13px;color:var(--t3);margin-top:6px;font-weight:300;font-style:italic}
+.dc-divider{width:40px;height:1px;background:var(--border);margin:28px auto}
+.dc-sections{display:flex;gap:48px;text-align:left;margin-top:0}
+.dc-section .dc-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-bottom:6px;text-transform:uppercase}
+.dc-section .dc-sect-text{font-size:13px;color:var(--t2);line-height:1.7;font-weight:300;max-width:200px}
+.dc-stars{display:flex;gap:4px;justify-content:center;margin-top:28px}
+.dc-stars svg{width:24px;height:24px;stroke:var(--gold);stroke-width:1.2;fill:none}
+.dc-rate{font-size:11px;color:var(--t4);margin-top:6px}
+.dc-btns{display:flex;gap:12px;margin-top:28px}
+.dc-btn{padding:14px 32px;border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:transform 0.2s;display:flex;align-items:center;gap:8px;border:none}
+.dc-btn:active{transform:scale(0.96)}
+.dc-btn.gold{background:var(--gold);color:#000;font-weight:600}
+.dc-btn.glass{background:var(--glass);border:0.5px solid var(--glass-b);color:var(--t2)}
+.dc-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ═══ 9. SEARCH RESULTS ═══ */
+#search-results{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.sr-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.sr-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sr-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sr-search-active{flex:1;display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--glass);border:0.5px solid var(--gold);border-radius:16px}
+.sr-search-active svg{width:18px;height:18px;stroke:var(--gold);stroke-width:1.5;fill:none;flex-shrink:0}
+.sr-search-active span{font-size:14px;color:var(--t1);font-weight:400}
+.sr-count{font-size:12px;color:var(--t3);margin-bottom:16px;font-weight:300}
+.sr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.sr-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:18px;overflow:hidden;cursor:pointer;transition:transform 0.25s}
+.sr-card:active{transform:scale(0.98)}
+.sr-card-hero{height:130px;background:linear-gradient(160deg,var(--s3),var(--s1));display:flex;align-items:center;justify-content:center;position:relative}
+.sr-card-hero svg{width:40px;height:40px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.15}
+.sr-card-body{padding:16px 18px 18px}
+.sr-card-body h4{font-size:15px;font-weight:600;letter-spacing:-0.2px}
+.sr-card-body p{font-size:11px;color:var(--t2);margin-top:4px;font-weight:300;font-style:italic}
+.sr-card-tags{display:flex;gap:4px;margin-top:8px}
+.sr-card-tag{padding:3px 10px;border-radius:100px;font-size:9px;border:0.5px solid var(--border);color:var(--t4)}
+.sr-card-meta{display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--t3)}
+
+/* ═══ 10. CREATE RECIPE ═══ */
+#create-recipe{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.cr-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.cr-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cr-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cr-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.cr-header-info h1 strong{font-weight:700}
+.cr-body{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.cr-panel{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px}
+.cr-panel-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.cr-field{margin-bottom:16px}
+.cr-field label{font-size:11px;color:var(--t3);font-weight:500;display:block;margin-bottom:6px}
+.cr-input{width:100%;padding:14px 18px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px;font-size:14px;color:var(--t1);font-family:inherit;font-weight:300;outline:none;transition:border-color 0.3s}
+.cr-input:focus{border-color:var(--gold)}
+.cr-textarea{width:100%;padding:14px 18px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--t2);font-family:inherit;font-weight:300;outline:none;height:80px;resize:none;transition:border-color 0.3s}
+.cr-textarea:focus{border-color:var(--gold)}
+.cr-ing-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cr-ing-name{flex:1;padding:12px 16px;background:var(--s1);border:0.5px solid var(--border);border-radius:10px;font-size:13px;color:var(--t1);font-family:inherit;outline:none}
+.cr-ing-amt{width:80px;padding:12px 16px;background:var(--s1);border:0.5px solid var(--border);border-radius:10px;font-size:13px;color:var(--t2);font-family:inherit;outline:none;text-align:center}
+.cr-add-ing{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gold);cursor:pointer;font-weight:500;margin-top:8px}
+.cr-add-ing svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+.cr-save-btn{width:100%;padding:16px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s;margin-top:16px}
+.cr-save-btn:active{transform:scale(0.97)}
+
+/* Dynamic Context Bar */
+.ctx-bar{position:absolute;bottom:0;left:0;right:0;z-index:200;padding:0 32px 20px;background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.ctx-bar-inner{display:flex;align-items:center;justify-content:space-between;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:8px;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+.ctx-nav{display:flex;gap:2px}
+.ctx-tab{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:14px;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);color:var(--t4);border:none;background:transparent;font-family:inherit}
+.ctx-tab svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ctx-tab span{font-size:12px;font-weight:500;display:none;letter-spacing:-0.2px}
+.ctx-tab.active{background:var(--gold);color:#000}
+.ctx-tab.active span{display:inline}
+.ctx-actions{display:flex;gap:4px}
+.ctx-action{display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:14px;cursor:pointer;color:var(--t3);border:none;background:transparent;font-family:inherit;font-size:11px;font-weight:500;transition:all 0.25s}
+.ctx-action:hover{background:var(--glass);color:var(--t2)}
+.ctx-action svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* Toast */
+.toast{position:absolute;top:52px;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(200,169,126,0.15);border:0.5px solid rgba(200,169,126,0.18);border-radius:14px;padding:10px 24px;z-index:500;font-size:13px;color:var(--gold-l);font-weight:500;white-space:nowrap;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ═══ 11. CUSTOMIZE DRINK ═══ */
+#customize-drink{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.cust-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.cust-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cust-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cust-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.cust-header-info h1 strong{font-weight:700}
+.cust-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.cust-body{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.cust-panel{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px}
+.cust-panel-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.cust-ing-row{display:flex;align-items:center;gap:12px;padding:14px;background:var(--s1);border:0.5px solid var(--border);border-radius:14px;margin-bottom:8px}
+.cust-ing-info{flex:1}
+.cust-ing-info h4{font-size:13px;font-weight:600}
+.cust-ing-info p{font-size:10px;color:var(--t3);margin-top:2px}
+.cust-slider-wrap{width:180px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.cust-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;background:var(--s2);outline:none}
+.cust-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer}
+.cust-slider-val{font-size:10px;color:var(--gold);font-weight:600;text-align:right}
+.cust-option{display:flex;align-items:center;gap:12px;padding:14px;background:var(--s1);border:0.5px solid var(--border);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.25s}
+.cust-option.selected{border-color:var(--gold);background:var(--gold-d)}
+.cust-option-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--t4);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cust-option.selected .cust-option-dot{border-color:var(--gold);background:var(--gold)}
+.cust-option-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#000;display:none}
+.cust-option.selected .cust-option-dot::after{display:block}
+.cust-option h4{font-size:13px;font-weight:600}
+.cust-option p{font-size:10px;color:var(--t3);margin-top:1px}
+.cust-note{width:100%;padding:14px 18px;background:var(--s1);border:0.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--t2);font-family:inherit;font-weight:300;outline:none;height:80px;resize:none;margin-top:12px}
+.cust-craft-btn{width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s;margin-top:20px}
+.cust-craft-btn:active{transform:scale(0.97)}
+
+/* ═══ 12. FULL HISTORY ═══ */
+#full-history{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.fh-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.fh-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.fh-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fh-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.fh-header-info h1 strong{font-weight:700}
+.fh-filters{display:flex;gap:6px;margin-bottom:16px}
+.fh-list{flex:1;min-height:0;padding-bottom:96px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.fh-date-label{font-size:10px;letter-spacing:2px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-top:12px;margin-bottom:4px}
+.fh-row{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:background 0.3s}
+.fh-row:active{background:rgba(255,255,255,0.04)}
+.fh-row-thumb{width:44px;height:44px;border-radius:11px;background:var(--s2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fh-row-thumb svg{width:18px;height:18px;stroke:var(--t4);stroke-width:1.5;fill:none}
+.fh-row-info{flex:1;min-width:0}
+.fh-row-info h4{font-size:14px;font-weight:600}
+.fh-row-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300}
+.fh-row-meta{text-align:right;flex-shrink:0}
+.fh-row-meta .fh-time{font-size:11px;color:var(--t4)}
+.fh-row-meta .fh-rating{font-size:10px;color:var(--gold);margin-top:2px}
+
+/* ═══ 13. TRENDING GRID ═══ */
+#trending-grid{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.tg-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.tg-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tg-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tg-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.tg-header-info h1 strong{font-weight:700}
+.tg-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.tg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+
+/* ═══ 14. CATEGORY RESULTS ═══ */
+#category-results{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.cat-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.cat-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cat-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cat-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.cat-header-info h1 strong{font-weight:700}
+.cat-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.cat-filters{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+
+/* ═══ 15. SIMILAR DRINKS ═══ */
+#similar-drinks{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.sim-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.sim-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sim-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sim-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.sim-header-info h1 strong{font-weight:700}
+.sim-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.sim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+
+/* ═══ 16. REVIEWS ═══ */
+#reviews{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.rev-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.rev-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.rev-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.rev-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.rev-header-info h1 strong{font-weight:700}
+.rev-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.rev-summary{display:flex;align-items:center;gap:32px;padding:28px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;margin-bottom:20px}
+.rev-big-score{text-align:center}
+.rev-big-score .rev-num{font-size:56px;font-weight:200;color:var(--gold-l)}
+.rev-big-score .rev-of{font-size:12px;color:var(--t4);margin-top:2px}
+.rev-stars-summary{display:flex;gap:4px;margin-top:8px;justify-content:center}
+.rev-stars-summary svg{width:16px;height:16px;fill:var(--gold);stroke:var(--gold);stroke-width:1}
+.rev-bars{flex:1}
+.rev-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rev-bar-label{font-size:11px;color:var(--t3);width:10px;text-align:right}
+.rev-bar-track{flex:1;height:4px;border-radius:2px;background:var(--s2)}
+.rev-bar-fill{height:100%;border-radius:2px;background:var(--gold)}
+.rev-bar-count{font-size:10px;color:var(--t4);width:20px}
+.rev-list{flex:1;min-height:0;padding-bottom:96px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.rev-card{padding:20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px}
+.rev-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rev-card-avatar{width:32px;height:32px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--gold);flex-shrink:0}
+.rev-card-user{flex:1}
+.rev-card-user h4{font-size:13px;font-weight:600}
+.rev-card-user p{font-size:10px;color:var(--t4);margin-top:1px}
+.rev-card-stars{display:flex;gap:2px}
+.rev-card-stars svg{width:12px;height:12px;fill:var(--gold);stroke:var(--gold);stroke-width:1}
+.rev-card-text{font-size:13px;color:var(--t2);line-height:1.7;font-weight:300}
+
+/* ═══ 17. CLEANING ═══ */
+#cleaning{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#cleaning::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(122,154,130,0.08) 0%,transparent 50%);pointer-events:none}
+.cln-content{position:relative;z-index:2;max-width:420px}
+.cln-icon{margin-bottom:20px;opacity:0.4}
+.cln-icon svg{width:48px;height:48px;stroke:var(--success);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cln-eyebrow{font-size:10px;letter-spacing:5px;color:var(--success);font-weight:600;text-transform:uppercase;margin-bottom:12px}
+.cln-title{font-size:36px;font-weight:200;letter-spacing:-0.8px}
+.cln-title strong{font-weight:700}
+.cln-desc{font-size:14px;color:var(--t2);margin-top:10px;font-weight:300;line-height:1.7}
+.cln-divider{width:40px;height:1px;background:rgba(122,154,130,0.2);margin:28px auto}
+.cln-steps{display:flex;gap:24px;justify-content:center;margin-bottom:28px}
+.cln-step{text-align:center}
+.cln-step-num{width:32px;height:32px;border-radius:50%;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--success);margin:0 auto 8px}
+.cln-step span{font-size:10px;color:var(--t3);font-weight:400}
+.cln-progress{width:240px;margin:0 auto;position:relative}
+.cln-progress-bar{height:4px;border-radius:2px;background:var(--s2);overflow:hidden}
+.cln-progress-fill{height:100%;border-radius:2px;background:var(--success);width:65%;transition:width 0.5s}
+.cln-progress-label{font-size:11px;color:var(--t3);margin-top:8px}
+.cln-btns{display:flex;gap:12px;margin-top:28px;justify-content:center}
+.cln-btn{padding:14px 32px;border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;border:none;transition:transform 0.2s}
+.cln-btn:active{transform:scale(0.96)}
+.cln-btn.green{background:var(--success);color:#000;font-weight:600}
+.cln-btn.glass{background:var(--glass);border:0.5px solid var(--glass-b);color:var(--t2)}
+
+/* ═══ 18. BOTTLE SLOTS ═══ */
+#bottle-slots{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.bs-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.bs-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.bs-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.bs-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.bs-header-info h1 strong{font-weight:700}
+.bs-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.bs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.bs-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center;text-align:center;cursor:pointer;transition:border-color 0.25s}
+.bs-card:hover{border-color:rgba(200,169,126,0.15)}
+.bs-card.empty{opacity:0.4}
+.bs-card-num{width:40px;height:40px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:14px}
+.bs-card h4{font-size:15px;font-weight:600;letter-spacing:-0.2px}
+.bs-card p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300}
+.bs-card-level{width:100%;margin-top:16px}
+.bs-card-level-bar{height:6px;border-radius:3px;background:var(--s2);overflow:hidden}
+.bs-card-level-bar div{height:100%;border-radius:3px;background:var(--gold)}
+.bs-card-level-text{font-size:10px;color:var(--t4);margin-top:6px}
+.bs-card-actions{display:flex;gap:6px;margin-top:14px}
+.bs-card-action{padding:6px 14px;border-radius:100px;font-size:10px;font-weight:500;border:0.5px solid var(--border);color:var(--t3);cursor:pointer;transition:all 0.25s}
+.bs-card-action:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ═══ 19. MAINTENANCE ═══ */
+#maintenance{background:var(--bg);padding:56px 64px 0;overflow:hidden}
+.mnt-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.mnt-back{width:36px;height:36px;border-radius:10px;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.mnt-back svg{width:18px;height:18px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mnt-header-info h1{font-size:32px;font-weight:200;letter-spacing:-0.5px}
+.mnt-header-info h1 strong{font-weight:700}
+.mnt-header-info p{font-size:13px;color:var(--t3);font-weight:300;margin-top:2px}
+.mnt-body{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;min-height:0;padding-bottom:96px;overflow-y:auto}
+.mnt-panel{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:24px}
+.mnt-panel-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.mnt-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--s1);border:0.5px solid var(--border);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:background 0.25s}
+.mnt-item:active{background:var(--s2)}
+.mnt-item-icon{width:36px;height:36px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mnt-item-icon svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mnt-item-info{flex:1}
+.mnt-item-info h4{font-size:13px;font-weight:600}
+.mnt-item-info p{font-size:10px;color:var(--t3);margin-top:2px;font-weight:300}
+.mnt-item-status{font-size:10px;font-weight:500;flex-shrink:0}
+.mnt-item-status.good{color:var(--success)}
+.mnt-item-status.warn{color:var(--warning)}
+.mnt-item-status.bad{color:var(--error)}
+
+/* iPhone Override */
+.device{width:390px;height:844px;border-radius:44px}
+.home-body{grid-template-columns:1fr;gap:12px;overflow-y:auto}
+.home-body > div:nth-child(3){display:none}
+.disc-grid{grid-template-columns:1fr}
+.mb-body{grid-template-columns:1fr;overflow-y:auto}
+.sd-body{grid-template-columns:1fr;overflow-y:auto}
+.cr-body{grid-template-columns:1fr;overflow-y:auto}
+.sr-grid{grid-template-columns:repeat(2,1fr);gap:10px;overflow-y:auto}
+.det-visual{display:none}
+.det-info{width:100%;padding:56px 32px 32px}
+.home-header{padding:0}
+.home-header-left .home-title{font-size:28px}
+.pro-card h3{font-size:16px}
+.pro-card p{font-size:11px}
+.feat-item{padding:12px}
+.disc-top{padding:0 24px}
+.disc-header h1{font-size:28px}
+.disc-body{padding:0 24px 100px}
+.disc-ccard{width:150px;min-width:150px}
+.disc-ccard-hero{height:80px}
+#discover{padding:56px 0 0}
+#mybar{padding:56px 24px 0}
+.mb-header h1{font-size:28px}
+.mb-actions{gap:6px}
+.mb-action-btn{padding:8px 14px;font-size:11px}
+#station-detail{padding:56px 24px 0}
+.sd-header-info h1{font-size:26px}
+#search-results{padding:56px 24px 0}
+#create-recipe{padding:56px 24px 0}
+.cr-header-info h1{font-size:26px}
+.ctx-bar{padding:0 16px 12px}
+.ctx-actions{display:none}
+.cc-name{font-size:32px}
+.cc-buttons{flex-direction:column;gap:8px}
+.cc-btn{width:100%}
+.pour-ring{width:180px;height:180px}
+.pour-pct{font-size:48px}
+.dc-btns{flex-wrap:wrap;justify-content:center}
+.station-widget{padding:16px}
+#customize-drink{padding:56px 24px 0}
+.cust-body{grid-template-columns:1fr;overflow-y:auto}
+.cust-header-info h1{font-size:26px}
+#full-history{padding:56px 24px 0}
+.fh-header-info h1{font-size:26px}
+#trending-grid{padding:56px 24px 0}
+.tg-header-info h1{font-size:26px}
+.tg-grid{grid-template-columns:repeat(2,1fr);gap:10px;overflow-y:auto}
+#category-results{padding:56px 24px 0}
+.cat-header-info h1{font-size:26px}
+.cat-grid{grid-template-columns:repeat(2,1fr);gap:10px;overflow-y:auto}
+#similar-drinks{padding:56px 24px 0}
+.sim-header-info h1{font-size:26px}
+.sim-grid{grid-template-columns:repeat(2,1fr);gap:10px;overflow-y:auto}
+#reviews{padding:56px 24px 0}
+.rev-header-info h1{font-size:26px}
+.rev-summary{flex-direction:column;gap:20px}
+#bottle-slots{padding:56px 24px 0}
+.bs-header-info h1{font-size:26px}
+.bs-grid{grid-template-columns:1fr 1fr;gap:12px;overflow-y:auto}
+#maintenance{padding:56px 24px 0}
+.mnt-header-info h1{font-size:26px}
+.mnt-body{grid-template-columns:1fr;overflow-y:auto}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+  <div class="status-bar"><span>9:41</span><div class="status-icons"><svg viewBox="0 0 16 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="white" stroke-opacity="0.35"/><rect x="22.5" y="3.5" width="2" height="5" rx="0.5" fill="white" fill-opacity="0.3"/><rect x="2" y="2" width="18" height="8" rx="1" fill="white"/></svg></div></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- 1. HOME -->
+  <div class="screen active" id="home">
+    <div class="home-header">
+      <div class="home-header-left">
+        <div class="home-greet">Good evening</div>
+        <div class="home-title">Welcome back, <strong>Akshet</strong></div>
+      </div>
+      <div class="home-header-right">
+        <div class="home-avatar">AT</div>
+      </div>
+    </div>
+    <div class="home-body">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="pro-card ai-card gold" onclick="goTo('craft-confirm')">
+          <div class="pc-label">AI Suggestion</div>
+          <h3>Boulevardier</h3>
+          <p>Based on your mood and what's loaded in Station A. Warm, bittersweet, perfect for tonight.</p>
+          <div class="pc-action">Craft now &rarr;</div>
+        </div>
+        <div class="pro-card" onclick="goTo('recipe-detail')">
+          <div class="pc-label">Recent</div>
+          <h3>Old Fashioned</h3>
+          <p>Crafted 2 hours ago. 4.8 rating.</p>
+          <div class="pc-action">View recipe &rarr;</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="font-size:9px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:4px">Quick Craft</div>
+        <div class="feat-item" onclick="goTo('craft-confirm')">
+          <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="feat-info"><h4>Negroni</h4><p>Bitter, bold, classic</p></div>
+          <button class="feat-craft" onclick="event.stopPropagation();goTo('craft-confirm')">Craft</button>
+        </div>
+        <div class="feat-item" onclick="goTo('recipe-detail')">
+          <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="feat-info"><h4>Manhattan</h4><p>Smooth, rye, cherry</p></div>
+          <button class="feat-craft">Craft</button>
+        </div>
+        <div class="feat-item" onclick="goTo('recipe-detail')">
+          <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="feat-info"><h4>Whiskey Sour</h4><p>Bright, balanced, citrus</p></div>
+          <button class="feat-craft">Craft</button>
+        </div>
+        <div class="feat-item">
+          <div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="feat-info"><h4>Daiquiri</h4><p>Clean, rum-forward, lime</p></div>
+          <button class="feat-craft">Craft</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="station-widget" onclick="goTo('station-detail')">
+          <div class="sw-header">
+            <div class="sw-label">Station A</div>
+            <div class="sw-status"><div class="dot"></div>Online</div>
+          </div>
+          <div class="sw-slot">
+            <div class="sw-slot-num">1</div>
+            <div class="sw-slot-info"><h5>Maker's Mark</h5><p>Bourbon</p></div>
+            <div class="sw-slot-level"><div style="width:85%"></div></div>
+          </div>
+          <div class="sw-slot">
+            <div class="sw-slot-num">2</div>
+            <div class="sw-slot-info"><h5>Campari</h5><p>Bitter</p></div>
+            <div class="sw-slot-level"><div style="width:60%"></div></div>
+          </div>
+          <div class="sw-slot">
+            <div class="sw-slot-num">3</div>
+            <div class="sw-slot-info"><h5>Sweet Vermouth</h5><p>Fortified Wine</p></div>
+            <div class="sw-slot-level"><div style="width:40%"></div></div>
+          </div>
+          <div class="sw-slot">
+            <div class="sw-slot-num">4</div>
+            <div class="sw-slot-info"><h5>Angostura</h5><p>Bitters</p></div>
+            <div class="sw-slot-level"><div style="width:70%"></div></div>
+          </div>
+        </div>
+        <div class="station-widget" onclick="goTo('station-detail')" style="opacity:0.5">
+          <div class="sw-header">
+            <div class="sw-label">Station B</div>
+            <div class="sw-status" style="color:var(--error)"><div class="dot" style="background:var(--error);animation:none"></div>Offline</div>
+          </div>
+          <div style="font-size:12px;color:var(--t3);font-weight:300;padding:8px 0">Not connected. Tap to set up.</div>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab active" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 2. DISCOVER -->
+  <div class="screen" id="discover">
+    <div class="disc-top">
+      <div class="disc-header">
+        <h1>Dis<strong>cover</strong></h1>
+        <div class="disc-count">342 recipes</div>
+      </div>
+      <div class="disc-search-bar" onclick="goTo('search-results')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Search cocktails, spirits, moods...</span>
+        <svg viewBox="0 0 24 24" style="stroke:var(--t4)"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>
+      </div>
+      <div class="disc-filters">
+        <div class="disc-filter active">All</div>
+        <div class="disc-filter" onclick="goTo('category-results')">Whiskey</div>
+        <div class="disc-filter">Gin</div>
+        <div class="disc-filter">Rum</div>
+        <div class="disc-filter">Vodka</div>
+        <div class="disc-filter">Tequila</div>
+        <div class="disc-filter">Low ABV</div>
+        <div class="disc-filter">Non-alcoholic</div>
+      </div>
+    </div>
+    <div class="disc-body">
+      <div class="disc-section-label" style="padding:0">AI Picks For You<div class="disc-see-all">See all</div></div>
+      <div class="disc-carousel">
+        <div class="disc-ccard" onclick="goTo('recipe-detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Paper Plane</h4><p>Equal parts elegance</p><div class="disc-ccard-tags"><div class="disc-ccard-tag">Bourbon</div><div class="disc-ccard-tag">Aperol</div></div></div></div>
+        <div class="disc-ccard" onclick="goTo('recipe-detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Last Word</h4><p>Herbaceous, complex</p><div class="disc-ccard-tags"><div class="disc-ccard-tag">Gin</div><div class="disc-ccard-tag">Chartreuse</div></div></div></div>
+        <div class="disc-ccard" onclick="goTo('recipe-detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Penicillin</h4><p>Smoky, honeyed</p><div class="disc-ccard-tags"><div class="disc-ccard-tag">Scotch</div><div class="disc-ccard-tag">Ginger</div></div></div></div>
+        <div class="disc-ccard"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Jungle Bird</h4><p>Tropical bitterness</p><div class="disc-ccard-tags"><div class="disc-ccard-tag">Rum</div><div class="disc-ccard-tag">Campari</div></div></div></div>
+        <div class="disc-ccard"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Bee's Knees</h4><p>Prohibition-era charm</p><div class="disc-ccard-tags"><div class="disc-ccard-tag">Gin</div><div class="disc-ccard-tag">Honey</div></div></div></div>
+      </div>
+      <div class="disc-section-label">Trending<div class="disc-see-all" onclick="goTo('trending-grid')">See all</div></div>
+      <div class="disc-grid">
+        <div class="disc-item" onclick="goTo('recipe-detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Espresso Martini</h4><p>Vodka, coffee liqueur, espresso</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">45 sec</div></div></div>
+        <div class="disc-item" onclick="goTo('recipe-detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Tommy's Margarita</h4><p>Tequila, lime, agave</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">30 sec</div></div></div>
+        <div class="disc-item" onclick="goTo('recipe-detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Gold Rush</h4><p>Bourbon, honey, lemon</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">35 sec</div></div></div>
+        <div class="disc-item"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Aviation</h4><p>Gin, maraschino, crème de violette</p></div><div class="disc-item-meta"><div class="dim-diff">Medium</div><div class="dim-time">40 sec</div></div></div>
+        <div class="disc-item"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Paloma</h4><p>Tequila, grapefruit, lime</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">25 sec</div></div></div>
+        <div class="disc-item"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Corpse Reviver #2</h4><p>Gin, Cointreau, Lillet, absinthe</p></div><div class="disc-item-meta"><div class="dim-diff">Hard</div><div class="dim-time">50 sec</div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab active" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 3. MY BAR -->
+  <div class="screen" id="mybar">
+    <div class="mb-header">
+      <h1>My <strong>Bar</strong></h1>
+      <div class="mb-actions">
+        <button class="mb-action-btn" onclick="goTo('create-recipe')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Recipe</button>
+        <button class="mb-action-btn gold" onclick="goTo('station-detail')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>Stations</button>
+      </div>
+    </div>
+    <div class="mb-body">
+      <!-- Drink History -->
+      <div class="mb-section">
+        <div class="mb-sect-header">
+          <div class="mb-sect-label">Drink History</div>
+          <div class="mb-sect-see-all" onclick="goTo('full-history')">See all</div>
+        </div>
+        <div class="mb-drink-row" onclick="goTo('recipe-detail')">
+          <div class="mb-drink-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Boulevardier</h4><p>Crafted with Station A</p></div>
+          <div class="mb-drink-meta">2 hrs ago</div>
+        </div>
+        <div class="mb-drink-row" onclick="goTo('recipe-detail')">
+          <div class="mb-drink-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Old Fashioned</h4><p>Custom recipe</p></div>
+          <div class="mb-drink-meta">Yesterday</div>
+        </div>
+        <div class="mb-drink-row">
+          <div class="mb-drink-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Negroni</h4><p>Classic recipe</p></div>
+          <div class="mb-drink-meta">2 days ago</div>
+        </div>
+        <div class="mb-drink-row">
+          <div class="mb-drink-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Manhattan</h4><p>AI-suggested</p></div>
+          <div class="mb-drink-meta">3 days ago</div>
+        </div>
+      </div>
+      <!-- Favorites -->
+      <div class="mb-section">
+        <div class="mb-sect-header">
+          <div class="mb-sect-label">Favorites</div>
+          <div class="mb-sect-see-all">See all</div>
+        </div>
+        <div class="mb-drink-row" onclick="goTo('recipe-detail')">
+          <div class="mb-drink-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Old Fashioned</h4><p>Your go-to. 12 times crafted.</p></div>
+          <div class="mb-drink-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        </div>
+        <div class="mb-drink-row" onclick="goTo('recipe-detail')">
+          <div class="mb-drink-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Whiskey Sour</h4><p>Bright balance. 8 times.</p></div>
+          <div class="mb-drink-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        </div>
+        <div class="mb-drink-row">
+          <div class="mb-drink-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Daiquiri</h4><p>Clean rum-forward. 5 times.</p></div>
+          <div class="mb-drink-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        </div>
+      </div>
+      <!-- My Recipes -->
+      <div class="mb-section">
+        <div class="mb-sect-header">
+          <div class="mb-sect-label">My Recipes</div>
+          <div class="mb-sect-see-all" onclick="goTo('create-recipe')">+ Create</div>
+        </div>
+        <div class="mb-drink-row" onclick="goTo('recipe-detail')">
+          <div class="mb-drink-thumb" style="background:var(--gold-d);border:0.5px solid rgba(200,169,126,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Akshet's Mule</h4><p>Custom creation</p></div>
+          <div class="mb-drink-meta">Edited 1w ago</div>
+        </div>
+        <div class="mb-drink-row">
+          <div class="mb-drink-thumb" style="background:var(--gold-d);border:0.5px solid rgba(200,169,126,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+          <div class="mb-drink-info"><h4>Midnight Sour</h4><p>Custom creation</p></div>
+          <div class="mb-drink-meta">2w ago</div>
+        </div>
+      </div>
+      <!-- Station Overview -->
+      <div class="mb-section">
+        <div class="mb-sect-header">
+          <div class="mb-sect-label">Stations</div>
+          <div class="mb-sect-see-all" onclick="goTo('station-detail')">Manage</div>
+        </div>
+        <div class="mb-station-card" onclick="goTo('station-detail')">
+          <div class="mb-station-header">
+            <div class="mb-station-name">Station A</div>
+            <div class="mb-station-status online"><div class="dot"></div>Online</div>
+          </div>
+          <div class="mb-station-slots">
+            <div class="mb-slot-pill loaded">Maker's Mark</div>
+            <div class="mb-slot-pill loaded">Campari</div>
+            <div class="mb-slot-pill loaded">Vermouth</div>
+            <div class="mb-slot-pill">+1</div>
+          </div>
+        </div>
+        <div class="mb-station-card">
+          <div class="mb-station-header">
+            <div class="mb-station-name">Station B</div>
+            <div class="mb-station-status offline"><div class="dot"></div>Offline</div>
+          </div>
+          <div class="mb-station-slots">
+            <div class="mb-slot-pill">Not connected</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>My Bar</span></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 4. RECIPE DETAIL -->
+  <div class="screen" id="recipe-detail">
+    <div class="det-visual">
+      <div class="det-nav">
+        <svg viewBox="0 0 24 24" onclick="goBack()"><polyline points="15 18 9 12 15 6"/></svg>
+        <div class="det-save" onclick="showToast('Saved to favorites')">Save</div>
+      </div>
+      <svg class="det-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+    </div>
+    <div class="det-info">
+      <h1>Boulevardier</h1>
+      <div class="det-lore">The whiskey drinker's Negroni. Born in 1920s Paris, refined in every sip since.</div>
+      <div class="det-tags"><div class="det-tag">Whiskey</div><div class="det-tag">Bitter</div><div class="det-tag">Stirred</div><div class="det-tag">Classic</div></div>
+      <div class="det-sect-label">Ingredients</div>
+      <div class="det-ing"><div class="dot"></div>1.5 oz Bourbon (Maker's Mark)</div>
+      <div class="det-ing"><div class="dot"></div>1 oz Campari</div>
+      <div class="det-ing"><div class="dot"></div>1 oz Sweet Vermouth</div>
+      <div class="det-sect-label">The Story</div>
+      <div class="det-story">Erskine Gwynne, an American expat in Paris, created this while publishing a magazine called <em>Boulevardier</em>. It's a Negroni that traded gin for bourbon, and Paris for everywhere else.</div>
+      <div class="det-similar">
+        <div class="det-sect-label">Similar Drinks</div>
+        <div class="det-similar-row">
+          <div class="det-similar-card" onclick="goTo('similar-drinks')"><h5>Negroni</h5><p>Gin, Campari, Vermouth</p></div>
+          <div class="det-similar-card" onclick="goTo('reviews')"><h5>See All Reviews</h5><p>247 ratings &middot; 4.8 avg</p></div>
+        </div>
+      </div>
+      <div class="det-craft-btn"><button onclick="goTo('customize-drink')">Customize & Craft</button></div>
+    </div>
+  </div>
+
+  <!-- 5. STATION DETAIL -->
+  <div class="screen" id="station-detail">
+    <div class="sd-header">
+      <div class="sd-back" onclick="goBack()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="sd-header-info">
+        <h1>Station <strong>A</strong></h1>
+        <p>Connected &middot; Firmware v2.4.1</p>
+      </div>
+    </div>
+    <div class="sd-body">
+      <div class="sd-panel">
+        <div class="sd-panel-label" style="cursor:pointer" onclick="goTo('bottle-slots')">Bottle Slots <span style="font-size:10px;letter-spacing:0;text-transform:none;color:var(--t3);font-weight:400;float:right;margin-top:1px">Manage &rarr;</span></div>
+        <div class="sd-bottle-slot">
+          <div class="sd-bottle-num">1</div>
+          <div class="sd-bottle-info"><h4>Maker's Mark</h4><p>Bourbon &middot; 750ml</p></div>
+          <div class="sd-bottle-bar"><div style="width:85%"></div></div>
+        </div>
+        <div class="sd-bottle-slot">
+          <div class="sd-bottle-num">2</div>
+          <div class="sd-bottle-info"><h4>Campari</h4><p>Bitter &middot; 700ml</p></div>
+          <div class="sd-bottle-bar"><div style="width:60%"></div></div>
+        </div>
+        <div class="sd-bottle-slot">
+          <div class="sd-bottle-num">3</div>
+          <div class="sd-bottle-info"><h4>Sweet Vermouth</h4><p>Fortified Wine &middot; 750ml</p></div>
+          <div class="sd-bottle-bar"><div style="width:40%"></div></div>
+        </div>
+        <div class="sd-bottle-slot">
+          <div class="sd-bottle-num">4</div>
+          <div class="sd-bottle-info"><h4>Angostura Bitters</h4><p>Bitters &middot; 200ml</p></div>
+          <div class="sd-bottle-bar"><div style="width:70%"></div></div>
+        </div>
+        <div class="sd-bottle-slot" style="opacity:0.4">
+          <div class="sd-bottle-num">5</div>
+          <div class="sd-bottle-info"><h4>Empty</h4><p>Tap to assign</p></div>
+          <div class="sd-bottle-bar"><div style="width:0%"></div></div>
+        </div>
+        <div class="sd-bottle-slot" style="opacity:0.4">
+          <div class="sd-bottle-num">6</div>
+          <div class="sd-bottle-info"><h4>Empty</h4><p>Tap to assign</p></div>
+          <div class="sd-bottle-bar"><div style="width:0%"></div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="sd-panel">
+          <div class="sd-panel-label">Station Info</div>
+          <div class="sd-stat"><div class="sd-stat-label">Status</div><div class="sd-stat-value" style="color:var(--success)">Online</div></div>
+          <div class="sd-stat"><div class="sd-stat-label">Last Cleaned</div><div class="sd-stat-value">2 days ago</div></div>
+          <div class="sd-stat"><div class="sd-stat-label">Total Drinks</div><div class="sd-stat-value">247</div></div>
+          <div class="sd-stat"><div class="sd-stat-label">Firmware</div><div class="sd-stat-value">v2.4.1</div></div>
+          <div class="sd-stat"><div class="sd-stat-label">Wi-Fi Signal</div><div class="sd-stat-value">Strong</div></div>
+        </div>
+        <div class="sd-action-row">
+          <div class="sd-action" onclick="goTo('cleaning')"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>Clean</div>
+          <div class="sd-action" onclick="goTo('maintenance')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Maintenance</div>
+        </div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>My Bar</span></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 6. CRAFT CONFIRMATION -->
+  <div class="screen" id="craft-confirm">
+    <div class="cc-content">
+      <div class="cc-eyebrow">Ready to craft</div>
+      <div class="cc-name">Boulev<strong>ardier</strong></div>
+      <div class="cc-desc">Warm and bittersweet. The whiskey drinker's Negroni.</div>
+      <div class="cc-divider"></div>
+      <div class="cc-ingredients">
+        <div class="cc-ing">1.5 oz Bourbon</div>
+        <div class="cc-ing">1 oz Campari</div>
+        <div class="cc-ing">1 oz Sweet Vermouth</div>
+      </div>
+      <div class="cc-station-info"><div class="dot"></div><span>Station A &middot; All ingredients available</span></div>
+      <div class="cc-buttons">
+        <button class="cc-btn gold" onclick="goTo('active-pour')">Craft Now</button>
+        <button class="cc-btn glass" onclick="goTo('customize-drink')">Customize</button>
+      </div>
+      <div class="cc-time">Estimated time: 40 seconds</div>
+    </div>
+  </div>
+
+  <!-- 7. ACTIVE POUR -->
+  <div class="screen" id="active-pour">
+    <div class="pour-content">
+      <div class="pour-status">Crafting</div>
+      <div class="pour-name">Boulevardier</div>
+      <div class="pour-ring">
+        <svg viewBox="0 0 240 240"><circle class="bg" cx="120" cy="120" r="108"/><circle class="progress" cx="120" cy="120" r="108" style="stroke-dashoffset:271"/></svg>
+        <div class="pour-pct">60<span class="pct-sign">%</span></div>
+      </div>
+      <div class="pour-step">Pouring Campari...</div>
+      <div class="pour-steps">
+        <div class="ps active"><div class="ps-dot"></div><span>Bourbon</span></div>
+        <div class="ps active"><div class="ps-dot"></div><span>Campari</span></div>
+        <div class="ps"><div class="ps-dot"></div><span>Vermouth</span></div>
+      </div>
+      <div class="pour-glass"><div class="cg-dot"></div><span>Station A &middot; Place glass on platform</span></div>
+    </div>
+  </div>
+
+  <!-- 8. DRINK COMPLETE -->
+  <div class="screen" id="drink-complete">
+    <div class="dc-sparkle" id="dcSparkle"></div>
+    <div class="dc-center">
+      <div class="dc-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <div class="dc-label">Cheers</div>
+      <div class="dc-name">Boulevardier</div>
+      <div class="dc-sub">Crafted with BarBot.</div>
+      <div class="dc-divider"></div>
+      <div class="dc-sections">
+        <div class="dc-section"><div class="dc-sect-label">Garnish</div><div class="dc-sect-text">Express an orange peel over the glass. Let the oils catch the light.</div></div>
+        <div class="dc-section"><div class="dc-sect-label">Tasting Note</div><div class="dc-sect-text">Warm and bittersweet. Campari cuts the bourbon's caramel. Finishes long.</div></div>
+      </div>
+      <div class="dc-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="dc-rate">Rate this drink</div>
+      <div class="dc-btns">
+        <button class="dc-btn gold" onclick="goTo('home')">Make Another</button>
+        <button class="dc-btn glass" onclick="showToast('Saved to favorites')"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>Save</button>
+        <button class="dc-btn glass"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. SEARCH RESULTS -->
+  <div class="screen" id="search-results">
+    <div class="sr-header">
+      <div class="sr-back" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="sr-search-active">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>bourbon cocktails</span>
+      </div>
+    </div>
+    <div class="sr-count">12 results for "bourbon cocktails"</div>
+    <div class="sr-grid">
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Old Fashioned</h4><p>The original cocktail, perfected.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Classic</div></div><div class="sr-card-meta"><span>45 sec</span><span>3 ingredients</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Boulevardier</h4><p>Warm, bittersweet, Parisian.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Bitter</div></div><div class="sr-card-meta"><span>40 sec</span><span>3 ingredients</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Gold Rush</h4><p>Honeyed whiskey sour variation.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Honey</div></div><div class="sr-card-meta"><span>35 sec</span><span>3 ingredients</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Mint Julep</h4><p>Kentucky's pride, muddled fresh.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Mint</div></div><div class="sr-card-meta"><span>30 sec</span><span>3 ingredients</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Paper Plane</h4><p>Equal parts brilliance.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Aperol</div></div><div class="sr-card-meta"><span>35 sec</span><span>4 ingredients</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Kentucky Mule</h4><p>Bourbon meets ginger fire.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Ginger</div></div><div class="sr-card-meta"><span>25 sec</span><span>3 ingredients</span></div></div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab active" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 10. CREATE RECIPE -->
+  <div class="screen" id="create-recipe">
+    <div class="cr-header">
+      <div class="cr-back" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="cr-header-info"><h1>Create <strong>Recipe</strong></h1></div>
+    </div>
+    <div class="cr-body">
+      <div class="cr-panel">
+        <div class="cr-panel-label">Details</div>
+        <div class="cr-field"><label>Recipe Name</label><input class="cr-input" value="Akshet's Evening Mule" readonly></div>
+        <div class="cr-field"><label>Description</label><textarea class="cr-textarea" readonly>A spicy bourbon mule with fresh ginger and lime. Personal twist on a classic.</textarea></div>
+        <div class="cr-field"><label>Category</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <div class="disc-filter active">Whiskey</div>
+            <div class="disc-filter">Gin</div>
+            <div class="disc-filter">Rum</div>
+            <div class="disc-filter">Vodka</div>
+          </div>
+        </div>
+      </div>
+      <div class="cr-panel">
+        <div class="cr-panel-label">Ingredients</div>
+        <div class="cr-ing-row"><input class="cr-ing-name" value="Bourbon" readonly><input class="cr-ing-amt" value="2 oz" readonly></div>
+        <div class="cr-ing-row"><input class="cr-ing-name" value="Ginger Beer" readonly><input class="cr-ing-amt" value="4 oz" readonly></div>
+        <div class="cr-ing-row"><input class="cr-ing-name" value="Fresh Lime" readonly><input class="cr-ing-amt" value="0.5 oz" readonly></div>
+        <div class="cr-ing-row"><input class="cr-ing-name" value="Angostura Bitters" readonly><input class="cr-ing-amt" value="2 dash" readonly></div>
+        <div class="cr-add-ing"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add ingredient</div>
+        <button class="cr-save-btn" onclick="showToast('Recipe saved!');goTo('mybar')">Save Recipe</button>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>My Bar</span></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 11. CUSTOMIZE DRINK -->
+  <div class="screen" id="customize-drink">
+    <div class="cust-header">
+      <div class="cust-back" onclick="goBack()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="cust-header-info"><h1>Customize <strong>Drink</strong></h1><p>Adjust ingredients, glass, and more</p></div>
+    </div>
+    <div class="cust-body">
+      <div class="cust-panel">
+        <div class="cust-panel-label">Ingredients</div>
+        <div class="cust-ing-row">
+          <div class="cust-ing-info"><h4>Bourbon</h4><p>Maker's Mark</p></div>
+          <div class="cust-slider-wrap"><input type="range" class="cust-slider" min="0.5" max="3" step="0.25" value="1.5"><div class="cust-slider-val">1.5 oz</div></div>
+        </div>
+        <div class="cust-ing-row">
+          <div class="cust-ing-info"><h4>Campari</h4><p>Bitter liqueur</p></div>
+          <div class="cust-slider-wrap"><input type="range" class="cust-slider" min="0.25" max="2" step="0.25" value="1"><div class="cust-slider-val">1 oz</div></div>
+        </div>
+        <div class="cust-ing-row">
+          <div class="cust-ing-info"><h4>Sweet Vermouth</h4><p>Fortified wine</p></div>
+          <div class="cust-slider-wrap"><input type="range" class="cust-slider" min="0.25" max="2" step="0.25" value="1"><div class="cust-slider-val">1 oz</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--gold);cursor:pointer;margin-top:12px;font-weight:500">+ Add ingredient</div>
+      </div>
+      <div class="cust-panel">
+        <div class="cust-panel-label">Glass Type</div>
+        <div class="cust-option selected"><div class="cust-option-dot"></div><div><h4>Rocks Glass</h4><p>Classic choice for stirred cocktails</p></div></div>
+        <div class="cust-option"><div class="cust-option-dot"></div><div><h4>Coupe</h4><p>Elegant, vintage feel</p></div></div>
+        <div class="cust-option"><div class="cust-option-dot"></div><div><h4>Nick & Nora</h4><p>Refined, smaller pour</p></div></div>
+        <div class="cust-panel-label" style="margin-top:20px">Notes</div>
+        <textarea class="cust-note" placeholder="Extra stir, lighter pour, garnish preferences..." readonly></textarea>
+        <button class="cust-craft-btn" onclick="goTo('craft-confirm')">Craft Customized Drink</button>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab active" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+  <!-- 12. FULL HISTORY -->
+  <div class="screen" id="full-history">
+    <div class="fh-header">
+      <div class="fh-back" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="fh-header-info"><h1>Drink <strong>History</strong></h1></div>
+    </div>
+    <div class="fh-filters">
+      <div class="disc-filter active">All</div>
+      <div class="disc-filter">This Week</div>
+      <div class="disc-filter">This Month</div>
+      <div class="disc-filter">Favorites Only</div>
+    </div>
+    <div class="fh-list">
+      <div class="fh-date-label">Today</div>
+      <div class="fh-row" onclick="goTo('recipe-detail')"><div class="fh-row-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="fh-row-info"><h4>Boulevardier</h4><p>Station A &middot; Classic recipe</p></div><div class="fh-row-meta"><div class="fh-time">2 hrs ago</div><div class="fh-rating">&#9733; 4.8</div></div></div>
+      <div class="fh-row" onclick="goTo('recipe-detail')"><div class="fh-row-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="fh-row-info"><h4>Negroni</h4><p>Station A &middot; Customized</p></div><div class="fh-row-meta"><div class="fh-time">5 hrs ago</div><div class="fh-rating">&#9733; 4.5</div></div></div>
+      <div class="fh-date-label">Yesterday</div>
+      <div class="fh-row" onclick="goTo('recipe-detail')"><div class="fh-row-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="fh-row-info"><h4>Old Fashioned</h4><p>Station A &middot; Custom recipe</p></div><div class="fh-row-meta"><div class="fh-time">8:42 PM</div><div class="fh-rating">&#9733; 5.0</div></div></div>
+      <div class="fh-row"><div class="fh-row-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="fh-row-info"><h4>Manhattan</h4><p>Station A &middot; AI-suggested</p></div><div class="fh-row-meta"><div class="fh-time">6:15 PM</div><div class="fh-rating">&#9733; 4.2</div></div></div>
+      <div class="fh-date-label">This Week</div>
+      <div class="fh-row"><div class="fh-row-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="fh-row-info"><h4>Whiskey Sour</h4><p>Station A &middot; Classic recipe</p></div><div class="fh-row-meta"><div class="fh-time">Tue</div><div class="fh-rating">&#9733; 4.7</div></div></div>
+      <div class="fh-row"><div class="fh-row-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="fh-row-info"><h4>Daiquiri</h4><p>Station A &middot; Classic recipe</p></div><div class="fh-row-meta"><div class="fh-time">Mon</div><div class="fh-rating">&#9733; 4.9</div></div></div>
+      <div class="fh-row"><div class="fh-row-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="fh-row-info"><h4>Paper Plane</h4><p>Station A &middot; AI-suggested</p></div><div class="fh-row-meta"><div class="fh-time">Sun</div><div class="fh-rating">&#9733; 4.6</div></div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>My Bar</span></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+  <!-- 13. TRENDING GRID -->
+  <div class="screen" id="trending-grid">
+    <div class="tg-header">
+      <div class="tg-back" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="tg-header-info"><h1>Trending <strong>Recipes</strong></h1><p>What the community is crafting right now</p></div>
+    </div>
+    <div class="tg-grid">
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Espresso Martini</h4><p>Vodka, coffee liqueur, espresso</p><div class="sr-card-tags"><div class="sr-card-tag">Vodka</div><div class="sr-card-tag">Coffee</div></div><div class="sr-card-meta"><span>45 sec</span><span>&#9733; 4.9</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Tommy's Margarita</h4><p>Tequila, lime, agave</p><div class="sr-card-tags"><div class="sr-card-tag">Tequila</div><div class="sr-card-tag">Citrus</div></div><div class="sr-card-meta"><span>30 sec</span><span>&#9733; 4.8</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Gold Rush</h4><p>Bourbon, honey, lemon</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Honey</div></div><div class="sr-card-meta"><span>35 sec</span><span>&#9733; 4.7</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Aviation</h4><p>Gin, maraschino, cr&egrave;me de violette</p><div class="sr-card-tags"><div class="sr-card-tag">Gin</div><div class="sr-card-tag">Floral</div></div><div class="sr-card-meta"><span>40 sec</span><span>&#9733; 4.6</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Paloma</h4><p>Tequila, grapefruit, lime</p><div class="sr-card-tags"><div class="sr-card-tag">Tequila</div><div class="sr-card-tag">Grapefruit</div></div><div class="sr-card-meta"><span>25 sec</span><span>&#9733; 4.8</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Corpse Reviver #2</h4><p>Gin, Cointreau, Lillet, absinthe</p><div class="sr-card-tags"><div class="sr-card-tag">Gin</div><div class="sr-card-tag">Complex</div></div><div class="sr-card-meta"><span>50 sec</span><span>&#9733; 4.5</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Jungle Bird</h4><p>Rum, Campari, pineapple</p><div class="sr-card-tags"><div class="sr-card-tag">Rum</div><div class="sr-card-tag">Tropical</div></div><div class="sr-card-meta"><span>40 sec</span><span>&#9733; 4.4</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Bee's Knees</h4><p>Gin, honey, lemon</p><div class="sr-card-tags"><div class="sr-card-tag">Gin</div><div class="sr-card-tag">Honey</div></div><div class="sr-card-meta"><span>30 sec</span><span>&#9733; 4.7</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Penicillin</h4><p>Scotch, ginger, honey, lemon</p><div class="sr-card-tags"><div class="sr-card-tag">Scotch</div><div class="sr-card-tag">Smoky</div></div><div class="sr-card-meta"><span>45 sec</span><span>&#9733; 4.8</span></div></div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab active" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+  <!-- 14. CATEGORY RESULTS -->
+  <div class="screen" id="category-results">
+    <div class="cat-header">
+      <div class="cat-back" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="cat-header-info"><h1>Whiskey <strong>Cocktails</strong></h1><p>48 recipes in this category</p></div>
+    </div>
+    <div class="cat-filters">
+      <div class="disc-filter active">All Whiskey</div>
+      <div class="disc-filter">Bourbon</div>
+      <div class="disc-filter">Rye</div>
+      <div class="disc-filter">Scotch</div>
+      <div class="disc-filter">Irish</div>
+      <div class="disc-filter">Japanese</div>
+    </div>
+    <div class="cat-grid">
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Old Fashioned</h4><p>The original cocktail, perfected.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Classic</div></div><div class="sr-card-meta"><span>45 sec</span><span>&#9733; 4.9</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Manhattan</h4><p>Rye, vermouth, bitters. Timeless.</p><div class="sr-card-tags"><div class="sr-card-tag">Rye</div><div class="sr-card-tag">Stirred</div></div><div class="sr-card-meta"><span>40 sec</span><span>&#9733; 4.8</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Boulevardier</h4><p>Warm, bittersweet, Parisian.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Bitter</div></div><div class="sr-card-meta"><span>40 sec</span><span>&#9733; 4.7</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Whiskey Sour</h4><p>Bright, balanced, citrus lift.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Citrus</div></div><div class="sr-card-meta"><span>35 sec</span><span>&#9733; 4.8</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Penicillin</h4><p>Smoky scotch, ginger, honey.</p><div class="sr-card-tags"><div class="sr-card-tag">Scotch</div><div class="sr-card-tag">Smoky</div></div><div class="sr-card-meta"><span>45 sec</span><span>&#9733; 4.6</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Gold Rush</h4><p>Honeyed whiskey sour variation.</p><div class="sr-card-tags"><div class="sr-card-tag">Bourbon</div><div class="sr-card-tag">Honey</div></div><div class="sr-card-meta"><span>35 sec</span><span>&#9733; 4.7</span></div></div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab active" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+  <!-- 15. SIMILAR DRINKS -->
+  <div class="screen" id="similar-drinks">
+    <div class="sim-header">
+      <div class="sim-back" onclick="goBack()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="sim-header-info"><h1>Similar <strong>Drinks</strong></h1><p>Based on Boulevardier's flavor profile</p></div>
+    </div>
+    <div class="sim-grid">
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Negroni</h4><p>Gin, Campari, Vermouth</p><div class="sr-card-tags"><div class="sr-card-tag">Gin</div><div class="sr-card-tag">Bitter</div></div><div class="sr-card-meta"><span>35 sec</span><span>98% match</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Old Pal</h4><p>Rye, Campari, Dry Vermouth</p><div class="sr-card-tags"><div class="sr-card-tag">Rye</div><div class="sr-card-tag">Dry</div></div><div class="sr-card-meta"><span>35 sec</span><span>92% match</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Americano</h4><p>Campari, Sweet Vermouth, Soda</p><div class="sr-card-tags"><div class="sr-card-tag">Low ABV</div><div class="sr-card-tag">Bitter</div></div><div class="sr-card-meta"><span>20 sec</span><span>85% match</span></div></div></div>
+      <div class="sr-card" onclick="goTo('recipe-detail')"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Vieux Carr&eacute;</h4><p>Rye, Cognac, Vermouth, Benedictine</p><div class="sr-card-tags"><div class="sr-card-tag">Complex</div><div class="sr-card-tag">Stirred</div></div><div class="sr-card-meta"><span>45 sec</span><span>82% match</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Bijou</h4><p>Gin, Sweet Vermouth, Chartreuse</p><div class="sr-card-tags"><div class="sr-card-tag">Herbal</div><div class="sr-card-tag">Complex</div></div><div class="sr-card-meta"><span>35 sec</span><span>78% match</span></div></div></div>
+      <div class="sr-card"><div class="sr-card-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="sr-card-body"><h4>Rob Roy</h4><p>Scotch, Sweet Vermouth, Bitters</p><div class="sr-card-tags"><div class="sr-card-tag">Scotch</div><div class="sr-card-tag">Stirred</div></div><div class="sr-card-meta"><span>40 sec</span><span>75% match</span></div></div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab active" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+  <!-- 16. REVIEWS -->
+  <div class="screen" id="reviews">
+    <div class="rev-header">
+      <div class="rev-back" onclick="goBack()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="rev-header-info"><h1>Boulevardier <strong>Reviews</strong></h1><p>247 community ratings</p></div>
+    </div>
+    <div class="rev-summary">
+      <div class="rev-big-score"><div class="rev-num">4.8</div><div class="rev-of">out of 5</div><div class="rev-stars-summary"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="none" stroke="var(--gold)" stroke-width="1"/></svg></div></div>
+      <div class="rev-bars">
+        <div class="rev-bar-row"><div class="rev-bar-label">5</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:72%"></div></div><div class="rev-bar-count">178</div></div>
+        <div class="rev-bar-row"><div class="rev-bar-label">4</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:18%"></div></div><div class="rev-bar-count">44</div></div>
+        <div class="rev-bar-row"><div class="rev-bar-label">3</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:6%"></div></div><div class="rev-bar-count">15</div></div>
+        <div class="rev-bar-row"><div class="rev-bar-label">2</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:3%"></div></div><div class="rev-bar-count">7</div></div>
+        <div class="rev-bar-row"><div class="rev-bar-label">1</div><div class="rev-bar-track"><div class="rev-bar-fill" style="width:1%"></div></div><div class="rev-bar-count">3</div></div>
+      </div>
+    </div>
+    <div class="rev-list">
+      <div class="rev-card"><div class="rev-card-top"><div class="rev-card-avatar">JM</div><div class="rev-card-user"><h4>James M.</h4><p>Verified Crafter &middot; 2 days ago</p></div><div class="rev-card-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></div><div class="rev-card-text">Perfectly balanced. The Campari comes through just right. My go-to evening drink now.</div></div>
+      <div class="rev-card"><div class="rev-card-top"><div class="rev-card-avatar">SK</div><div class="rev-card-user"><h4>Sarah K.</h4><p>Verified Crafter &middot; 1 week ago</p></div><div class="rev-card-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="none" stroke="var(--gold)" stroke-width="1"/></svg></div></div><div class="rev-card-text">Love the warmth of this cocktail. Tried it with a customized higher bourbon ratio and it was even better. The orange peel garnish note was a nice touch.</div></div>
+      <div class="rev-card"><div class="rev-card-top"><div class="rev-card-avatar">DP</div><div class="rev-card-user"><h4>David P.</h4><p>Verified Crafter &middot; 2 weeks ago</p></div><div class="rev-card-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></div><div class="rev-card-text">This is what sold me on BarBot. Consistent every time, perfectly measured. Restaurant quality at home.</div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab active" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+  <!-- 17. CLEANING -->
+  <div class="screen" id="cleaning">
+    <div class="cln-content">
+      <div class="cln-icon"><svg viewBox="0 0 24 24"><path d="M12 2v6m0 12v2M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M2 12h6m8 0h6M4.93 19.07l4.24-4.24m5.66-5.66l4.24-4.24"/></svg></div>
+      <div class="cln-eyebrow">Station A</div>
+      <div class="cln-title">Cleaning <strong>Cycle</strong></div>
+      <div class="cln-desc">Flushing all lines with purified water. Keep the glass on the platform.</div>
+      <div class="cln-divider"></div>
+      <div class="cln-steps">
+        <div class="cln-step"><div class="cln-step-num" style="background:var(--success);color:#000">&#10003;</div><span>Flush Lines</span></div>
+        <div class="cln-step"><div class="cln-step-num" style="border:1px solid var(--success)">2</div><span>Rinse Nozzles</span></div>
+        <div class="cln-step"><div class="cln-step-num">3</div><span>Air Dry</span></div>
+      </div>
+      <div class="cln-progress"><div class="cln-progress-bar"><div class="cln-progress-fill"></div></div><div class="cln-progress-label">Step 2 of 3 &middot; ~45 seconds remaining</div></div>
+      <div class="cln-btns">
+        <button class="cln-btn glass" onclick="goTo('station-detail')">Cancel</button>
+        <button class="cln-btn green" onclick="showToast('Cleaning complete!');goTo('station-detail')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 18. BOTTLE SLOTS -->
+  <div class="screen" id="bottle-slots">
+    <div class="bs-header">
+      <div class="bs-back" onclick="goTo('station-detail')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="bs-header-info"><h1>Bottle <strong>Slots</strong></h1><p>Station A &middot; 4 of 6 loaded</p></div>
+    </div>
+    <div class="bs-grid">
+      <div class="bs-card"><div class="bs-card-num">1</div><h4>Maker's Mark</h4><p>Bourbon &middot; 750ml</p><div class="bs-card-level"><div class="bs-card-level-bar"><div style="width:85%"></div></div><div class="bs-card-level-text">85% remaining</div></div><div class="bs-card-actions"><div class="bs-card-action">Replace</div><div class="bs-card-action">History</div></div></div>
+      <div class="bs-card"><div class="bs-card-num">2</div><h4>Campari</h4><p>Bitter &middot; 700ml</p><div class="bs-card-level"><div class="bs-card-level-bar"><div style="width:60%"></div></div><div class="bs-card-level-text">60% remaining</div></div><div class="bs-card-actions"><div class="bs-card-action">Replace</div><div class="bs-card-action">History</div></div></div>
+      <div class="bs-card"><div class="bs-card-num">3</div><h4>Sweet Vermouth</h4><p>Fortified Wine &middot; 750ml</p><div class="bs-card-level"><div class="bs-card-level-bar"><div style="width:40%"></div></div><div class="bs-card-level-text" style="color:var(--warning)">40% &mdash; reorder soon</div></div><div class="bs-card-actions"><div class="bs-card-action">Replace</div><div class="bs-card-action">History</div></div></div>
+      <div class="bs-card"><div class="bs-card-num">4</div><h4>Angostura</h4><p>Bitters &middot; 200ml</p><div class="bs-card-level"><div class="bs-card-level-bar"><div style="width:70%"></div></div><div class="bs-card-level-text">70% remaining</div></div><div class="bs-card-actions"><div class="bs-card-action">Replace</div><div class="bs-card-action">History</div></div></div>
+      <div class="bs-card empty"><div class="bs-card-num">5</div><h4>Empty</h4><p>Tap to assign a bottle</p><div class="bs-card-level"><div class="bs-card-level-bar"><div style="width:0%"></div></div><div class="bs-card-level-text">Not loaded</div></div><div class="bs-card-actions"><div class="bs-card-action" style="border-color:var(--gold);color:var(--gold)">+ Assign</div></div></div>
+      <div class="bs-card empty"><div class="bs-card-num">6</div><h4>Empty</h4><p>Tap to assign a bottle</p><div class="bs-card-level"><div class="bs-card-level-bar"><div style="width:0%"></div></div><div class="bs-card-level-text">Not loaded</div></div><div class="bs-card-actions"><div class="bs-card-action" style="border-color:var(--gold);color:var(--gold)">+ Assign</div></div></div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>My Bar</span></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+  <!-- 19. MAINTENANCE -->
+  <div class="screen" id="maintenance">
+    <div class="mnt-header">
+      <div class="mnt-back" onclick="goTo('station-detail')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="mnt-header-info"><h1>Station <strong>Maintenance</strong></h1><p>Station A &middot; Last serviced 2 days ago</p></div>
+    </div>
+    <div class="mnt-body">
+      <div class="mnt-panel">
+        <div class="mnt-panel-label">System Health</div>
+        <div class="mnt-item"><div class="mnt-item-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="mnt-item-info"><h4>Pump System</h4><p>All 6 pumps operational</p></div><div class="mnt-item-status good">Healthy</div></div>
+        <div class="mnt-item"><div class="mnt-item-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg></div><div class="mnt-item-info"><h4>Flow Sensors</h4><p>Calibrated 3 days ago</p></div><div class="mnt-item-status good">Accurate</div></div>
+        <div class="mnt-item"><div class="mnt-item-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="mnt-item-info"><h4>Line Cleanliness</h4><p>Clean cycle needed soon</p></div><div class="mnt-item-status warn">Due in 1 day</div></div>
+        <div class="mnt-item" onclick="goTo('cleaning')"><div class="mnt-item-icon"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg></div><div class="mnt-item-info"><h4>Run Cleaning Cycle</h4><p>Flush all lines with purified water</p></div><div class="mnt-item-status" style="color:var(--gold)">&rarr;</div></div>
+      </div>
+      <div class="mnt-panel">
+        <div class="mnt-panel-label">Device Info</div>
+        <div class="sd-stat"><div class="sd-stat-label">Model</div><div class="sd-stat-value">BarBot Pro 2</div></div>
+        <div class="sd-stat"><div class="sd-stat-label">Serial</div><div class="sd-stat-value">BB2-A7K-0419</div></div>
+        <div class="sd-stat"><div class="sd-stat-label">Firmware</div><div class="sd-stat-value">v2.4.1</div></div>
+        <div class="sd-stat"><div class="sd-stat-label">Wi-Fi</div><div class="sd-stat-value" style="color:var(--success)">Connected (Strong)</div></div>
+        <div class="sd-stat"><div class="sd-stat-label">Total Drinks</div><div class="sd-stat-value">247</div></div>
+        <div class="sd-stat"><div class="sd-stat-label">Uptime</div><div class="sd-stat-value">14 days</div></div>
+        <div class="sd-stat"><div class="sd-stat-label">Last Error</div><div class="sd-stat-value" style="color:var(--success)">None</div></div>
+        <div class="mnt-panel-label" style="margin-top:20px">Actions</div>
+        <div class="mnt-item"><div class="mnt-item-icon"><svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div><div class="mnt-item-info"><h4>Calibrate Pumps</h4><p>Re-calibrate pour accuracy</p></div><div class="mnt-item-status" style="color:var(--gold)">&rarr;</div></div>
+        <div class="mnt-item"><div class="mnt-item-icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg></div><div class="mnt-item-info"><h4>Check for Updates</h4><p>Current: v2.4.1</p></div><div class="mnt-item-status good">Up to date</div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="ctx-tab active" onclick="goTo('mybar')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>My Bar</span></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div></div></div></div>
+  </div>
+
+</div>
+
+<script>
+let currentScreen='home',navHistory=[];
+function goTo(id){if(currentScreen===id)return;navHistory.push(currentScreen);document.getElementById(currentScreen).classList.remove('active');document.getElementById(id).classList.add('active');currentScreen=id;if(id==='drink-complete')spawnSparkles()}
+function goBack(){if(!navHistory.length)return;const p=navHistory.pop();document.getElementById(currentScreen).classList.remove('active');document.getElementById(p).classList.add('active');currentScreen=p}
+function haptic(el){el.classList.add('haptic');setTimeout(()=>el.classList.remove('haptic'),160)}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function spawnSparkles(){const c=document.getElementById('dcSparkle');c.innerHTML='';for(let i=0;i<30;i++){const sp=document.createElement('div');sp.className='sp';sp.style.left=Math.random()*100+'%';sp.style.bottom=Math.random()*40+'%';sp.style.animationDelay=(Math.random()*3)+'s';sp.style.animationDuration=(2.5+Math.random()*2.5)+'s';c.appendChild(sp)}}
+document.querySelectorAll('.pro-card,.feat-item,.feat-craft,.cc-btn,.dc-btn,.disc-ccard,.disc-item,.mb-drink-row,.sr-card,.sd-action,.cr-save-btn,.cust-craft-btn,.cust-option,.fh-row,.bs-card,.mnt-item,.cln-btn,.rev-card').forEach(el=>{el.addEventListener('click',()=>haptic(el))});
+</script>
+</body>
+</html>

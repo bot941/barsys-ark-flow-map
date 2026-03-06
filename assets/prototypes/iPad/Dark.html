@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARSYS — iPad FTUE · Dark</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050505;--s1:#0A0A0A;--s2:#111111;--s3:#191919;
+  --gold:#C8A97E;--gold-l:#E8D5B5;--gold-d:rgba(200,169,126,0.08);
+  --t1:#FFFFFF;--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.25);--t4:rgba(255,255,255,0.10);
+  --glass:rgba(255,255,255,0.025);--glass-b:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.06);
+  --unwind:#8A9490;--celebrate:#B8A67A;--impress:#9A7B7F;--explore:#7E8B96;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#000;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;color:var(--t1)}
+
+.device{width:1194px;height:834px;background:var(--bg);border-radius:22px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.03),0 80px 200px rgba(0,0,0,0.95)}
+
+/* Status */
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px 0;z-index:200;font-size:13px;font-weight:600}
+.status-icons{display:flex;gap:6px;align-items:center}
+.status-icons svg{width:auto;height:11px}
+
+/* Screens */
+.screen{position:absolute;inset:0;display:flex;opacity:0;pointer-events:none;transition:opacity 0.5s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.screen.active{opacity:1;pointer-events:auto}
+
+@keyframes fadeScale{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.35}50%{transform:scale(1.05);opacity:0.65}}
+@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes orbFloat{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.02) translateY(-6px)}}
+@keyframes sparkleFloat{0%{opacity:0;transform:translateY(0) scale(0)}20%{opacity:0.6;transform:translateY(-80px) scale(1)}80%{opacity:0.15;transform:translateY(-200px) scale(0.3)}100%{opacity:0;transform:translateY(-260px) scale(0)}}
+@keyframes haptic{0%{transform:scale(1)}50%{transform:scale(0.97)}100%{transform:scale(1)}}
+.haptic{animation:haptic 0.15s ease!important}
+
+/* ═══ 1. SPLASH ═══ */
+#splash{background:var(--bg);align-items:center;justify-content:center;flex-direction:column}
+#splash::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.03) 0%,transparent 60%);pointer-events:none}
+.splash-logo{font-size:48px;font-weight:200;letter-spacing:20px;color:var(--t1);opacity:0;animation:fadeScale 1.4s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;position:relative;z-index:2}
+.splash-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;margin-top:24px;opacity:0;animation:fadeIn 0.8s ease 1.2s forwards}
+
+/* ═══ 2. ONBOARDING ═══ */
+#onboarding{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.ob-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.04) 0%,transparent 55%);pointer-events:none;animation:breathe 6s ease-in-out infinite}
+.ob-orb{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:260px;height:260px;border-radius:50%;border:0.5px solid rgba(200,169,126,0.06);background:radial-gradient(circle at 35% 35%,rgba(200,169,126,0.04),transparent 70%);animation:orbFloat 8s ease-in-out infinite;pointer-events:none}
+.ob-orb::after{content:'';position:absolute;inset:35px;border-radius:50%;border:0.5px solid rgba(200,169,126,0.03);background:radial-gradient(circle at 40% 40%,rgba(200,169,126,0.03),transparent 60%)}
+.ob-center{position:relative;z-index:5;max-width:600px}
+.ob-eyebrow{font-size:10px;letter-spacing:8px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:20px}
+.ob-title{font-size:56px;font-weight:200;line-height:1.06;letter-spacing:-2px}
+.ob-title em{font-style:italic;color:var(--gold);font-weight:300}
+.ob-sub{font-size:15px;color:var(--t2);font-weight:300;line-height:1.8;margin-top:24px;max-width:400px;margin-left:auto;margin-right:auto}
+.ob-cta{padding:18px 56px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:40px;letter-spacing:-0.2px;transition:transform 0.2s,opacity 0.2s}
+.ob-cta:active{transform:scale(0.97);opacity:0.9}
+.ob-skip{margin-top:18px;font-size:12px;color:var(--t3);cursor:pointer;letter-spacing:0.5px}
+.ob-dots{display:flex;gap:8px;justify-content:center;margin-top:40px}
+.ob-dots div{width:24px;height:2px;border-radius:1px;background:rgba(255,255,255,0.06)}
+.ob-dots div.active{background:var(--gold)}
+
+/* ═══ 3. MOOD ═══ */
+#mood{background:var(--bg);flex-direction:column;padding:80px 64px 48px}
+.mood-header{text-align:center;margin-bottom:48px}
+.mood-header .mood-greet{font-size:14px;color:var(--gold);font-weight:500;letter-spacing:0.5px;margin-bottom:6px}
+.mood-header .mood-q{font-size:44px;font-weight:200;letter-spacing:-1px;line-height:1.1}
+.mood-header .mood-q strong{font-weight:700}
+.mood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1}
+.mood-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:32px;cursor:pointer;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;justify-content:flex-end}
+.mood-card::before{content:'';position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:180px;height:120px;border-radius:50%;filter:blur(50px);opacity:0.1;transition:opacity 0.4s}
+.mood-card:active{transform:scale(0.97)}
+.mood-card:hover::before{opacity:0.22}
+.mood-card.selected{border-color:var(--gold);background:rgba(200,169,126,0.04)}
+.mood-card .mc-line{width:28px;height:2px;border-radius:1px;margin-bottom:auto}
+.mood-card h3{font-size:22px;font-weight:600;letter-spacing:-0.3px}
+.mood-card p{font-size:12px;color:var(--t3);margin-top:4px}
+.mood-card.unwind::before{background:var(--unwind)}.mood-card.unwind .mc-line{background:var(--unwind)}
+.mood-card.celebrate::before{background:var(--celebrate)}.mood-card.celebrate .mc-line{background:var(--celebrate)}
+.mood-card.impress::before{background:var(--impress)}.mood-card.impress .mc-line{background:var(--impress)}
+.mood-card.explore::before{background:var(--explore)}.mood-card.explore .mc-line{background:var(--explore)}
+.mood-bottom{display:flex;align-items:center;gap:20px;justify-content:center;margin-top:32px}
+.trending-pill{display:flex;align-items:center;gap:10px;padding:12px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:background 0.3s}
+.trending-pill:active{background:rgba(255,255,255,0.04)}
+.trending-pill .t-icon{width:36px;height:36px;border-radius:9px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.trending-pill .t-icon svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.trending-pill h4{font-size:13px;font-weight:600}
+.trending-pill p{font-size:10px;color:var(--t4);margin-top:1px}
+.prompt-bar{display:flex;align-items:center;padding:4px 4px 4px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;height:48px;width:340px}
+.prompt-bar span{flex:1;font-size:13px;color:var(--t4)}
+.prompt-bar .send{width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.prompt-bar .send svg{width:14px;height:14px;stroke:#000;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ═══ 4. STREAM ═══ */
+#stream{background:var(--bg);flex-direction:column;padding:72px 64px 48px}
+.stream-head{text-align:center;margin-bottom:36px}
+.stream-mood-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:100px;font-size:11px;font-weight:500;margin-bottom:14px;border:0.5px solid var(--glass-b)}
+.stream-mood-tag .dot{width:6px;height:6px;border-radius:50%}
+.stream-title{font-size:36px;font-weight:200;letter-spacing:-0.5px;line-height:1.2}
+.stream-title strong{font-weight:700}
+.stream-sub{font-size:14px;color:var(--t2);margin-top:8px;font-weight:300;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto}
+.recipe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;min-height:0}
+.recipe-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform 0.25s;display:flex;flex-direction:column}
+.recipe-card:active{transform:scale(0.98)}
+.rc-hero{flex:1;min-height:160px;background:linear-gradient(160deg,var(--s2),var(--s1));display:flex;align-items:center;justify-content:center;color:var(--t4);position:relative}
+.rc-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(5,5,5,0.5),transparent)}
+.rc-hero svg{width:52px;height:52px;stroke:currentColor;stroke-width:0.8;fill:none;opacity:0.15}
+.rc-body{padding:20px 24px 24px}
+.rc-body h3{font-size:19px;font-weight:600;letter-spacing:-0.3px}
+.rc-body .rc-desc{font-size:12px;color:var(--t2);margin-top:5px;font-weight:300;font-style:italic}
+.rc-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.rc-tag{padding:4px 11px;border-radius:100px;font-size:10px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.rc-meta{display:flex;gap:18px;margin-top:12px;font-size:11px;color:var(--t3)}
+
+/* ═══ 5. DETAIL ═══ */
+#detail{background:var(--bg);flex-direction:row}
+.det-visual{flex:1;position:relative;display:flex;align-items:center;justify-content:center}
+.det-visual::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--s2) 0%,var(--bg) 100%)}
+.det-visual svg.det-icon{width:100px;height:100px;stroke:var(--t4);stroke-width:0.5;fill:none;opacity:0.12;position:relative;z-index:2}
+.det-nav{position:absolute;top:48px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 32px;z-index:10}
+.det-nav svg{width:22px;height:22px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}
+.det-nav .det-save{font-size:13px;color:var(--gold);font-weight:500;cursor:pointer}
+.det-info{width:460px;padding:72px 56px 56px 48px;overflow-y:auto;display:flex;flex-direction:column}
+.det-info::-webkit-scrollbar{display:none}
+.det-info h1{font-size:34px;font-weight:700;letter-spacing:-0.8px}
+.det-lore{font-size:14px;color:var(--t2);margin-top:8px;font-weight:300;font-style:italic;line-height:1.7}
+.det-tags{display:flex;gap:6px;margin-top:14px}
+.det-tag{padding:6px 14px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.det-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-top:28px;margin-bottom:10px;text-transform:uppercase}
+.det-ing{display:flex;align-items:center;padding:13px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:11px;margin-bottom:5px;font-size:13px;color:var(--t2)}
+.det-ing .dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin-right:12px;flex-shrink:0}
+.det-story{font-size:13px;color:var(--t2);line-height:1.8;font-weight:300}
+.det-craft-btn{margin-top:auto;padding-top:28px}
+.det-craft-btn button{width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s}
+.det-craft-btn button:active{transform:scale(0.97)}
+
+/* ═══ 6. AUTH ═══ */
+#auth{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#auth::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:500px;height:350px;background:radial-gradient(ellipse,rgba(200,169,126,0.03) 0%,transparent 60%);pointer-events:none}
+.auth-content{position:relative;z-index:2;width:360px}
+.auth-logo{font-size:20px;font-weight:200;letter-spacing:10px}
+.auth-dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin:16px auto}
+.auth-title{font-size:40px;font-weight:200;letter-spacing:-0.8px;line-height:1.15;margin-top:8px}
+.auth-title strong{font-weight:700}
+.auth-sub{font-size:14px;color:var(--t2);margin-top:10px;font-weight:300;line-height:1.7}
+.auth-buttons{margin-top:36px;display:flex;flex-direction:column;gap:10px}
+.auth-btn{width:100%;padding:16px;border-radius:14px;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform 0.2s}
+.auth-btn:active{transform:scale(0.97)}
+.auth-btn.apple{background:#fff;color:#000;border:none}
+.auth-btn.google{background:transparent;color:var(--t1);border:0.5px solid var(--glass-b)}
+.auth-btn.phone{background:transparent;color:var(--t1);border:0.5px solid var(--glass-b)}
+.auth-btn svg{width:18px;height:18px}
+.auth-later{margin-top:24px;font-size:13px;color:var(--t3);cursor:pointer}
+
+/* ═══ 7. WELCOME ═══ */
+#welcome{background:var(--bg);align-items:center;justify-content:center;text-align:center;flex-direction:column}
+#welcome::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.05) 0%,transparent 50%);animation:breathe 5s ease-in-out infinite}
+.welcome-text{position:relative;z-index:2}
+.welcome-greet{font-size:15px;color:var(--gold);font-weight:500;letter-spacing:2px;margin-bottom:10px;opacity:0;animation:fadeUp 0.8s ease 0.3s forwards}
+.welcome-name{font-size:72px;font-weight:200;letter-spacing:-3px;opacity:0;animation:fadeUp 0.8s ease 0.6s forwards}
+.welcome-name strong{font-weight:700}
+.welcome-line{width:32px;height:1px;background:var(--gold);margin:28px auto;opacity:0;animation:fadeIn 0.8s ease 1s forwards}
+.welcome-sub{font-size:14px;color:var(--t3);font-weight:300;opacity:0;animation:fadeUp 0.8s ease 1.2s forwards;letter-spacing:0.3px}
+
+/* ═══ 8. HOME ═══ */
+#home{background:var(--bg);flex-direction:column;padding:56px 64px 0;overflow:hidden}
+.home-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px}
+.home-header-left .home-greet{font-size:14px;color:var(--gold);font-weight:500;margin-bottom:4px}
+.home-header-left .home-title{font-size:36px;font-weight:200;letter-spacing:-0.5px;line-height:1.15}
+.home-header-left .home-title strong{font-weight:700}
+.home-body{display:grid;grid-template-columns:1fr 1fr 340px;gap:16px;flex:1;min-height:0;padding-bottom:84px}
+.pro-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:28px;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.pro-card:active{background:rgba(255,255,255,0.04)}
+.pro-card::before{content:'';position:absolute;top:-20px;right:-20px;width:160px;height:160px;border-radius:50%;filter:blur(60px);opacity:0.05}
+.pro-card.gold::before{background:var(--gold)}
+.pc-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:auto}
+.pro-card h3{font-size:18px;font-weight:600;letter-spacing:-0.2px;margin-top:16px}
+.pro-card p{font-size:12px;color:var(--t2);margin-top:5px;font-weight:300;line-height:1.7}
+.pc-action{display:inline-block;margin-top:14px;font-size:12px;color:var(--gold);font-weight:500}
+.home-popular{display:flex;flex-direction:column;gap:10px}
+.feat-label{font-size:9px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:4px}
+.feat-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:background 0.3s}
+.feat-item:active{background:rgba(255,255,255,0.04)}
+.feat-thumb{width:44px;height:44px;border-radius:11px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.feat-thumb svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.feat-info{flex:1;min-width:0}
+.feat-info h4{font-size:14px;font-weight:600}
+.feat-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300}
+.feat-craft{padding:7px 14px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;flex-shrink:0}
+.tab-bar{position:absolute;bottom:0;left:0;right:0;height:64px;display:flex;justify-content:center;gap:56px;align-items:flex-start;padding-top:10px;background:linear-gradient(to top,var(--bg) 80%,transparent);z-index:200}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--t4);cursor:pointer;transition:color 0.3s}
+.tab.active{color:var(--gold)}
+.tab svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tab span{font-size:10px;font-weight:500;letter-spacing:0.5px}
+
+/* ═══ 9. CRAFTING ═══ */
+#crafting{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#crafting::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:600px;height:450px;background:radial-gradient(ellipse,rgba(200,169,126,0.04) 0%,transparent 50%);pointer-events:none}
+.craft-content{position:relative;z-index:2}
+.craft-status{font-size:10px;letter-spacing:4px;color:var(--t4);font-weight:500;text-transform:uppercase}
+.craft-name{font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-0.4px}
+.craft-ring{width:240px;height:240px;margin:32px auto;position:relative}
+.craft-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.craft-ring .bg{fill:none;stroke:rgba(255,255,255,0.03);stroke-width:1.5}
+.craft-ring .progress{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:678;stroke-linecap:round;transition:stroke-dashoffset 0.3s ease}
+.craft-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;font-weight:200;color:var(--gold-l)}
+.craft-pct .pct-sign{font-size:22px;color:var(--t4);margin-left:2px}
+.craft-step{font-size:13px;color:var(--t3);margin-top:4px;transition:opacity 0.4s}
+.craft-step-detail{display:flex;gap:24px;justify-content:center;margin-top:20px}
+.craft-step-detail .csd{opacity:0.2;transition:opacity 0.4s}
+.craft-step-detail .csd.active{opacity:1}
+.craft-step-detail .csd-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin:0 auto 5px}
+.craft-step-detail .csd span{font-size:9px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;font-weight:500}
+.craft-glass{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;margin-top:24px}
+.craft-glass .cg-dot{width:5px;height:5px;background:#7A9A82;border-radius:50%;animation:pulse 2s ease infinite}
+.craft-glass span{font-size:12px;color:var(--t2)}
+
+/* ═══ 10. CHEERS ═══ */
+#cheers{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#cheers::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:600px;height:450px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 45%);pointer-events:none}
+.cheers-sparkle{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.cheers-sparkle .sp{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:sparkleFloat 3.5s ease-in-out infinite}
+.cheers-center{position:relative;z-index:2;max-width:400px}
+.cheers-heart{margin-bottom:16px;opacity:0.5}
+.cheers-heart svg{width:36px;height:36px;stroke:var(--gold);stroke-width:1.2;fill:none;stroke-linecap:round}
+.cheers-label{font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.cheers-name{font-size:36px;font-weight:200;margin-top:8px;letter-spacing:-0.8px}
+.cheers-sub{font-size:13px;color:var(--t3);margin-top:6px;font-weight:300;font-style:italic}
+.cheers-divider{width:40px;height:1px;background:var(--border);margin:28px auto}
+.cheers-sections{display:flex;gap:48px;text-align:left;margin-top:0}
+.cheers-section .cheers-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-bottom:6px;text-transform:uppercase}
+.cheers-section .cheers-sect-text{font-size:13px;color:var(--t2);line-height:1.7;font-weight:300;max-width:200px}
+.cheers-btn{margin-top:36px;padding:14px 40px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;color:var(--t2);transition:transform 0.2s}
+.cheers-btn:active{transform:scale(0.96)}
+
+/* Toast */
+.toast{position:absolute;top:52px;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(200,169,126,0.12);border:0.5px solid rgba(200,169,126,0.15);border-radius:14px;padding:10px 24px;z-index:500;font-size:13px;color:var(--gold-l);font-weight:500;white-space:nowrap;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+  <div class="status-bar"><span>9:41</span><div class="status-icons"><svg viewBox="0 0 16 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="white" stroke-opacity="0.35"/><rect x="22.5" y="3.5" width="2" height="5" rx="0.5" fill="white" fill-opacity="0.3"/><rect x="2" y="2" width="18" height="8" rx="1" fill="white"/></svg></div></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- 1. SPLASH -->
+  <div class="screen active" id="splash">
+    <div class="splash-logo">BARSYS</div>
+    <div class="splash-dot"></div>
+  </div>
+
+  <!-- 2. ONBOARDING -->
+  <div class="screen" id="onboarding">
+    <div class="ob-glow"></div>
+    <div class="ob-orb"></div>
+    <div class="ob-center">
+      <div class="ob-eyebrow">Welcome to</div>
+      <div class="ob-title">Your next drink<br>should make you<br><em>feel something.</em></div>
+      <p class="ob-sub">Not a recipe app. A moment machine.<br>Tell us the occasion — we'll handle the rest.</p>
+      <button class="ob-cta" onclick="goTo('mood')">What's the occasion?</button>
+      <div class="ob-skip" onclick="goTo('mood')">Skip intro</div>
+      <div class="ob-dots"><div class="active"></div><div></div><div></div></div>
+    </div>
+  </div>
+
+  <!-- 3. MOOD -->
+  <div class="screen" id="mood">
+    <div class="mood-header">
+      <div class="mood-greet">Good evening,</div>
+      <div class="mood-q">What's the <strong>occasion?</strong></div>
+    </div>
+    <div class="mood-grid">
+      <div class="mood-card unwind" onclick="selectMood('unwind')"><div class="mc-line"></div><h3>Unwind</h3><p>Smooth & slow</p></div>
+      <div class="mood-card celebrate" onclick="selectMood('celebrate')"><div class="mc-line"></div><h3>Celebrate</h3><p>Bold & bright</p></div>
+      <div class="mood-card impress" onclick="selectMood('impress')"><div class="mc-line"></div><h3>Impress</h3><p>Date night</p></div>
+      <div class="mood-card explore" onclick="selectMood('explore')"><div class="mc-line"></div><h3>Explore</h3><p>Surprise me</p></div>
+    </div>
+    <div class="mood-bottom">
+      <div class="trending-pill" onclick="goTo('detail')">
+        <div class="t-icon"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div><h4>Espresso Martini</h4><p>Most crafted this week</p></div>
+      </div>
+      <div class="prompt-bar"><span>What are you in the mood for?</span><div class="send"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div></div>
+    </div>
+  </div>
+
+  <!-- 4. STREAM -->
+  <div class="screen" id="stream">
+    <div class="stream-head">
+      <div class="stream-mood-tag" id="stream-tag"><div class="dot" style="background:var(--unwind)"></div>Unwind</div>
+      <div class="stream-title" id="stream-title">Time to <strong>unwind.</strong></div>
+      <p class="stream-sub" id="stream-sub">BarBot picked these just for you. Aged spirits, low-proof sips — drinks meant to be nursed.</p>
+    </div>
+    <div class="recipe-grid">
+      <div class="recipe-card" onclick="goTo('detail')"><div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div><div class="rc-body"><h3>Old Fashioned</h3><div class="rc-desc">Born in 1806. Still the king.</div><div class="rc-tags"><span class="rc-tag">Bourbon</span><span class="rc-tag">Classic</span><span class="rc-tag">Strong</span></div><div class="rc-meta"><span>4 ingredients</span><span>45 seconds</span></div></div></div>
+      <div class="recipe-card" onclick="goTo('detail')"><div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div><div class="rc-body"><h3>Whiskey Sour</h3><div class="rc-desc">Citrus takes the edge off.</div><div class="rc-tags"><span class="rc-tag">Whiskey</span><span class="rc-tag">Citrus</span></div><div class="rc-meta"><span>5 ingredients</span><span>50 seconds</span></div></div></div>
+      <div class="recipe-card" onclick="goTo('detail')"><div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div><div class="rc-body"><h3>Penicillin</h3><div class="rc-desc">Scotch, honey, ginger. Medicine.</div><div class="rc-tags"><span class="rc-tag">Scotch</span><span class="rc-tag">Honey</span></div><div class="rc-meta"><span>5 ingredients</span><span>55 seconds</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- 5. DETAIL -->
+  <div class="screen" id="detail">
+    <div class="det-visual">
+      <div class="det-nav"><svg viewBox="0 0 24 24" onclick="goBack()"><polyline points="15 18 9 12 15 6"/></svg><span class="det-save" onclick="showToast('Saved to favorites')">Save</span></div>
+      <svg class="det-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/><path d="M10 18h4"/></svg>
+    </div>
+    <div class="det-info">
+      <h1>Old Fashioned</h1>
+      <div class="det-lore">Born in 1806. Survived Prohibition.<br>Still the most ordered cocktail on earth.</div>
+      <div class="det-tags"><span class="det-tag">Bourbon</span><span class="det-tag">Classic</span><span class="det-tag">Strong</span></div>
+      <div class="det-sect-label">Ingredients</div>
+      <div class="det-ing"><div class="dot"></div>Bourbon — 60ml</div>
+      <div class="det-ing"><div class="dot"></div>Sugar cube — 1</div>
+      <div class="det-ing"><div class="dot"></div>Angostura bitters — 2 dashes</div>
+      <div class="det-ing"><div class="dot"></div>Orange peel</div>
+      <div class="det-sect-label" style="margin-top:20px">The Story</div>
+      <p class="det-story">The drink that started it all. When bartenders first began mixing spirits with sugar and bitters in the early 1800s, there was no name for it — it was just a cocktail. When newer, fancier recipes emerged, purists asked for their drinks made "the old-fashioned way." And so it stuck.</p>
+      <div class="det-craft-btn"><button onclick="goTo('auth')">Craft This Cocktail</button></div>
+    </div>
+  </div>
+
+  <!-- 6. AUTH -->
+  <div class="screen" id="auth">
+    <div class="auth-content">
+      <div class="auth-logo">BARSYS</div>
+      <div class="auth-dot"></div>
+      <div class="auth-title">Join the<br><strong>ritual.</strong></div>
+      <p class="auth-sub">One tap. Then we'll craft your<br>Old Fashioned in 45 seconds.</p>
+      <div class="auth-buttons">
+        <button class="auth-btn apple" onclick="goTo('welcome')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Continue with Apple</button>
+        <button class="auth-btn google" onclick="goTo('welcome')"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continue with Google</button>
+        <button class="auth-btn phone" onclick="goTo('welcome')"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Sign in with Phone</button>
+      </div>
+    </div>
+    <div class="auth-later" onclick="goTo('home')">Maybe later</div>
+  </div>
+
+  <!-- 7. WELCOME -->
+  <div class="screen" id="welcome">
+    <div class="welcome-text">
+      <div class="welcome-greet">Welcome back,</div>
+      <div class="welcome-name">Akshet.</div>
+      <div class="welcome-line"></div>
+      <div class="welcome-sub">Let's make tonight matter.</div>
+    </div>
+  </div>
+
+  <!-- 8. HOME -->
+  <div class="screen" id="home">
+    <div class="home-header"><div class="home-header-left"><div class="home-greet">Good evening, Akshet</div><div class="home-title">What are we <strong>making tonight?</strong></div></div></div>
+    <div class="home-body">
+      <div class="pro-card gold" onclick="goTo('mood')"><div class="pc-label">Tonight's mood</div><h3>Set the occasion</h3><p>Tell us what's happening tonight and we'll curate the perfect cocktail menu.</p><div class="pc-action">Choose mood →</div></div>
+      <div class="pro-card" onclick="goTo('detail')"><div class="pc-label">Last crafted</div><h3>Old Fashioned</h3><p>2 days ago · Unwind mood</p><div class="pc-action">Craft again →</div></div>
+      <div class="home-popular">
+        <div class="feat-label">Popular tonight</div>
+        <div class="feat-item" onclick="goTo('detail')"><div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="feat-info"><h4>Espresso Martini</h4><p>Coffee · Vodka · No sleep tonight</p></div><button class="feat-craft">Craft</button></div>
+        <div class="feat-item" onclick="goTo('detail')"><div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="feat-info"><h4>Negroni</h4><p>Campari · Gin · Confidence</p></div><button class="feat-craft">Craft</button></div>
+        <div class="feat-item" onclick="goTo('detail')"><div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="feat-info"><h4>French 75</h4><p>Champagne · Reckless · Perfect</p></div><button class="feat-craft">Craft</button></div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+      <div class="tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div>
+      <div class="tab"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/><path d="M10 18h4"/></svg><span>BarBot</span></div>
+      <div class="tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Control</span></div>
+    </div>
+  </div>
+
+  <!-- 9. CRAFTING -->
+  <div class="screen" id="crafting">
+    <div class="craft-content">
+      <div class="craft-status">Crafting</div>
+      <div class="craft-name">Old Fashioned</div>
+      <div class="craft-ring">
+        <svg viewBox="0 0 240 240"><circle cx="120" cy="120" r="108" class="bg"/><circle cx="120" cy="120" r="108" class="progress" id="craftProgress" style="stroke-dashoffset:678"/></svg>
+        <div class="craft-pct"><span id="craftPct">0</span><span class="pct-sign">%</span></div>
+      </div>
+      <div class="craft-step" id="craftStep">Dispensing bourbon...</div>
+      <div class="craft-step-detail">
+        <div class="csd active" id="csd1"><div class="csd-dot"></div><span>Pour</span></div>
+        <div class="csd" id="csd2"><div class="csd-dot"></div><span>Mix</span></div>
+        <div class="csd" id="csd3"><div class="csd-dot"></div><span>Stir</span></div>
+        <div class="csd" id="csd4"><div class="csd-dot"></div><span>Finish</span></div>
+      </div>
+      <div class="craft-glass"><div class="cg-dot"></div><span>Glass detected</span></div>
+    </div>
+  </div>
+
+  <!-- 10. CHEERS -->
+  <div class="screen" id="cheers">
+    <div class="cheers-sparkle" id="cheersSparkle"></div>
+    <div class="cheers-center">
+      <div class="cheers-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <div class="cheers-label">Cheers</div>
+      <div class="cheers-name">Old Fashioned</div>
+      <div class="cheers-sub">Crafted just for you.</div>
+      <div class="cheers-divider"></div>
+      <div class="cheers-sections">
+        <div class="cheers-section"><div class="cheers-sect-label">Garnish</div><div class="cheers-sect-text">Express an orange peel over the glass. Let the oils catch the light.</div></div>
+        <div class="cheers-section"><div class="cheers-sect-label">Tasting Note</div><div class="cheers-sect-text">Warm oak and vanilla up front. A whisper of citrus. Finishes like a good conversation.</div></div>
+      </div>
+      <button class="cheers-btn" onclick="goTo('home')">Make Another</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentScreen='splash',navHistory=[],isLoggedIn=false;
+function goTo(id){if(currentScreen===id)return;navHistory.push(currentScreen);document.getElementById(currentScreen).classList.remove('active');document.getElementById(id).classList.add('active');currentScreen=id;if(id==='crafting')startCrafting()}
+function goBack(){if(!navHistory.length)return;const p=navHistory.pop();document.getElementById(currentScreen).classList.remove('active');document.getElementById(p).classList.add('active');currentScreen=p}
+function haptic(el){el.classList.add('haptic');setTimeout(()=>el.classList.remove('haptic'),160)}
+setTimeout(()=>goTo('onboarding'),2200);
+function selectMood(m){
+  document.querySelectorAll('.mood-card').forEach(c=>c.classList.remove('selected'));
+  const card=document.querySelector('.mood-card.'+m);if(card){card.classList.add('selected');haptic(card)}
+  const n={unwind:'Unwind',celebrate:'Celebrate',impress:'Impress',explore:'Explore'};
+  const t={unwind:'Time to <strong>unwind.</strong>',celebrate:"Let's <strong>celebrate.</strong>",impress:'Time to <strong>impress.</strong>',explore:"Let's <strong>explore.</strong>"};
+  const s={unwind:'BarBot picked these just for you. Aged spirits, low-proof sips — drinks meant to be nursed.',celebrate:'BarBot knows this energy. Sparkling, citrusy, dangerously easy to drink.',impress:'BarBot went sophisticated. Bitter aperitifs, complex stirred cocktails, drinks that look devastating.',explore:'BarBot went off-script. Unusual ingredients, impossible pairings, drinks that scare you a little.'};
+  const c={unwind:'var(--unwind)',celebrate:'var(--celebrate)',impress:'var(--impress)',explore:'var(--explore)'};
+  document.getElementById('stream-tag').innerHTML=`<div class="dot" style="background:${c[m]}"></div>${n[m]}`;
+  document.getElementById('stream-title').innerHTML=t[m];document.getElementById('stream-sub').textContent=s[m];
+  setTimeout(()=>goTo('stream'),350);
+}
+function startCrafting(){
+  let pct=0;const ring=document.getElementById('craftProgress'),pctEl=document.getElementById('craftPct'),stepEl=document.getElementById('craftStep');
+  const steps=[{at:0,text:'Dispensing bourbon...',a:1},{at:25,text:'Adding sugar & bitters...',a:2},{at:55,text:'Stirring over ice...',a:3},{at:85,text:'Finishing touches...',a:4}];let si=0;
+  for(let i=1;i<=4;i++){const el=document.getElementById('csd'+i);el.classList.remove('active');if(i===1)el.classList.add('active')}stepEl.textContent=steps[0].text;
+  const iv=setInterval(()=>{pct++;pctEl.textContent=pct;ring.style.strokeDashoffset=678-(678*pct/100);
+    if(si<steps.length-1&&pct>=steps[si+1].at){si++;stepEl.style.opacity='0';setTimeout(()=>{stepEl.textContent=steps[si].text;stepEl.style.opacity='1'},200);for(let i=1;i<=4;i++)document.getElementById('csd'+i).classList.toggle('active',i<=steps[si].a)}
+    if(pct>=100){clearInterval(iv);setTimeout(()=>{goTo('cheers');spawnSparkles()},600)}
+  },38);
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+document.querySelector('.det-craft-btn button').onclick=function(){isLoggedIn?goTo('crafting'):goTo('auth')};
+document.querySelectorAll('.auth-btn').forEach(b=>{b.onclick=function(){isLoggedIn=true;goTo('welcome');setTimeout(()=>goTo('home'),2500)}});
+document.querySelector('.auth-later').onclick=function(){goTo('home')};
+document.querySelectorAll('.feat-craft').forEach(b=>{b.onclick=function(e){e.stopPropagation();isLoggedIn?goTo('crafting'):goTo('detail')}});
+function spawnSparkles(){const c=document.getElementById('cheersSparkle');c.innerHTML='';for(let i=0;i<30;i++){const sp=document.createElement('div');sp.className='sp';sp.style.left=Math.random()*100+'%';sp.style.bottom=Math.random()*40+'%';sp.style.animationDelay=(Math.random()*3)+'s';sp.style.animationDuration=(2.5+Math.random()*2.5)+'s';c.appendChild(sp)}}
+document.querySelectorAll('.ob-cta,.auth-btn,.cheers-btn,.feat-craft,.trending-pill,.pro-card,.mood-card').forEach(el=>{el.addEventListener('click',()=>haptic(el))});
+</script>
+</body>
+</html>

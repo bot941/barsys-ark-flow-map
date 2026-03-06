@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARSYS 360 — Recipe Flow · Dark</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+:root{
+  --bg:#050505;--s1:#0A0A0A;--s2:#121212;--s3:#191919;
+  --gold:#C8A97E;--gold-l:#E8D5B5;--gold-tint:rgba(200,169,126,0.08);
+  --t1:#FFFFFF;--t2:rgba(255,255,255,0.50);--t3:rgba(255,255,255,0.22);--t4:rgba(255,255,255,0.07);
+  --glass-bg:rgba(255,255,255,0.025);--glass-border:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.06);
+  --success:#7A9A82;--error:#A07272;--warning:#B8A67A;
+  --t-micro:150ms;--t-fast:250ms;--t-smooth:400ms;--t-slow:600ms;--t-ritual:1200ms;--t-breathe:6000ms;
+  --ease-smooth:cubic-bezier(.4,0,.2,1);--ease-slow:cubic-bezier(.22,1,.36,1);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#000;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;color:var(--t1)}
+.device{width:1194px;height:834px;background:var(--bg);border-radius:22px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.03),0 80px 200px rgba(0,0,0,0.95)}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px 0;z-index:200;font-size:13px;font-weight:600;color:var(--t2)}
+.status-icons{display:flex;gap:6px;align-items:center}
+.status-icons svg{width:auto;height:11px;opacity:0.5}
+.screen{position:absolute;inset:0;display:flex;opacity:0;pointer-events:none;transition:opacity var(--t-slow) var(--ease-slow);overflow:hidden}
+.screen.active{opacity:1;pointer-events:auto}
+
+@keyframes breathe{0%,100%{opacity:0.04}50%{opacity:0.10}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slowReveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowAppear{from{opacity:0;filter:blur(10px)}to{opacity:1;filter:blur(0)}}
+@keyframes checkStroke{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
+@keyframes celebratePulse{0%,100%{transform:scale(1);opacity:0.06}50%{transform:scale(1.1);opacity:0.12}}
+@keyframes starPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+.back-btn{position:absolute;top:56px;left:48px;z-index:150;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.4;transition:opacity var(--t-micro)}
+.back-btn:hover{opacity:0.7}
+.back-btn svg{width:18px;height:18px;stroke:var(--t2);stroke-width:1.5;fill:none;stroke-linecap:round}
+.ic{stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* SHARED */
+.cs{align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0}
+.cs-content{max-width:440px;display:flex;flex-direction:column;align-items:center}
+.cs-icon{width:48px;height:48px;margin-bottom:44px;opacity:0;animation:glowAppear 0.8s ease 0.2s forwards}
+.cs-icon svg{width:48px;height:48px;stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cs-title{font-size:30px;font-weight:200;letter-spacing:-0.8px;opacity:0;animation:slowReveal 1s ease 0.3s forwards}
+.cs-title strong{font-weight:700}
+.cs-sub{font-size:14px;color:var(--t2);font-weight:300;margin-top:14px;line-height:1.8;opacity:0;animation:slowReveal 1s ease 0.5s forwards}
+.gc{width:100%;margin-top:40px;padding:20px 24px;background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:14px;text-align:left;opacity:0;animation:slowReveal 0.8s ease 0.8s forwards}
+.gc-label{font-size:9px;color:var(--t3);letter-spacing:3px;text-transform:uppercase;font-weight:300;margin-bottom:10px}
+.gc-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:0.5px solid var(--glass-bg)}
+.gc-row:last-child{border:none}
+.gc-row-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.gc-row-text{font-size:13px;color:var(--t2);font-weight:300;flex:1}
+.gc-row-val{font-size:12px;color:var(--t3);font-weight:300}
+.gc-row-badge{font-size:10px;padding:4px 10px;border-radius:100px;font-weight:500}
+.cta-pill{margin-top:44px;width:280px;padding:18px;background:var(--t1);color:#000;border:none;border-radius:100px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;opacity:0;animation:slowReveal 0.8s ease 1s forwards;letter-spacing:-0.2px;transition:transform var(--t-micro)}
+.cta-pill:active{transform:scale(0.97)}
+.cta-ghost{background:none;border:0.5px solid var(--glass-border);color:var(--t2)}
+.cta-gold{background:var(--gold);color:#000}
+.cta-row{display:flex;gap:14px;margin-top:44px;opacity:0;animation:slowReveal 0.8s ease 1s forwards}
+.cta-row .cta-pill{margin:0;opacity:1;animation:none;flex:1}
+.detail{font-size:12px;color:var(--t3);margin-top:28px;font-weight:300;letter-spacing:0.3px;opacity:0;animation:fadeIn 1s ease 0.9s forwards}
+.pr{width:160px;height:160px;position:relative;margin-bottom:48px}
+.pr svg{width:160px;height:160px;transform:rotate(-90deg)}
+.pr-bg{fill:none;stroke:var(--glass-bg);stroke-width:1.5}
+.pr-fg{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-dasharray:452;stroke-dashoffset:452;opacity:0.6}
+.pr-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pr-label{font-size:9px;color:var(--t4);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.steps{width:100%;margin-top:40px}
+.step{display:flex;align-items:center;gap:18px;padding:16px 0;border-bottom:0.5px solid var(--glass-bg);opacity:0}
+.step:last-child{border:none}
+.step-n{font-size:10px;color:var(--t3);font-weight:300;letter-spacing:2px;width:24px}
+.step-t{font-size:14px;font-weight:300;color:var(--t3);flex:1;text-align:left;transition:color var(--t-smooth) var(--ease-smooth)}
+.step-t.done{color:var(--t2)}
+.step-c{margin-left:auto;opacity:0;transition:opacity var(--t-smooth)}
+.step-c svg{width:16px;height:16px;stroke:var(--success);stroke-width:1.5;fill:none;stroke-linecap:round}
+
+/* ═══ S1: HUB — SPLIT ═══ */
+#s1{flex-direction:row;padding:0}
+.s1-left{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 80px 0 96px}
+.s1-label{font-size:9px;color:var(--t3);letter-spacing:5px;text-transform:uppercase;margin-bottom:16px;font-weight:300;opacity:0;animation:fadeIn 0.6s ease 0.2s forwards}
+.s1-title{font-size:44px;font-weight:200;letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px;opacity:0;animation:slowReveal 1s ease 0.3s forwards}
+.s1-title strong{font-weight:700}
+.s1-sub{font-size:14px;color:var(--t2);font-weight:300;line-height:1.8;opacity:0;animation:slowReveal 1s ease 0.5s forwards}
+.s1-right{width:460px;display:flex;flex-direction:column;justify-content:center;padding:0 64px 0 0;border-left:0.5px solid var(--border)}
+.s1-cats{display:flex;flex-direction:column;gap:0;padding-left:48px}
+.s1-cat{display:flex;align-items:center;gap:20px;padding:20px 0;border-bottom:0.5px solid var(--glass-bg);cursor:pointer;transition:opacity var(--t-micro);opacity:0}
+.s1-cat:last-child{border:none}
+.s1-cat:active{opacity:0.5}
+.s1-ci{width:44px;height:44px;border-radius:12px;border:0.5px solid var(--glass-border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s1-ci svg{width:18px;height:18px}
+.s1-ct{flex:1}
+.s1-ct h4{font-size:15px;font-weight:500;letter-spacing:-0.2px}
+.s1-ct p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300}
+.s1-ca{font-size:12px;color:var(--t3)}
+
+/* ═══ S2: BROWSE — TRENDING ═══ */
+#s2{flex-direction:column;padding:104px 64px 0}
+.s2-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;opacity:0;animation:slowReveal 0.8s ease 0.2s forwards}
+.s2-header h1{font-size:40px;font-weight:200;letter-spacing:-1px}
+.s2-header h1 strong{font-weight:700}
+.s2-tags{display:flex;gap:8px;opacity:0;animation:slowReveal 0.8s ease 0.4s forwards}
+.s2-tag{padding:8px 18px;border:0.5px solid var(--glass-border);border-radius:100px;font-size:11px;color:var(--t3);font-weight:300;cursor:pointer;transition:all var(--t-micro)}
+.s2-tag.active{border-color:rgba(200,169,126,0.25);color:var(--gold);background:var(--gold-tint)}
+.s2-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:4px;opacity:0;animation:slowReveal 0.8s ease 0.6s forwards;overflow-y:auto;padding-bottom:80px}
+.s2-card{background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform var(--t-micro)}
+.s2-card:active{transform:scale(0.97)}
+.s2-card-hero{height:120px;background:linear-gradient(160deg,var(--s2),var(--s1));display:flex;align-items:center;justify-content:center;position:relative}
+.s2-card-hero svg{width:36px;height:36px;stroke:var(--t4);stroke-width:0.6;fill:none;opacity:0.12}
+.s2-card-body{padding:16px 18px 18px}
+.s2-card-body h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.s2-card-body p{font-size:11px;color:var(--t3);margin-top:4px;font-weight:300}
+.s2-card-meta{display:flex;gap:8px;margin-top:10px}
+.s2-card-meta span{font-size:9px;color:var(--t4);letter-spacing:1px;text-transform:uppercase}
+
+/* ═══ S3: BROWSE — SEARCH ═══ */
+#s3{flex-direction:column;padding:56px 0 0}
+.s3-bar{display:flex;align-items:center;gap:12px;padding:16px 24px;background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:100px;margin-bottom:32px;opacity:0;animation:slowReveal 0.8s ease 0.2s forwards}
+.s3-bar svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round;flex-shrink:0}
+.s3-bar-input{font-size:15px;color:var(--t1);font-weight:300;border:none;background:none;outline:none;flex:1;font-family:inherit}
+.s3-bar-input::placeholder{color:var(--t3)}
+.s3-bar-voice{width:36px;height:36px;border-radius:50%;background:var(--gold-tint);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.s3-bar-voice svg{width:16px;height:16px;stroke:var(--gold);stroke-width:1.5;fill:none;stroke-linecap:round}
+.s3-results-label{font-size:9px;color:var(--t3);letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;font-weight:300;opacity:0;animation:fadeIn 0.6s ease 0.4s forwards}
+.s3-results{display:flex;flex-direction:column;gap:0;opacity:0;animation:slowReveal 0.8s ease 0.5s forwards}
+.s3-result{display:flex;align-items:center;gap:18px;padding:18px 0;border-bottom:0.5px solid var(--glass-bg);cursor:pointer;transition:opacity var(--t-micro)}
+.s3-result:last-child{border:none}
+.s3-result:active{opacity:0.5}
+.s3-r-thumb{width:52px;height:52px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s3-r-thumb svg{width:22px;height:22px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.15}
+.s3-r-info{flex:1}
+.s3-r-info h4{font-size:15px;font-weight:500;letter-spacing:-0.2px}
+.s3-r-info p{font-size:12px;color:var(--t3);margin-top:3px;font-weight:300}
+.s3-r-arrow{font-size:12px;color:var(--t4)}
+.s3-ai{margin-top:28px;padding:20px;background:var(--gold-tint);border:0.5px solid rgba(200,169,126,0.12);border-radius:14px;display:flex;align-items:center;gap:16px;opacity:0;animation:slowReveal 0.8s ease 0.8s forwards;cursor:pointer}
+.s3-ai svg{width:20px;height:20px;stroke:var(--gold);stroke-width:1.5;fill:none;stroke-linecap:round;flex-shrink:0}
+.s3-ai span{font-size:13px;color:var(--gold-l);font-weight:300}
+
+/* ═══ S4: RECIPE DETAIL ═══ */
+#s4{flex-direction:row;padding:0}
+.s4-hero{width:480px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--s2) 0%,var(--bg) 100%)}
+.s4-hero::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,var(--gold-tint) 0%,transparent 70%);animation:breathe var(--t-breathe) ease-in-out infinite}
+.s4-hero-icon{position:relative;z-index:2;width:100px;height:100px;stroke:var(--t4);stroke-width:0.5;fill:none;opacity:0.12}
+.s4-info{flex:1;padding:64px 56px 56px 48px;overflow-y:auto}
+.s4-name{font-size:34px;font-weight:700;letter-spacing:-0.8px;opacity:0;animation:slowReveal 0.8s ease 0.2s forwards}
+.s4-lore{font-size:14px;color:var(--t2);font-style:italic;font-weight:300;line-height:1.7;margin-top:8px;opacity:0;animation:slowReveal 0.8s ease 0.4s forwards}
+.s4-tags{display:flex;gap:6px;margin-top:14px;opacity:0;animation:fadeIn 0.8s ease 0.6s forwards}
+.s4-tags span{padding:6px 14px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.s4-sect{font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-top:28px;margin-bottom:10px;opacity:0;animation:fadeIn 0.6s ease 0.7s forwards}
+.s4-ing{display:flex;align-items:center;padding:12px 16px;background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:11px;margin-bottom:5px;font-size:13px;color:var(--t2);font-weight:300;opacity:0;animation:slowReveal 0.6s ease 0.8s forwards}
+.s4-ing .dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin-right:12px;flex-shrink:0}
+.s4-ing .amt{margin-left:auto;color:var(--t3);font-size:12px}
+.s4-craft{margin-top:auto;padding-top:28px;opacity:0;animation:slowReveal 0.8s ease 1s forwards}
+.s4-craft button{width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s}
+.s4-craft button:active{transform:scale(0.97)}
+
+/* ═══ S5: INGREDIENT CHECK ═══ */
+#s5::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,var(--gold-tint) 0%,transparent 70%);pointer-events:none}
+
+/* ═══ S6: CUSTOMIZE ═══ */
+#s6{flex-direction:column;padding:104px 0 0}
+.s6-header{padding:0 96px;margin-bottom:32px;opacity:0;animation:slowReveal 0.8s ease 0.2s forwards}
+.s6-header h1{font-size:34px;font-weight:200;letter-spacing:-1px}
+.s6-header h1 strong{font-weight:700}
+.s6-body{display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1;min-height:0}
+.s6-left{padding:0 48px 0 96px;border-right:0.5px solid var(--border)}
+.s6-right{padding:0 96px 0 48px;display:flex;flex-direction:column;justify-content:center}
+.s6-slider-group{margin-bottom:28px;opacity:0;animation:slowReveal 0.8s ease 0.4s forwards}
+.s6-slider-group:nth-child(2){animation-delay:0.5s}
+.s6-slider-group:nth-child(3){animation-delay:0.6s}
+.s6-slider-group:nth-child(4){animation-delay:0.7s}
+.s6-slider-label{display:flex;justify-content:space-between;margin-bottom:12px}
+.s6-slider-label span{font-size:12px;color:var(--t3);font-weight:300}
+.s6-slider-label strong{font-size:12px;color:var(--t1);font-weight:500}
+.s6-track{width:100%;height:3px;background:var(--glass-bg);border-radius:2px;position:relative}
+.s6-track-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l));border-radius:2px;position:absolute;left:0;top:0}
+.s6-track-thumb{width:14px;height:14px;border-radius:50%;background:var(--t1);position:absolute;top:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.s6-preview{opacity:0;animation:slowReveal 0.8s ease 0.8s forwards}
+.s6-preview-label{font-size:9px;color:var(--gold);letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:16px}
+.s6-preview-card{background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:16px;padding:24px}
+.s6-preview-card h3{font-size:18px;font-weight:600;letter-spacing:-0.3px;margin-bottom:12px}
+.s6-preview-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--glass-bg);font-size:13px;font-weight:300;color:var(--t2)}
+.s6-preview-row:last-child{border:none}
+.s6-preview-row span:last-child{color:var(--t3)}
+.s6-cta{margin-top:28px;width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s;opacity:0;animation:slowReveal 0.8s ease 1s forwards}
+.s6-cta:active{transform:scale(0.97)}
+
+/* ═══ S7: CRAFT — PLACE GLASS ═══ */
+#s7::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:350px;height:350px;background:radial-gradient(circle,var(--gold-tint) 0%,transparent 70%);animation:breathe var(--t-breathe) ease-in-out infinite;pointer-events:none}
+
+/* ═══ S8: CRAFT — POURING ═══ */
+/* uses .pr ring and .steps */
+
+/* ═══ S9: CRAFT — COMPLETE ═══ */
+#s9::before{content:'';position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(200,169,126,0.06) 0%,transparent 60%);animation:celebratePulse 3s ease-in-out infinite;pointer-events:none}
+.s9-mark{width:56px;height:56px;margin-bottom:48px;position:relative;opacity:0;animation:glowAppear var(--t-ritual) ease 0.3s forwards}
+.s9-mark svg{width:56px;height:56px;stroke:var(--gold);stroke-width:1;fill:none;stroke-linecap:round}
+.s9-mark svg circle{opacity:0.06}
+.s9-mark svg path{stroke-dasharray:24;stroke-dashoffset:24;animation:checkStroke 0.8s ease 1s forwards}
+
+/* ═══ S10: POST-CRAFT — RATE ═══ */
+.s10-stars{display:flex;gap:12px;margin-top:36px;margin-bottom:20px;opacity:0;animation:slowReveal 0.8s ease 0.7s forwards}
+.s10-star{width:36px;height:36px;cursor:pointer;transition:transform var(--t-micro)}
+.s10-star:active{transform:scale(0.85)}
+.s10-star svg{width:36px;height:36px;stroke:var(--t3);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:all var(--t-fast)}
+.s10-star.lit svg{stroke:var(--gold);fill:rgba(200,169,126,0.15)}
+.s10-actions{display:flex;flex-direction:column;gap:14px;margin-top:36px;width:100%;opacity:0;animation:slowReveal 0.8s ease 0.9s forwards}
+.s10-action{display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--glass-bg);border:0.5px solid var(--glass-border);border-radius:14px;cursor:pointer;transition:background var(--t-micro)}
+.s10-action:active{background:rgba(255,255,255,0.04)}
+.s10-action svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.s10-action span{font-size:13px;font-weight:300;color:var(--t2);flex:1}
+.s10-action .arr{font-size:11px;color:var(--t4)}
+
+/* ═══ S11: POST-CRAFT — NEXT ═══ */
+#s11::before{content:'';position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(200,169,126,0.04) 0%,transparent 70%);pointer-events:none}
+</style>
+</head>
+<body>
+<div class="device">
+  <div class="status-bar"><span>9:41</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 17 12"><path d="M1 4.2C3 1.7 6.3 0 10 0s7 1.7 9 4.2" stroke="#fff" fill="none" stroke-width="1.2"/><path d="M3.5 7C5 5.3 7.3 4.2 10 4.2s5 1.1 6.5 2.8" stroke="#fff" fill="none" stroke-width="1.2"/><circle cx="10" cy="10.5" r="1.5" fill="#fff"/></svg>
+      <svg viewBox="0 0 16 12"><rect x="0" y="1" width="3" height="11" rx="0.5" fill="#fff" opacity=".3"/><rect x="4.5" y="4" width="3" height="8" rx="0.5" fill="#fff" opacity=".5"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="#fff" opacity=".7"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="#fff"/></svg>
+      <svg viewBox="0 0 25 12"><rect x="0" y="0" width="22" height="12" rx="3" stroke="#fff" stroke-width="1" fill="none" opacity=".3"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="#fff" opacity=".3"/><rect x="1.5" y="1.5" width="16" height="9" rx="1.5" fill="#fff"/></svg>
+    </div>
+  </div>
+
+  <!-- S1: HUB -->
+  <div id="s1" class="screen active">
+    <div class="s1-left">
+      <div class="s1-label">Recipe flow</div>
+      <div class="s1-title">Discover,<br>craft, <strong>enjoy</strong></div>
+      <div class="s1-sub">From browsing to your first sip —<br>every moment considered</div>
+    </div>
+    <div class="s1-right"><div class="s1-cats">
+      <div class="s1-cat" onclick="go(2)" style="animation:slowReveal 0.8s ease 0.5s forwards"><div class="s1-ci"><svg viewBox="0 0 24 24" class="ic" stroke="var(--gold)"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="s1-ct"><h4>Browse & Search</h4><p>Trending, categories, AI suggest</p></div><div class="s1-ca">→</div></div>
+      <div class="s1-cat" onclick="go(4)" style="animation:slowReveal 0.8s ease 0.65s forwards"><div class="s1-ci"><svg viewBox="0 0 24 24" class="ic" stroke="var(--gold)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="s1-ct"><h4>Recipe Detail</h4><p>Ingredients, taste, reviews</p></div><div class="s1-ca">→</div></div>
+      <div class="s1-cat" onclick="go(6)" style="animation:slowReveal 0.8s ease 0.8s forwards"><div class="s1-ci"><svg viewBox="0 0 24 24" class="ic" stroke="var(--gold)"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></div><div class="s1-ct"><h4>Customize & Craft</h4><p>Strength, sweetness, size</p></div><div class="s1-ca">→</div></div>
+      <div class="s1-cat" onclick="go(7)" style="animation:slowReveal 0.8s ease 0.95s forwards"><div class="s1-ci"><svg viewBox="0 0 24 24" class="ic" stroke="var(--gold)"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg></div><div class="s1-ct"><h4>Craft & Celebrate</h4><p>Pour animation, rate, share</p></div><div class="s1-ca">→</div></div>
+    </div></div>
+  </div>
+
+  <!-- S2: BROWSE — TRENDING -->
+  <div id="s2" class="screen">
+    <div class="back-btn" onclick="go(1)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+    <div class="s2-header"><h1>Trending <strong>recipes</strong></h1></div>
+    <div class="s2-tags">
+      <div class="s2-tag active">All</div><div class="s2-tag">Whiskey</div><div class="s2-tag">Vodka</div><div class="s2-tag">Rum</div><div class="s2-tag">Gin</div><div class="s2-tag">Low-cal</div>
+    </div>
+    <div class="s2-grid">
+      <div class="s2-card" onclick="go(4)"><div class="s2-card-hero"><svg viewBox="0 0 36 36"><path d="M10 30l8-16 8 16M18 14V6" stroke="var(--gold)" stroke-width="0.6" fill="none"/></svg></div><div class="s2-card-body"><h4>Classic Martini</h4><p>Gin · Dry vermouth</p><div class="s2-card-meta"><span>★ 4.8</span><span>3 min</span></div></div></div>
+      <div class="s2-card" onclick="go(4)"><div class="s2-card-hero"><svg viewBox="0 0 36 36"><rect x="10" y="8" width="16" height="24" rx="4" stroke="var(--gold)" stroke-width="0.6" fill="none"/></svg></div><div class="s2-card-body"><h4>Old Fashioned</h4><p>Bourbon · Bitters · Sugar</p><div class="s2-card-meta"><span>★ 4.9</span><span>2 min</span></div></div></div>
+      <div class="s2-card" onclick="go(4)"><div class="s2-card-hero"><svg viewBox="0 0 36 36"><path d="M8 12h20l-3 20H11L8 12z" stroke="var(--gold)" stroke-width="0.6" fill="none"/></svg></div><div class="s2-card-body"><h4>Margarita</h4><p>Tequila · Lime · Triple sec</p><div class="s2-card-meta"><span>★ 4.7</span><span>2 min</span></div></div></div>
+      <div class="s2-card" onclick="go(4)"><div class="s2-card-hero"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="10" stroke="var(--gold)" stroke-width="0.6" fill="none"/><path d="M18 12v6l3 3" stroke="var(--gold)" stroke-width="0.6" fill="none"/></svg></div><div class="s2-card-body"><h4>Negroni</h4><p>Gin · Campari · Vermouth</p><div class="s2-card-meta"><span>★ 4.6</span><span>2 min</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- S3: BROWSE — SEARCH -->
+  <div id="s3" class="screen">
+    <div class="back-btn" onclick="go(2)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+    <div style="padding:48px 64px 0;flex:1;display:flex;flex-direction:column">
+      <div class="s3-bar">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input class="s3-bar-input" placeholder="Search cocktails…" value="Espresso mart" readonly>
+        <div class="s3-bar-voice"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><path d="M12 19v4M8 23h8"/></svg></div>
+      </div>
+      <div class="s3-results-label">Live results</div>
+      <div class="s3-results">
+        <div class="s3-result" onclick="go(4)"><div class="s3-r-thumb"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M5 8H2a4 4 0 000 8h3M6 12h12" stroke="var(--t4)" stroke-width="0.8" fill="none"/></svg></div><div class="s3-r-info"><h4>Espresso Martini</h4><p>Vodka · Espresso · Coffee liqueur</p></div><div class="s3-r-arrow">→</div></div>
+        <div class="s3-result" onclick="go(4)"><div class="s3-r-thumb"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M5 8H2a4 4 0 000 8h3M6 12h12" stroke="var(--t4)" stroke-width="0.8" fill="none"/></svg></div><div class="s3-r-info"><h4>Espresso Tonic</h4><p>Espresso · Tonic water · Vanilla</p></div><div class="s3-r-arrow">→</div></div>
+        <div class="s3-result" onclick="go(4)"><div class="s3-r-thumb"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M5 8H2a4 4 0 000 8h3M6 12h12" stroke="var(--t4)" stroke-width="0.8" fill="none"/></svg></div><div class="s3-r-info"><h4>Midnight Espresso</h4><p>Bourbon · Espresso · Cream</p></div><div class="s3-r-arrow">→</div></div>
+      </div>
+      <div class="s3-ai" onclick="go(4)"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Ask BarBot to create a custom espresso cocktail</span></div>
+    </div>
+  </div>
+
+  <!-- S4: RECIPE DETAIL -->
+  <div id="s4" class="screen">
+    <div class="back-btn" onclick="go(2)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+    <div class="s4-hero"><svg class="s4-hero-icon" viewBox="0 0 100 100"><path d="M35 85l15-30 15 30M50 55V25"/><circle cx="50" cy="20" r="5" opacity="0.3"/></svg></div>
+    <div class="s4-info">
+      <div class="s4-name">Espresso Martini</div>
+      <div class="s4-lore">A decadent blend of bold espresso and smooth vodka — shaken, not stirred</div>
+      <div class="s4-tags"><span>Vodka</span><span>Strong</span><span>After dinner</span></div>
+      <div class="s4-sect">Ingredients</div>
+      <div class="s4-ing"><div class="dot"></div>Vodka<span class="amt">60ml</span></div>
+      <div class="s4-ing"><div class="dot"></div>Fresh espresso<span class="amt">30ml</span></div>
+      <div class="s4-ing"><div class="dot"></div>Coffee liqueur<span class="amt">20ml</span></div>
+      <div class="s4-ing"><div class="dot"></div>Simple syrup<span class="amt">10ml</span></div>
+      <div class="s4-sect">Taste profile</div>
+      <div class="s4-ing"><div class="dot"></div>Bitter-sweet · Full-bodied · Rich</div>
+      <div class="s4-craft"><button onclick="go(5)">Check Ingredients</button></div>
+    </div>
+  </div>
+
+  <!-- S5: INGREDIENT CHECK -->
+  <div id="s5" class="screen cs">
+    <div class="back-btn" onclick="go(4)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+    <div class="cs-content">
+      <div class="cs-icon"><svg viewBox="0 0 48 48" stroke="var(--success)"><path d="M14 24l7 7L34 17" stroke-width="1.5"/><circle cx="24" cy="24" r="20" opacity="0.08"/></svg></div>
+      <div class="cs-title">All <strong>available</strong></div>
+      <div class="cs-sub">Every ingredient for this recipe<br>is loaded on your station</div>
+      <div class="gc">
+        <div class="gc-label">Station check</div>
+        <div class="gc-row"><div class="gc-row-dot" style="background:var(--success)"></div><div class="gc-row-text">Vodka</div><div class="gc-row-val">72% remaining</div></div>
+        <div class="gc-row"><div class="gc-row-dot" style="background:var(--success)"></div><div class="gc-row-text">Coffee liqueur</div><div class="gc-row-val">58% remaining</div></div>
+        <div class="gc-row"><div class="gc-row-dot" style="background:var(--warning)"></div><div class="gc-row-text">Simple syrup</div><div class="gc-row-val">22% remaining</div></div>
+      </div>
+      <div class="detail">Fresh espresso — manual add required</div>
+      <button class="cta-pill cta-gold" onclick="go(6)">Customize & Craft</button>
+    </div>
+  </div>
+
+  <!-- S6: CUSTOMIZE -->
+  <div id="s6" class="screen">
+    <div class="back-btn" onclick="go(5)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+    <div class="s6-header"><h1>Customize your <strong>craft</strong></h1></div>
+    <div class="s6-body">
+      <div class="s6-left">
+        <div class="s6-slider-group"><div class="s6-slider-label"><span>Strength</span><strong>Regular</strong></div><div class="s6-track"><div class="s6-track-fill" style="width:50%"></div><div class="s6-track-thumb" style="left:50%"></div></div></div>
+        <div class="s6-slider-group"><div class="s6-slider-label"><span>Sweetness</span><strong>Balanced</strong></div><div class="s6-track"><div class="s6-track-fill" style="width:45%"></div><div class="s6-track-thumb" style="left:45%"></div></div></div>
+        <div class="s6-slider-group"><div class="s6-slider-label"><span>Size</span><strong>Single</strong></div><div class="s6-track"><div class="s6-track-fill" style="width:33%"></div><div class="s6-track-thumb" style="left:33%"></div></div></div>
+        <div class="s6-slider-group"><div class="s6-slider-label"><span>Ice</span><strong>None</strong></div><div class="s6-track"><div class="s6-track-fill" style="width:0%"></div><div class="s6-track-thumb" style="left:0%"></div></div></div>
+      </div>
+      <div class="s6-right">
+        <div class="s6-preview">
+          <div class="s6-preview-label">Preview</div>
+          <div class="s6-preview-card">
+            <h3>Espresso Martini</h3>
+            <div class="s6-preview-row"><span>Vodka</span><span>60ml</span></div>
+            <div class="s6-preview-row"><span>Fresh espresso</span><span>30ml</span></div>
+            <div class="s6-preview-row"><span>Coffee liqueur</span><span>20ml</span></div>
+            <div class="s6-preview-row"><span>Simple syrup</span><span>10ml</span></div>
+            <div class="s6-preview-row"><span>Total</span><span style="color:var(--gold)">120ml</span></div>
+          </div>
+          <button class="s6-cta" onclick="go(7)">Craft This Drink</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: CRAFT — PLACE GLASS -->
+  <div id="s7" class="screen cs">
+    <div class="back-btn" onclick="go(6)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+    <div class="cs-content">
+      <div class="cs-icon"><svg viewBox="0 0 48 48" stroke="var(--gold)"><path d="M16 40h16M20 40V28M28 40V28M14 12h20l-3 16H17L14 12z"/><path d="M10 12h28" opacity="0.3"/></svg></div>
+      <div class="cs-title">Place your <strong>glass</strong></div>
+      <div class="cs-sub">Position your glass on the station<br>platform to begin crafting</div>
+      <div class="detail" id="gd">Waiting for glass detection…</div>
+    </div>
+  </div>
+
+  <!-- S8: CRAFT — POURING -->
+  <div id="s8" class="screen cs">
+    <div class="cs-content">
+      <div class="pr">
+        <svg viewBox="0 0 160 160"><circle class="pr-bg" cx="80" cy="80" r="72"/><circle id="pp" class="pr-fg" cx="80" cy="80" r="72" stroke="var(--gold)"/></svg>
+        <div class="pr-center"><span id="ppct" style="font-size:28px;font-weight:200;letter-spacing:-1px">0%</span><div class="pr-label">Pouring</div></div>
+      </div>
+      <div class="cs-title">Crafting your <strong>drink</strong></div>
+      <div class="steps">
+        <div class="step" id="p0"><div class="step-n">01</div><div class="step-t">Vodka · 60ml</div><div class="step-c"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 5"/></svg></div></div>
+        <div class="step" id="p1"><div class="step-n">02</div><div class="step-t">Fresh espresso · 30ml</div><div class="step-c"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 5"/></svg></div></div>
+        <div class="step" id="p2"><div class="step-n">03</div><div class="step-t">Coffee liqueur · 20ml</div><div class="step-c"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 5"/></svg></div></div>
+        <div class="step" id="p3"><div class="step-n">04</div><div class="step-t">Simple syrup · 10ml</div><div class="step-c"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 5"/></svg></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9: CRAFT — COMPLETE -->
+  <div id="s9" class="screen cs">
+    <div class="cs-content">
+      <div class="s9-mark"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="24"/><path d="M18 28l7 7L38 21"/></svg></div>
+      <div class="cs-title" style="font-size:38px;letter-spacing:-1.2px">Your drink<br>is <strong style="color:var(--gold)">ready</strong></div>
+      <div class="cs-sub">Espresso Martini — crafted in 47s</div>
+      <div class="detail">Enjoy responsibly</div>
+      <button class="cta-pill" onclick="go(10)">Continue</button>
+    </div>
+  </div>
+
+  <!-- S10: POST — RATE -->
+  <div id="s10" class="screen cs">
+    <div class="cs-content">
+      <div class="cs-title">How was <strong>it</strong>?</div>
+      <div class="cs-sub">Your rating helps us improve<br>every craft</div>
+      <div class="s10-stars" id="stars">
+        <div class="s10-star" onclick="rate(1)"><svg viewBox="0 0 36 36"><polygon points="18,3 22.5,13.5 34,15 25.5,23 28,34 18,28.5 8,34 10.5,23 2,15 13.5,13.5"/></svg></div>
+        <div class="s10-star" onclick="rate(2)"><svg viewBox="0 0 36 36"><polygon points="18,3 22.5,13.5 34,15 25.5,23 28,34 18,28.5 8,34 10.5,23 2,15 13.5,13.5"/></svg></div>
+        <div class="s10-star" onclick="rate(3)"><svg viewBox="0 0 36 36"><polygon points="18,3 22.5,13.5 34,15 25.5,23 28,34 18,28.5 8,34 10.5,23 2,15 13.5,13.5"/></svg></div>
+        <div class="s10-star" onclick="rate(4)"><svg viewBox="0 0 36 36"><polygon points="18,3 22.5,13.5 34,15 25.5,23 28,34 18,28.5 8,34 10.5,23 2,15 13.5,13.5"/></svg></div>
+        <div class="s10-star" onclick="rate(5)"><svg viewBox="0 0 36 36"><polygon points="18,3 22.5,13.5 34,15 25.5,23 28,34 18,28.5 8,34 10.5,23 2,15 13.5,13.5"/></svg></div>
+      </div>
+      <div class="s10-actions">
+        <div class="s10-action"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><span>Add to favorites</span><div class="arr">→</div></div>
+        <div class="s10-action"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg><span>Share on social</span><div class="arr">→</div></div>
+      </div>
+      <button class="cta-pill" onclick="go(11)">Continue</button>
+    </div>
+  </div>
+
+  <!-- S11: POST — NEXT -->
+  <div id="s11" class="screen cs">
+    <div class="cs-content">
+      <div class="cs-icon"><svg viewBox="0 0 48 48" stroke="var(--gold)"><path d="M24 4v40M4 24h40" opacity="0.15"/><circle cx="24" cy="24" r="16"/><path d="M24 16v16M16 24h16"/></svg></div>
+      <div class="cs-title">Craft <strong>another</strong>?</div>
+      <div class="cs-sub">The night is young</div>
+      <div class="cta-row">
+        <button class="cta-pill cta-ghost" onclick="go(1)">Return home</button>
+        <button class="cta-pill" onclick="go(2)">Browse recipes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function go(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  if(n===7)setTimeout(()=>go(8),2500);
+  if(n===8)runPour();
+}
+function runPour(){
+  const r=document.getElementById('pp'),pct=document.getElementById('ppct');
+  const steps=['p0','p1','p2','p3'],off=[339,226,113,0];let i=0;
+  function next(){
+    if(i>=4){pct.textContent='100%';setTimeout(()=>go(9),800);return}
+    const el=document.getElementById(steps[i]);el.style.opacity=1;el.style.animation='slowReveal 0.6s ease forwards';
+    r.style.transition='stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)';r.style.strokeDashoffset=off[i];
+    pct.textContent=Math.round((i+1)/4*100)+'%';
+    setTimeout(()=>{el.querySelector('.step-t').classList.add('done');el.querySelector('.step-c').style.opacity=1;i++;setTimeout(next,400)},1200);
+  }
+  setTimeout(next,400);
+}
+function rate(n){
+  document.querySelectorAll('.s10-star').forEach((s,i)=>{
+    if(i<n)s.classList.add('lit');else s.classList.remove('lit');
+  });
+}
+</script>
+</body>
+</html>

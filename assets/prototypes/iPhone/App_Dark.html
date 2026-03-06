@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARSYS — Full App · iPhone Dark</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+:root{
+  --bg:#050505;--s1:#0A0A0A;--s2:#111111;--s3:#191919;
+  --gold:#C8A97E;--gold-l:#E8D5B5;--gold-d:rgba(200,169,126,0.08);
+  --t1:#FFFFFF;--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.25);--t4:rgba(255,255,255,0.10);
+  --glass:rgba(255,255,255,0.025);--glass-b:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.06);
+  --unwind:#8A9490;--celebrate:#B8A67A;--impress:#9A7B7F;--explore:#7E8B96;
+  --success:#7A9A82;--warning:#B8A67A;--error:#A07272;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#000;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;color:var(--t1)}
+
+.device{width:390px;height:844px;background:var(--bg);border-radius:44px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.03),0 80px 200px rgba(0,0,0,0.95)}
+
+/* Status Bar */
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px 0;z-index:200;font-size:13px;font-weight:600}
+.status-icons{display:flex;gap:6px;align-items:center}
+.status-icons svg{width:auto;height:11px}
+
+/* Screens */
+.screen{position:absolute;inset:0;display:flex;opacity:0;pointer-events:none;transition:opacity 0.5s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.screen.active{opacity:1;pointer-events:auto}
+
+/* Animations */
+@keyframes fadeScale{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.35}50%{transform:scale(1.05);opacity:0.65}}
+@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes orbFloat{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.02) translateY(-6px)}}
+@keyframes sparkleFloat{0%{opacity:0;transform:translateY(0) scale(0)}20%{opacity:0.6;transform:translateY(-80px) scale(1)}80%{opacity:0.15;transform:translateY(-200px) scale(0.3)}100%{opacity:0;transform:translateY(-260px) scale(0)}}
+@keyframes haptic{0%{transform:scale(1)}50%{transform:scale(0.97)}100%{transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
+@keyframes typingDot{0%,60%,100%{opacity:0.2;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,169,126,0.3)}50%{box-shadow:0 0 0 16px rgba(200,169,126,0)}}
+.haptic{animation:haptic 0.15s ease!important}
+
+/* ═══ 1. SPLASH ═══ */
+#splash{background:var(--bg);align-items:center;justify-content:center;flex-direction:column}
+#splash::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 60%);pointer-events:none}
+.splash-logo{font-size:36px;font-weight:200;letter-spacing:20px;color:var(--t1);opacity:0;animation:fadeScale 1.4s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;position:relative;z-index:2}
+.splash-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;margin-top:24px;opacity:0;animation:fadeIn 0.8s ease 1.2s forwards}
+
+/* ═══ 2. ONBOARDING ═══ */
+#onboarding{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.ob-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.07) 0%,transparent 55%);pointer-events:none;animation:breathe 6s ease-in-out infinite}
+.ob-orb{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;border-radius:50%;border:0.5px solid rgba(200,169,126,0.10);background:radial-gradient(circle at 35% 35%,rgba(200,169,126,0.07),transparent 70%);animation:orbFloat 8s ease-in-out infinite;pointer-events:none}
+.ob-orb::after{content:'';position:absolute;inset:35px;border-radius:50%;border:0.5px solid rgba(200,169,126,0.06);background:radial-gradient(circle at 40% 40%,rgba(200,169,126,0.06),transparent 60%)}
+.ob-center{position:relative;z-index:5;max-width:600px}
+.ob-eyebrow{font-size:10px;letter-spacing:8px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:20px}
+.ob-title{font-size:32px;font-weight:200;line-height:1.06;letter-spacing:-2px}
+.ob-title em{font-style:italic;color:var(--gold);font-weight:300}
+.ob-sub{font-size:13px;color:var(--t2);font-weight:300;line-height:1.8;margin-top:24px;max-width:400px;margin-left:auto;margin-right:auto}
+.ob-cta{padding:18px 56px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:40px;letter-spacing:-0.2px;transition:transform 0.2s,opacity 0.2s}
+.ob-cta:active{transform:scale(0.97);opacity:0.9}
+.ob-skip{margin-top:18px;font-size:12px;color:var(--t3);cursor:pointer;letter-spacing:0.5px}
+.ob-dots{display:flex;gap:8px;justify-content:center;margin-top:40px}
+.ob-dots div{width:24px;height:2px;border-radius:1px;background:rgba(255,255,255,0.06)}
+.ob-dots div.active{background:var(--gold)}
+
+/* ═══ 3. MOOD ═══ */
+#mood{background:var(--bg);flex-direction:column;padding:100px 20px 24px}
+.mood-header{text-align:center;margin-bottom:48px}
+.mood-header .mood-greet{font-size:14px;color:var(--gold);font-weight:500;letter-spacing:0.5px;margin-bottom:6px}
+.mood-header .mood-q{font-size:28px;font-weight:200;letter-spacing:-1px;line-height:1.1}
+.mood-header .mood-q strong{font-weight:700}
+.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;flex:1}
+.mood-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:20px;cursor:pointer;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;justify-content:flex-end}
+.mood-card::before{content:'';position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:180px;height:120px;border-radius:50%;filter:blur(50px);opacity:0.1;transition:opacity 0.4s}
+.mood-card:active{transform:scale(0.97)}
+.mood-card:hover::before{opacity:0.22}
+.mood-card.selected{border-color:var(--gold);background:rgba(200,169,126,0.07)}
+.mood-card .mc-line{width:28px;height:2px;border-radius:1px;margin-bottom:auto}
+.mood-card h3{font-size:16px;font-weight:600;letter-spacing:-0.3px}
+.mood-card p{font-size:12px;color:var(--t3);margin-top:4px}
+.mood-card.unwind::before{background:var(--unwind)}.mood-card.unwind .mc-line{background:var(--unwind)}
+.mood-card.celebrate::before{background:var(--celebrate)}.mood-card.celebrate .mc-line{background:var(--celebrate)}
+.mood-card.impress::before{background:var(--impress)}.mood-card.impress .mc-line{background:var(--impress)}
+.mood-card.explore::before{background:var(--explore)}.mood-card.explore .mc-line{background:var(--explore)}
+.mood-bottom{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:16px}
+.trending-pill{display:flex;align-items:center;gap:10px;padding:12px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:background 0.3s}
+.trending-pill:active{background:rgba(255,255,255,0.04)}
+.trending-pill .t-icon{width:36px;height:36px;border-radius:9px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.trending-pill .t-icon svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.trending-pill h4{font-size:13px;font-weight:600}
+.trending-pill p{font-size:10px;color:var(--t4);margin-top:1px}
+.prompt-bar{display:flex;align-items:center;padding:4px 4px 4px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;height:44px;width:100%}
+.prompt-bar span{flex:1;font-size:13px;color:var(--t4)}
+.prompt-bar .send{width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.prompt-bar .send svg{width:14px;height:14px;stroke:#000;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ═══ 4. STREAM ═══ */
+#stream{background:var(--bg);flex-direction:column;padding:100px 20px 24px}
+.stream-head{text-align:center;margin-bottom:36px}
+.stream-mood-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:100px;font-size:11px;font-weight:500;margin-bottom:14px;border:0.5px solid var(--glass-b)}
+.stream-mood-tag .dot{width:6px;height:6px;border-radius:50%}
+.stream-title{font-size:26px;font-weight:200;letter-spacing:-0.5px;line-height:1.2}
+.stream-title strong{font-weight:700}
+.stream-sub{font-size:14px;color:var(--t2);margin-top:8px;font-weight:300;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto}
+.recipe-grid{display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow-y:auto;padding-bottom:20px}
+.recipe-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.25s;display:flex;flex-direction:row;flex-shrink:0}
+.recipe-card:active{transform:scale(0.98)}
+.rc-hero{width:100px;min-height:100px;background:linear-gradient(160deg,var(--s2),var(--s1));display:flex;align-items:center;justify-content:center;color:var(--t4);position:relative}
+.rc-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(5,5,5,0.5),transparent)}
+.rc-hero svg{width:52px;height:52px;stroke:currentColor;stroke-width:0.8;fill:none;opacity:0.15}
+.rc-body{padding:20px 24px 24px}
+.rc-body h3{font-size:19px;font-weight:600;letter-spacing:-0.3px}
+.rc-body .rc-desc{font-size:12px;color:var(--t2);margin-top:5px;font-weight:300;font-style:italic}
+.rc-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.rc-tag{padding:4px 11px;border-radius:100px;font-size:10px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.rc-meta{display:flex;gap:18px;margin-top:12px;font-size:11px;color:var(--t3)}
+
+/* ═══ 5. DETAIL ═══ */
+#detail{background:var(--bg);flex-direction:column;overflow-y:auto}
+.det-visual{height:200px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
+.det-visual::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--s2) 0%,var(--s1) 100%)}
+.det-visual svg.det-icon{width:100px;height:100px;stroke:var(--t4);stroke-width:0.5;fill:none;opacity:0.12;position:relative;z-index:2}
+.det-nav{position:absolute;top:48px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 32px;z-index:10}
+.det-nav svg{width:22px;height:22px;stroke:var(--t1);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;cursor:pointer}
+.det-nav .det-save{font-size:13px;color:var(--gold);font-weight:500;cursor:pointer}
+.det-info{width:100%;padding:20px 20px 100px;overflow-y:auto;display:flex;flex-direction:column}
+.det-info::-webkit-scrollbar{display:none}
+.det-info h1{font-size:26px;font-weight:700;letter-spacing:-0.8px}
+.det-lore{font-size:14px;color:var(--t2);margin-top:8px;font-weight:300;font-style:italic;line-height:1.7}
+.det-tags{display:flex;gap:6px;margin-top:14px}
+.det-tag{padding:6px 14px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3)}
+.det-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-top:28px;margin-bottom:10px;text-transform:uppercase}
+.det-ing{display:flex;align-items:center;padding:13px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:11px;margin-bottom:5px;font-size:13px;color:var(--t2)}
+.det-ing .dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin-right:12px;flex-shrink:0}
+.det-story{font-size:13px;color:var(--t2);line-height:1.8;font-weight:300}
+.det-craft-btn{margin-top:auto;padding-top:28px}
+.det-craft-btn button{width:100%;padding:17px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s}
+.det-craft-btn button:active{transform:scale(0.97)}
+
+/* ═══ 6. AUTH ═══ */
+#auth{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#auth::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:500px;height:350px;background:radial-gradient(ellipse,rgba(200,169,126,0.06) 0%,transparent 60%);pointer-events:none}
+.auth-content{position:relative;z-index:2;width:320px;padding:0 20px}
+.auth-logo{font-size:20px;font-weight:200;letter-spacing:10px}
+.auth-dot{width:4px;height:4px;background:var(--gold);border-radius:50%;margin:16px auto}
+.auth-title{font-size:30px;font-weight:200;letter-spacing:-0.8px;line-height:1.15;margin-top:8px}
+.auth-title strong{font-weight:700}
+.auth-sub{font-size:14px;color:var(--t2);margin-top:10px;font-weight:300;line-height:1.7}
+.auth-buttons{margin-top:36px;display:flex;flex-direction:column;gap:10px}
+.auth-btn{width:100%;padding:16px;border-radius:14px;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform 0.2s}
+.auth-btn:active{transform:scale(0.97)}
+.auth-btn.apple{background:#fff;color:#000;border:none}
+.auth-btn.google{background:transparent;color:var(--t1);border:0.5px solid var(--glass-b)}
+.auth-btn.phone{background:transparent;color:var(--t1);border:0.5px solid var(--glass-b)}
+.auth-btn svg{width:18px;height:18px}
+.auth-later{margin-top:24px;font-size:13px;color:var(--t3);cursor:pointer}
+
+/* ═══ 7. WELCOME ═══ */
+#welcome{background:var(--bg);align-items:center;justify-content:center;text-align:center;flex-direction:column}
+#welcome::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(200,169,126,0.08) 0%,transparent 50%);animation:breathe 5s ease-in-out infinite}
+.welcome-text{position:relative;z-index:2}
+.welcome-greet{font-size:15px;color:var(--gold);font-weight:500;letter-spacing:2px;margin-bottom:10px;opacity:0;animation:fadeUp 0.8s ease 0.3s forwards}
+.welcome-name{font-size:44px;font-weight:200;letter-spacing:-3px;opacity:0;animation:fadeUp 0.8s ease 0.6s forwards}
+.welcome-name strong{font-weight:700}
+.welcome-line{width:32px;height:1px;background:var(--gold);margin:28px auto;opacity:0;animation:fadeIn 0.8s ease 1s forwards}
+.welcome-sub{font-size:14px;color:var(--t3);font-weight:300;opacity:0;animation:fadeUp 0.8s ease 1.2s forwards;letter-spacing:0.3px}
+
+/* ═══ 8. HOME ═══ */
+#home{background:var(--bg);flex-direction:column;padding:100px 20px 0;overflow-y:auto;overflow-x:hidden}
+.home-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px}
+.home-header-left .home-greet{font-size:14px;color:var(--gold);font-weight:500;margin-bottom:4px}
+.home-header-left .home-title{font-size:26px;font-weight:200;letter-spacing:-0.5px;line-height:1.15}
+.home-header-left .home-title strong{font-weight:700}
+.home-header-right{display:flex;gap:12px;align-items:center}
+.home-avatar{width:40px;height:40px;border-radius:50%;background:var(--glass);border:0.5px solid var(--glass-b);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--gold)}
+.home-body{display:flex;flex-direction:column;gap:16px;flex:1;min-height:0;padding-bottom:100px}
+.pro-card{background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;padding:20px;cursor:pointer;transition:background 0.3s;position:relative;overflow:hidden;display:flex;flex-direction:column;flex-shrink:0}
+.pro-card:active{background:rgba(255,255,255,0.04)}
+.pro-card::before{content:'';position:absolute;top:-15px;right:-15px;width:120px;height:120px;border-radius:50%;filter:blur(60px);opacity:0.05}
+.pro-card.gold::before{background:var(--gold)}
+.pro-card.ai-card{border-color:rgba(200,169,126,0.15);background:rgba(200,169,126,0.02)}
+.pro-card.ai-card::before{background:var(--gold);opacity:0.08}
+.pc-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:auto}
+.pro-card h3{font-size:16px;font-weight:600;letter-spacing:-0.2px;margin-top:16px}
+.pro-card p{font-size:11px;color:var(--t2);margin-top:5px;font-weight:300;line-height:1.7}
+.pc-action{display:inline-block;margin-top:14px;font-size:12px;color:var(--gold);font-weight:500}
+.home-popular{display:flex;flex-direction:column;gap:10px}
+.feat-label{font-size:9px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:4px}
+.feat-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:background 0.3s;flex-shrink:0}
+.feat-item:active{background:rgba(255,255,255,0.04)}
+.feat-thumb{width:44px;height:44px;border-radius:11px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.feat-thumb svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.feat-info{flex:1;min-width:0}
+.feat-info h4{font-size:14px;font-weight:600}
+.feat-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300}
+.feat-craft{padding:7px 14px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;flex-shrink:0}
+
+/* Dynamic Context Bar */
+.ctx-bar{position:absolute;bottom:0;left:0;right:0;z-index:200;padding:0 16px 14px;background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.ctx-bar-inner{display:flex;align-items:center;justify-content:space-between;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:18px;padding:6px;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+.ctx-nav{display:flex;gap:2px}
+.ctx-tab{display:flex;align-items:center;gap:5px;padding:9px 12px;border-radius:12px;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);color:var(--t4);border:none;background:transparent;font-family:inherit}
+.ctx-tab svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ctx-tab span{font-size:11px;font-weight:500;display:none;letter-spacing:-0.2px}
+.ctx-tab.active{background:var(--gold);color:#000}
+.ctx-tab.active span{display:inline}
+.ctx-actions{display:flex;gap:4px}
+.ctx-action{display:flex;align-items:center;gap:0;padding:10px;border-radius:12px;cursor:pointer;color:var(--t3);border:none;background:transparent;font-family:inherit;font-size:0;font-weight:500;transition:all 0.25s}
+.ctx-action:hover{background:var(--glass);color:var(--t2)}
+.ctx-action svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ═══ 9. CRAFTING ═══ */
+#crafting{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#crafting::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:600px;height:450px;background:radial-gradient(ellipse,rgba(200,169,126,0.07) 0%,transparent 50%);pointer-events:none}
+.craft-content{position:relative;z-index:2}
+.craft-status{font-size:10px;letter-spacing:4px;color:var(--t4);font-weight:500;text-transform:uppercase}
+.craft-name{font-size:22px;font-weight:700;margin-top:6px;letter-spacing:-0.4px}
+.craft-ring{width:180px;height:180px;margin:32px auto;position:relative}
+.craft-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.craft-ring .bg{fill:none;stroke:rgba(255,255,255,0.04);stroke-width:1.5}
+.craft-ring .progress{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:678;stroke-linecap:round;transition:stroke-dashoffset 0.3s ease}
+.craft-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:200;color:var(--gold-l)}
+.craft-pct .pct-sign{font-size:22px;color:var(--t4);margin-left:2px}
+.craft-step{font-size:13px;color:var(--t3);margin-top:4px;transition:opacity 0.4s}
+.craft-step-detail{display:flex;gap:24px;justify-content:center;margin-top:20px}
+.craft-step-detail .csd{opacity:0.2;transition:opacity 0.4s}
+.craft-step-detail .csd.active{opacity:1}
+.craft-step-detail .csd-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin:0 auto 5px}
+.craft-step-detail .csd span{font-size:9px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;font-weight:500}
+.craft-glass{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;margin-top:24px}
+.craft-glass .cg-dot{width:5px;height:5px;background:var(--success);border-radius:50%;animation:pulse 2s ease infinite}
+.craft-glass span{font-size:12px;color:var(--t2)}
+
+/* ═══ 10. CHEERS ═══ */
+#cheers{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#cheers::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:600px;height:450px;background:radial-gradient(ellipse,rgba(200,169,126,0.10) 0%,transparent 45%);pointer-events:none}
+.cheers-sparkle{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.cheers-sparkle .sp{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:sparkleFloat 3.5s ease-in-out infinite}
+.cheers-center{position:relative;z-index:2;max-width:400px}
+.cheers-heart{margin-bottom:16px;opacity:0.5}
+.cheers-heart svg{width:36px;height:36px;stroke:var(--gold);stroke-width:1.2;fill:none;stroke-linecap:round}
+.cheers-label{font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.cheers-name{font-size:28px;font-weight:200;margin-top:8px;letter-spacing:-0.8px}
+.cheers-sub{font-size:13px;color:var(--t3);margin-top:6px;font-weight:300;font-style:italic}
+.cheers-divider{width:40px;height:1px;background:var(--border);margin:28px auto}
+.cheers-sections{display:flex;flex-direction:column;gap:20px;text-align:left;margin-top:0}
+.cheers-section .cheers-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-bottom:6px;text-transform:uppercase}
+.cheers-section .cheers-sect-text{font-size:13px;color:var(--t2);line-height:1.7;font-weight:300;max-width:200px}
+.cheers-btn{margin-top:36px;padding:14px 40px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;color:var(--t2);transition:transform 0.2s}
+.cheers-btn:active{transform:scale(0.96)}
+
+/* ═══ 11. DISCOVER ═══ */
+#discover{background:var(--bg);flex-direction:column;padding:100px 0 0;overflow:hidden}
+.disc-top{padding:0 20px}
+.disc-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+.disc-header h1{font-size:26px;font-weight:200;letter-spacing:-0.5px}
+.disc-header h1 strong{font-weight:700}
+.disc-header .disc-count{font-size:12px;color:var(--t4);font-weight:300}
+.disc-search-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;margin-bottom:12px;transition:border-color 0.3s}
+.disc-search-bar:focus-within{border-color:var(--gold)}
+.disc-search-bar svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.disc-search-bar input{flex:1;font-size:13px;color:var(--t1);background:transparent;border:none;outline:none;font-family:inherit;font-weight:300}
+.disc-search-bar input::placeholder{color:var(--t4)}
+.disc-search-bar .disc-search-clear{width:24px;height:24px;border-radius:50%;background:var(--s2);display:none;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.disc-search-bar .disc-search-clear svg{width:12px;height:12px;stroke:var(--t3)}
+.disc-filters{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.disc-filter{padding:7px 16px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--t3);cursor:pointer;transition:all 0.25s;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.disc-filter.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+.disc-filter svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.5;fill:none}
+.disc-section-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin:20px 0 12px;display:flex;align-items:center;justify-content:space-between}
+.disc-section-label .disc-see-all{font-size:11px;color:var(--t3);letter-spacing:0;text-transform:none;font-weight:400;cursor:pointer}
+.disc-carousel{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px}
+.disc-carousel::-webkit-scrollbar{display:none}
+.disc-ccard{width:160px;min-width:160px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.25s;flex-shrink:0}
+.disc-ccard:active{transform:scale(0.97)}
+.disc-ccard-hero{height:110px;background:linear-gradient(160deg,var(--s3),var(--s1));display:flex;align-items:center;justify-content:center;position:relative}
+.disc-ccard-hero svg{width:36px;height:36px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.12}
+.disc-ccard-body{padding:12px 14px 14px}
+.disc-ccard-body h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.disc-ccard-body p{font-size:10px;color:var(--t3);margin-top:3px;font-weight:300}
+.disc-ccard-tags{display:flex;gap:4px;margin-top:6px}
+.disc-ccard-tag{padding:2px 8px;border-radius:100px;font-size:9px;border:0.5px solid var(--border);color:var(--t4)}
+.disc-body{flex:1;overflow-y:auto;padding:0 20px 100px;min-height:0}
+.disc-grid{display:flex;flex-direction:column;gap:8px}
+.disc-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px;cursor:pointer;transition:all 0.3s;flex-shrink:0}
+.disc-item:active{background:rgba(255,255,255,0.04)}
+.disc-item-thumb{width:48px;height:48px;border-radius:12px;background:var(--s2);display:flex;align-items:center;justify-content:center;color:var(--t4);flex-shrink:0}
+.disc-item-thumb svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.disc-item-info{flex:1;min-width:0}
+.disc-item-info h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.disc-item-info p{font-size:11px;color:var(--t3);margin-top:2px;font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.disc-item-meta{text-align:right;flex-shrink:0}
+.disc-item-meta .dim-diff{font-size:10px;color:var(--gold);font-weight:500}
+.disc-item-meta .dim-time{font-size:10px;color:var(--t4);margin-top:2px}
+.disc-item-actions{display:flex;gap:4px;flex-shrink:0}
+.disc-item-actions button{width:32px;height:32px;border-radius:8px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+.disc-item-actions button:hover{background:var(--glass)}
+.disc-item-actions button svg{width:14px;height:14px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round}
+.disc-empty{text-align:center;padding:60px 20px;color:var(--t3)}
+.disc-empty h3{font-size:18px;font-weight:400;margin-bottom:6px;color:var(--t2)}
+.disc-empty p{font-size:13px;font-weight:300}
+
+/* ═══ 12. BARBOT CHAT ═══ */
+#barbot{background:var(--bg);flex-direction:column;overflow:hidden}
+.bb-header{padding:100px 20px 0;display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px}
+.bb-header-left h1{font-size:26px;font-weight:200;letter-spacing:-0.5px}
+.bb-header-left h1 strong{font-weight:700}
+.bb-header-left p{font-size:13px;color:var(--t3);font-weight:300;font-style:italic;margin-top:4px}
+.bb-new-chat{display:flex;align-items:center;gap:6px;padding:10px 18px;background:var(--gold);color:#000;border:none;border-radius:12px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s}
+.bb-new-chat:active{transform:scale(0.97)}
+.bb-new-chat svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+.bb-body{flex:1;display:flex;flex-direction:column;min-height:0;padding:0 0 84px}
+.bb-sidebar{display:none}
+.bb-sidebar::-webkit-scrollbar{display:none}
+.bb-sidebar-label{font-size:9px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:12px;padding-top:4px}
+.bb-conv{padding:16px;border-radius:14px;cursor:pointer;transition:background 0.3s;margin-bottom:4px}
+.bb-conv:active,.bb-conv.active{background:var(--glass)}
+.bb-conv h4{font-size:14px;font-weight:600;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-conv p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-conv .bb-conv-time{font-size:10px;color:var(--t4);margin-top:4px}
+.bb-chat{display:flex;flex-direction:column;min-height:0}
+.bb-messages{flex:1;overflow-y:auto;padding:0 20px 16px;display:flex;flex-direction:column;gap:12px}
+.bb-messages::-webkit-scrollbar{display:none}
+.bb-msg{max-width:300px;display:flex;flex-direction:column;animation:slideUp 0.4s ease}
+.bb-msg.user{align-self:flex-end}
+.bb-msg.ai{align-self:flex-start}
+.bb-msg .bb-bubble{padding:16px 20px;border-radius:18px;font-size:14px;line-height:1.7;font-weight:300}
+.bb-msg.user .bb-bubble{background:rgba(200,169,126,0.12);border:0.5px solid rgba(200,169,126,0.15);border-bottom-right-radius:4px;color:var(--t1)}
+.bb-msg.ai .bb-bubble{background:var(--glass);border:0.5px solid var(--glass-b);border-bottom-left-radius:4px;color:var(--t2)}
+.bb-msg.ai .bb-bubble strong{color:var(--t1);font-weight:600}
+.bb-msg-label{font-size:10px;color:var(--t4);margin-bottom:4px;font-weight:500}
+.bb-msg.user .bb-msg-label{text-align:right}
+
+/* AI Recipe Cards in Chat */
+.bb-recipe-cards{display:flex;gap:10px;margin-top:8px;overflow-x:auto;padding-bottom:4px}
+.bb-rc{width:160px;min-width:160px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.25s;flex-shrink:0}
+.bb-rc:active{transform:scale(0.97)}
+.bb-rc-hero{height:100px;background:linear-gradient(160deg,var(--s2),var(--s1));display:flex;align-items:center;justify-content:center}
+.bb-rc-hero svg{width:32px;height:32px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.15}
+.bb-rc-body{padding:14px 16px 16px}
+.bb-rc-body h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.bb-rc-body p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300}
+.bb-rc-body .bb-rc-craft{display:inline-block;margin-top:8px;padding:6px 14px;background:var(--gold);color:#000;border-radius:8px;font-size:11px;font-weight:600}
+
+/* Shimmer Loading */
+.bb-shimmer{width:260px;height:60px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:18px;border-bottom-left-radius:4px;padding:16px 20px;display:flex;gap:6px;align-items:center}
+.bb-shimmer .sh-dot{width:6px;height:6px;border-radius:50%;background:var(--t4)}
+.bb-shimmer .sh-dot:nth-child(1){animation:typingDot 1.4s ease infinite 0s}
+.bb-shimmer .sh-dot:nth-child(2){animation:typingDot 1.4s ease infinite 0.2s}
+.bb-shimmer .sh-dot:nth-child(3){animation:typingDot 1.4s ease infinite 0.4s}
+
+/* Chat Input */
+.bb-input-area{padding:10px 16px;display:flex;gap:6px;align-items:center}
+.bb-input{flex:1;display:flex;align-items:center;padding:6px 6px 6px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;height:52px}
+.bb-input span{flex:1;font-size:14px;color:var(--t4);font-weight:300}
+.bb-input-actions{display:flex;gap:4px;align-items:center}
+.bb-input-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;background:transparent;border:none}
+.bb-input-btn:hover{background:rgba(255,255,255,0.04)}
+.bb-input-btn svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.bb-input-btn.send-btn{background:var(--gold)}
+.bb-input-btn.send-btn svg{stroke:#000;width:16px;height:16px;stroke-width:2.5}
+
+/* Voice Recording Overlay */
+.bb-voice-overlay{position:absolute;inset:0;background:rgba(5,5,5,0.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.bb-voice-overlay.active{display:flex}
+.bb-voice-ring{width:160px;height:160px;border-radius:50%;border:1px solid rgba(200,169,126,0.2);display:flex;align-items:center;justify-content:center;animation:recordPulse 2s ease-in-out infinite}
+.bb-voice-ring svg{width:40px;height:40px;stroke:var(--gold);stroke-width:1.5;fill:none;stroke-linecap:round}
+.bb-voice-label{font-size:13px;color:var(--t2);margin-top:24px;font-weight:300}
+.bb-voice-transcript{font-size:18px;color:var(--t1);margin-top:12px;font-weight:400;max-width:400px}
+.bb-voice-cancel{margin-top:32px;font-size:13px;color:var(--t3);cursor:pointer;font-weight:400}
+
+/* ═══ 13. CONTROL ═══ */
+#control{background:var(--bg);flex-direction:column;padding:100px 20px 0;overflow:hidden}
+.ctrl-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px}
+.ctrl-header h1{font-size:26px;font-weight:200;letter-spacing:-0.5px}
+.ctrl-header h1 strong{font-weight:700}
+.ctrl-device-badge{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px}
+.ctrl-device-badge .cdb-dot{width:6px;height:6px;border-radius:50%;background:var(--success)}
+.ctrl-device-badge span{font-size:12px;color:var(--t2);font-weight:400}
+.ctrl-body{display:flex;flex-direction:column;gap:0;flex:1;min-height:0;padding-bottom:100px;overflow-y:auto}
+.ctrl-body::-webkit-scrollbar{display:none}
+.ctrl-stats-row{display:flex;gap:0;border-bottom:0.5px solid var(--border);margin:0 0 28px}
+.ctrl-hero-stat{flex:1;text-align:center;padding:16px 0 20px}
+.ctrl-hero-stat:not(:last-child){border-right:0.5px solid var(--border)}
+.ctrl-hero-val{font-size:24px;font-weight:200;color:var(--gold);letter-spacing:-1px}
+.ctrl-hero-label{font-size:10px;color:var(--t3);font-weight:400;margin-top:4px}
+.ctrl-section-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.ctrl-station{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:0.5px solid var(--border)}
+.ctrl-station:last-child{border-bottom:none;padding-bottom:0}
+.ctrl-station-num{width:28px;height:28px;border-radius:7px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--t3);flex-shrink:0}
+.ctrl-station-info{flex:1;min-width:0}
+.ctrl-station-info h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.ctrl-station-info p{font-size:10px;color:var(--t4);margin-top:2px;font-weight:300}
+.ctrl-station-level{width:44px;height:3px;border-radius:2px;background:var(--s2);overflow:hidden;flex-shrink:0}
+.ctrl-station-level .fill{height:100%;border-radius:2px;background:var(--gold)}
+
+
+/* Error state */
+.bb-msg.error .bb-bubble{border-color:var(--error);position:relative}
+.bb-msg.error .bb-error-badge{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--error);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.bb-msg.error .bb-retry{font-size:11px;color:var(--error);margin-top:6px;cursor:pointer;font-weight:500}
+/* Cancel stream */
+.bb-cancel-stream{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(160,114,114,0.1);border:0.5px solid rgba(160,114,114,0.2);border-radius:100px;font-size:11px;color:var(--error);cursor:pointer;margin-top:8px;font-weight:500;animation:fadeIn 0.3s ease;align-self:flex-start}
+/* Hardware confirmation */
+.bb-hw-confirm{background:var(--glass);border:0.5px solid rgba(200,169,126,0.15);border-radius:16px;padding:20px;margin-top:8px;animation:slideUp 0.4s ease}
+.bb-hw-confirm h4{font-size:15px;font-weight:600;margin-bottom:4px}
+.bb-hw-confirm p{font-size:12px;color:var(--t3);margin-bottom:14px;font-weight:300}
+.bb-hw-actions{display:flex;gap:8px}
+.bb-hw-actions button{padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:transform 0.2s}
+.bb-hw-actions button:active{transform:scale(0.97)}
+.bb-hw-actions .hw-confirm{background:var(--gold);color:#000}
+.bb-hw-actions .hw-cancel{background:var(--glass);color:var(--t2);border:0.5px solid var(--glass-b)}
+/* Bookmark on recipe cards */
+.bb-rc-hero{position:relative}
+.bb-rc-bookmark{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;z-index:2}
+.bb-rc-bookmark svg{width:14px;height:14px;stroke:var(--gold-l);stroke-width:1.5;fill:none}
+.bb-rc-bookmark.saved svg{fill:var(--gold)}
+/* Send disabled */
+.bb-input-btn.send-btn.disabled{opacity:0.3;pointer-events:none}
+
+/* Toast */
+.toast{position:absolute;top:52px;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(200,169,126,0.15);border:0.5px solid rgba(200,169,126,0.18);border-radius:14px;padding:10px 24px;z-index:500;font-size:13px;color:var(--gold-l);font-weight:500;white-space:nowrap;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+  <div class="status-bar"><span>9:41</span><div class="status-icons"><svg viewBox="0 0 16 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="white" stroke-opacity="0.35"/><rect x="22.5" y="3.5" width="2" height="5" rx="0.5" fill="white" fill-opacity="0.3"/><rect x="2" y="2" width="18" height="8" rx="1" fill="white"/></svg></div></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- 1. SPLASH -->
+  <div class="screen active" id="splash">
+    <div class="splash-logo">BARSYS</div>
+    <div class="splash-dot"></div>
+  </div>
+
+  <!-- 2. ONBOARDING -->
+  <div class="screen" id="onboarding">
+    <div class="ob-glow"></div><div class="ob-orb"></div>
+    <div class="ob-center">
+      <div class="ob-eyebrow">Welcome to</div>
+      <div class="ob-title">Your next drink<br>should make you<br><em>feel something.</em></div>
+      <p class="ob-sub">Not a recipe app. A moment machine.<br>Tell us the occasion — we'll handle the rest.</p>
+      <button class="ob-cta" onclick="goTo('mood')">What's the occasion?</button>
+      <div class="ob-skip" onclick="goTo('mood')">Skip intro</div>
+      <div class="ob-dots"><div class="active"></div><div></div><div></div></div>
+    </div>
+  </div>
+
+  <!-- 3. MOOD -->
+  <div class="screen" id="mood">
+    <div class="mood-header">
+      <div class="mood-greet">Good evening,</div>
+      <div class="mood-q">What's the <strong>occasion?</strong></div>
+    </div>
+    <div class="mood-grid">
+      <div class="mood-card unwind" onclick="selectMood('unwind')"><div class="mc-line"></div><h3>Unwind</h3><p>Smooth & slow</p></div>
+      <div class="mood-card celebrate" onclick="selectMood('celebrate')"><div class="mc-line"></div><h3>Celebrate</h3><p>Bold & bright</p></div>
+      <div class="mood-card impress" onclick="selectMood('impress')"><div class="mc-line"></div><h3>Impress</h3><p>Date night</p></div>
+      <div class="mood-card explore" onclick="selectMood('explore')"><div class="mc-line"></div><h3>Explore</h3><p>Surprise me</p></div>
+    </div>
+    <div class="mood-bottom">
+      <div class="trending-pill" onclick="goTo('detail')">
+        <div class="t-icon"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div>
+        <div><h4>Espresso Martini</h4><p>Most crafted this week</p></div>
+      </div>
+      <div class="prompt-bar"><span>What are you in the mood for?</span><div class="send"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div></div>
+    </div>
+  </div>
+
+  <!-- 4. STREAM -->
+  <div class="screen" id="stream">
+    <div class="stream-head">
+      <div class="stream-mood-tag" id="stream-tag"><div class="dot" style="background:var(--unwind)"></div>Unwind</div>
+      <div class="stream-title" id="stream-title">Time to <strong>unwind.</strong></div>
+      <p class="stream-sub" id="stream-sub">BarBot picked these just for you. Aged spirits, low-proof sips — drinks meant to be nursed.</p>
+    </div>
+    <div class="recipe-grid">
+      <div class="recipe-card" onclick="goTo('detail')"><div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div><div class="rc-body"><h3>Old Fashioned</h3><div class="rc-desc">Born in 1806. Still the king.</div><div class="rc-tags"><span class="rc-tag">Bourbon</span><span class="rc-tag">Classic</span><span class="rc-tag">Strong</span></div><div class="rc-meta"><span>4 ingredients</span><span>45 seconds</span></div></div></div>
+      <div class="recipe-card" onclick="goTo('detail')"><div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div><div class="rc-body"><h3>Whiskey Sour</h3><div class="rc-desc">Citrus takes the edge off.</div><div class="rc-tags"><span class="rc-tag">Whiskey</span><span class="rc-tag">Citrus</span></div><div class="rc-meta"><span>5 ingredients</span><span>50 seconds</span></div></div></div>
+      <div class="recipe-card" onclick="goTo('detail')"><div class="rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/></svg></div><div class="rc-body"><h3>Penicillin</h3><div class="rc-desc">Scotch, honey, ginger. Medicine.</div><div class="rc-tags"><span class="rc-tag">Scotch</span><span class="rc-tag">Honey</span></div><div class="rc-meta"><span>5 ingredients</span><span>55 seconds</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- 5. DETAIL -->
+  <div class="screen" id="detail">
+    <div class="det-visual">
+      <div class="det-nav"><svg viewBox="0 0 24 24" onclick="goBack()"><polyline points="15 18 9 12 15 6"/></svg><span class="det-save" onclick="showToast('Saved to favorites')">Save</span></div>
+      <svg class="det-icon" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/><path d="M8 22h8"/><path d="M10 18h4"/></svg>
+    </div>
+    <div class="det-info">
+      <h1>Old Fashioned</h1>
+      <div class="det-lore">Born in 1806. Survived Prohibition.<br>Still the most ordered cocktail on earth.</div>
+      <div class="det-tags"><span class="det-tag">Bourbon</span><span class="det-tag">Classic</span><span class="det-tag">Strong</span></div>
+      <div class="det-sect-label">Ingredients</div>
+      <div class="det-ing"><div class="dot"></div>Bourbon — 60ml</div>
+      <div class="det-ing"><div class="dot"></div>Sugar cube — 1</div>
+      <div class="det-ing"><div class="dot"></div>Angostura bitters — 2 dashes</div>
+      <div class="det-ing"><div class="dot"></div>Orange peel</div>
+      <div class="det-sect-label" style="margin-top:20px">The Story</div>
+      <p class="det-story">The drink that started it all. When bartenders first began mixing spirits with sugar and bitters in the early 1800s, there was no name for it — it was just a cocktail. When newer, fancier recipes emerged, purists asked for their drinks made "the old-fashioned way."</p>
+      <div class="det-craft-btn"><button onclick="isLoggedIn?goTo('crafting'):goTo('auth')">Craft This Cocktail</button></div>
+    </div>
+  </div>
+
+  <!-- 6. AUTH -->
+  <div class="screen" id="auth">
+    <div class="auth-content">
+      <div class="auth-logo">BARSYS</div><div class="auth-dot"></div>
+      <div class="auth-title">Join the<br><strong>ritual.</strong></div>
+      <p class="auth-sub">One tap. Then we'll craft your<br>Old Fashioned in 45 seconds.</p>
+      <div class="auth-buttons">
+        <button class="auth-btn apple" onclick="doAuth()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Continue with Apple</button>
+        <button class="auth-btn google" onclick="doAuth()"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continue with Google</button>
+        <button class="auth-btn phone" onclick="doAuth()"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Sign in with Phone</button>
+      </div>
+    </div>
+    <div class="auth-later" onclick="goTo('home')">Maybe later</div>
+  </div>
+
+  <!-- 7. WELCOME -->
+  <div class="screen" id="welcome">
+    <div class="welcome-text">
+      <div class="welcome-greet">Welcome back,</div>
+      <div class="welcome-name">Akshet.</div>
+      <div class="welcome-line"></div>
+      <div class="welcome-sub">Let's make tonight matter.</div>
+    </div>
+  </div>
+
+  <!-- 8. HOME -->
+  <div class="screen" id="home">
+    <div class="home-header">
+      <div class="home-header-left"><div class="home-greet">Good evening, Akshet</div><div class="home-title">What are we <strong>making tonight?</strong></div></div>
+      <div class="home-header-right"><div class="home-avatar">A</div></div>
+    </div>
+    <div class="home-body">
+      <div class="pro-card ai-card" onclick="goTo('barbot')"><div class="pc-label">BarBot AI</div><h3>You left bourbon out last night.</h3><p>I can make a Boulevardier with what's loaded. Want me to try something new?</p><div class="pc-action">Ask BarBot →</div></div>
+      <div class="pro-card gold" onclick="goTo('mood')"><div class="pc-label">Tonight's mood</div><h3>Set the occasion</h3><p>Tell us what's happening tonight and we'll curate the perfect cocktail menu.</p><div class="pc-action">Choose mood →</div></div>
+      <div class="home-popular">
+        <div class="feat-label">Popular tonight</div>
+        <div class="feat-item" onclick="goTo('detail')"><div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="feat-info"><h4>Espresso Martini</h4><p>Coffee · Vodka · No sleep tonight</p></div><button class="feat-craft" onclick="event.stopPropagation();isLoggedIn?goTo('crafting'):goTo('detail')">Craft</button></div>
+        <div class="feat-item" onclick="goTo('detail')"><div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="feat-info"><h4>Negroni</h4><p>Campari · Gin · Confidence</p></div><button class="feat-craft" onclick="event.stopPropagation();isLoggedIn?goTo('crafting'):goTo('detail')">Craft</button></div>
+        <div class="feat-item" onclick="goTo('detail')"><div class="feat-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="feat-info"><h4>French 75</h4><p>Champagne · Reckless · Perfect</p></div><button class="feat-craft" onclick="event.stopPropagation();isLoggedIn?goTo('crafting'):goTo('detail')">Craft</button></div>
+      </div>
+    </div>
+    <div class="ctx-bar">
+      <div class="ctx-bar-inner">
+        <div class="ctx-nav">
+          <div class="ctx-tab active" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+          <div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="ctx-tab" onclick="goTo('barbot')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div class="ctx-tab" onclick="goTo('control')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        </div>
+        <div class="ctx-actions">
+          <div class="ctx-action" onclick="goTo('mood')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>Set mood</div>
+          <div class="ctx-action" onclick="goTo('barbot')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Ask BarBot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. CRAFTING -->
+  <div class="screen" id="crafting">
+    <div class="craft-content">
+      <div class="craft-status">Crafting</div>
+      <div class="craft-name">Old Fashioned</div>
+      <div class="craft-ring">
+        <svg viewBox="0 0 240 240"><circle cx="120" cy="120" r="108" class="bg"/><circle cx="120" cy="120" r="108" class="progress" id="craftProgress" style="stroke-dashoffset:678"/></svg>
+        <div class="craft-pct"><span id="craftPct">0</span><span class="pct-sign">%</span></div>
+      </div>
+      <div class="craft-step" id="craftStep">Dispensing bourbon...</div>
+      <div class="craft-step-detail">
+        <div class="csd active" id="csd1"><div class="csd-dot"></div><span>Pour</span></div>
+        <div class="csd" id="csd2"><div class="csd-dot"></div><span>Mix</span></div>
+        <div class="csd" id="csd3"><div class="csd-dot"></div><span>Stir</span></div>
+        <div class="csd" id="csd4"><div class="csd-dot"></div><span>Finish</span></div>
+      </div>
+      <div class="craft-glass"><div class="cg-dot"></div><span>Glass detected</span></div>
+    </div>
+  </div>
+
+  <!-- 10. CHEERS -->
+  <div class="screen" id="cheers">
+    <div class="cheers-sparkle" id="cheersSparkle"></div>
+    <div class="cheers-center">
+      <div class="cheers-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <div class="cheers-label">Cheers</div>
+      <div class="cheers-name">Old Fashioned</div>
+      <div class="cheers-sub">Crafted just for you.</div>
+      <div class="cheers-divider"></div>
+      <div class="cheers-sections">
+        <div class="cheers-section"><div class="cheers-sect-label">Garnish</div><div class="cheers-sect-text">Express an orange peel over the glass. Let the oils catch the light.</div></div>
+        <div class="cheers-section"><div class="cheers-sect-label">Tasting Note</div><div class="cheers-sect-text">Warm oak and vanilla up front. A whisper of citrus. Finishes like a good conversation.</div></div>
+      </div>
+      <button class="cheers-btn" onclick="goTo('home')">Make Another</button>
+    </div>
+  </div>
+
+  <!-- 11. DISCOVER -->
+  <div class="screen" id="discover">
+    <div class="disc-top">
+      <div class="disc-header">
+        <h1><strong>Discover</strong></h1>
+        <div class="disc-count"><span id="discCount">10,247</span> recipes</div>
+      </div>
+      <div class="disc-search-bar">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="discSearch" placeholder="Search 10,000+ cocktails, spirits, flavors..." oninput="filterDiscover()">
+        <div class="disc-search-clear" id="discClear" onclick="clearDiscSearch()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="disc-filters" id="discFilters">
+        <div class="disc-filter active" data-filter="all">All</div>
+        <div class="disc-filter" data-filter="spirit"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg>Spirit</div>
+        <div class="disc-filter" data-filter="occasion"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Occasion</div>
+        <div class="disc-filter" data-filter="flavor"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>Flavor</div>
+        <div class="disc-filter" data-filter="quick"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Under 60s</div>
+        <div class="disc-filter" data-filter="available"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Can Make Now</div>
+        <div class="disc-filter" data-filter="trending"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>Trending</div>
+        <div class="disc-filter" data-filter="new"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>New</div>
+      </div>
+    </div>
+    <div class="disc-body" id="discBody">
+      <div class="disc-section-label">Curated for you<span class="disc-see-all">See all</span></div>
+      <div class="disc-carousel">
+        <div class="disc-ccard" onclick="goTo('detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Paper Plane</h4><p>Equal parts perfection</p><div class="disc-ccard-tags"><span class="disc-ccard-tag">Bourbon</span><span class="disc-ccard-tag">Aperol</span></div></div></div>
+        <div class="disc-ccard" onclick="goTo('detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Penicillin</h4><p>Scotch meets ginger</p><div class="disc-ccard-tags"><span class="disc-ccard-tag">Scotch</span><span class="disc-ccard-tag">Honey</span></div></div></div>
+        <div class="disc-ccard" onclick="goTo('detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Last Word</h4><p>Green chartreuse magic</p><div class="disc-ccard-tags"><span class="disc-ccard-tag">Gin</span><span class="disc-ccard-tag">Herbal</span></div></div></div>
+        <div class="disc-ccard" onclick="goTo('detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Jungle Bird</h4><p>Tiki meets Campari</p><div class="disc-ccard-tags"><span class="disc-ccard-tag">Rum</span><span class="disc-ccard-tag">Tropical</span></div></div></div>
+        <div class="disc-ccard" onclick="goTo('detail')"><div class="disc-ccard-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-ccard-body"><h4>Gold Rush</h4><p>Honey bourbon sour</p><div class="disc-ccard-tags"><span class="disc-ccard-tag">Bourbon</span><span class="disc-ccard-tag">Honey</span></div></div></div>
+      </div>
+
+      <div class="disc-section-label">Popular tonight<span class="disc-see-all">See all</span></div>
+      <div class="disc-grid" id="discGrid">
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Espresso Martini</h4><p>Vodka · Coffee liqueur · Espresso</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">40s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Negroni</h4><p>Gin · Campari · Sweet vermouth</p></div><div class="disc-item-meta"><div class="dim-diff">Classic</div><div class="dim-time">35s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Old Fashioned</h4><p>Bourbon · Sugar · Angostura bitters</p></div><div class="disc-item-meta"><div class="dim-diff">Classic</div><div class="dim-time">45s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Daiquiri</h4><p>White rum · Lime · Simple syrup</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">30s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Manhattan</h4><p>Rye · Sweet vermouth · Bitters</p></div><div class="disc-item-meta"><div class="dim-diff">Classic</div><div class="dim-time">40s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Boulevardier</h4><p>Bourbon · Campari · Sweet vermouth</p></div><div class="disc-item-meta"><div class="dim-diff">Medium</div><div class="dim-time">45s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Whiskey Sour</h4><p>Bourbon · Lemon · Egg white · Syrup</p></div><div class="disc-item-meta"><div class="dim-diff">Medium</div><div class="dim-time">50s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Margarita</h4><p>Tequila · Lime · Triple sec</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">35s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>French 75</h4><p>Gin · Champagne · Lemon · Sugar</p></div><div class="disc-item-meta"><div class="dim-diff">Medium</div><div class="dim-time">40s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Moscow Mule</h4><p>Vodka · Ginger beer · Lime</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">25s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Gin & Tonic</h4><p>Gin · Tonic water · Lime</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">20s</div></div></div>
+        <div class="disc-item" onclick="goTo('detail')"><div class="disc-item-thumb"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg></div><div class="disc-item-info"><h4>Mojito</h4><p>White rum · Mint · Lime · Soda</p></div><div class="disc-item-meta"><div class="dim-diff">Easy</div><div class="dim-time">45s</div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar" id="ctxDiscover">
+      <div class="ctx-bar-inner">
+        <div class="ctx-nav">
+          <div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="ctx-tab active" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Discover</span></div>
+          <div class="ctx-tab" onclick="goTo('barbot')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div class="ctx-tab" onclick="goTo('control')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        </div>
+        <div class="ctx-actions">
+          <div class="ctx-action" onclick="showToast('Shuffle: Surprise cocktail selected')"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>Surprise me</div>
+          <div class="ctx-action" onclick="showToast('Sorting by popularity')"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/></svg>Sort</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. BARBOT CHAT -->
+  <div class="screen" id="barbot">
+    <div class="bb-header">
+      <div class="bb-header-left"><h1>Bar<strong>Bot</strong></h1><p>Your confidant.</p></div>
+      <button class="bb-new-chat" onclick="newChat()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Chat</button>
+    </div>
+    <div class="bb-body">
+      <div class="bb-sidebar">
+        <div class="bb-sidebar-label">Today</div>
+        <div class="bb-conv active" onclick="goTo('barbot')"><h4>Bourbon recommendations</h4><p>Based on what's loaded in Station A...</p><div class="bb-conv-time">2 min ago</div></div>
+        <div class="bb-conv"><h4>Dinner party menu</h4><p>Here are 3 cocktails that pair with...</p><div class="bb-conv-time">Yesterday</div></div>
+        <div class="bb-sidebar-label" style="margin-top:16px">This week</div>
+        <div class="bb-conv"><h4>Clean Station B</h4><p>Station B has been cleaned and...</p><div class="bb-conv-time">2 days ago</div></div>
+        <div class="bb-conv"><h4>What can I make?</h4><p>With what's loaded, you can make...</p><div class="bb-conv-time">3 days ago</div></div>
+      </div>
+      <div class="bb-chat">
+        <div class="bb-messages" id="bbMessages">
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">I noticed you've got <strong>Maker's Mark</strong> in Station A and <strong>Angostura</strong> in Station C. You're 30 seconds away from an Old Fashioned. Want me to craft one, or are you feeling something different tonight?</div></div>
+          <div class="bb-msg user"><div class="bb-msg-label">You</div><div class="bb-bubble">What else can I make with what's loaded?</div></div>
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">With your current stations, here are my top picks:</div>
+            <div class="bb-recipe-cards">
+              <div class="bb-rc" onclick="goTo('detail')"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div class="bb-rc-bookmark" onclick="event.stopPropagation();toggleBookmark(this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div><div class="bb-rc-body"><h4>Old Fashioned</h4><p>45 sec · 4 ingredients</p><div class="bb-rc-craft" onclick="event.stopPropagation();goTo('crafting')">Craft</div></div></div>
+              <div class="bb-rc" onclick="goTo('detail')"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div class="bb-rc-bookmark" onclick="event.stopPropagation();toggleBookmark(this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div><div class="bb-rc-body"><h4>Whiskey Sour</h4><p>50 sec · 5 ingredients</p><div class="bb-rc-craft" onclick="event.stopPropagation();goTo('crafting')">Craft</div></div></div>
+              <div class="bb-rc" onclick="goTo('detail')"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div class="bb-rc-bookmark" onclick="event.stopPropagation();toggleBookmark(this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div><div class="bb-rc-body"><h4>Boulevardier</h4><p>40 sec · 3 ingredients</p><div class="bb-rc-craft" onclick="event.stopPropagation();goTo('crafting')">Craft</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="bb-input-area">
+          <div class="bb-input">
+            <input type="text" id="bbInput" placeholder="Ask BarBot anything..." onkeydown="if(event.key==='Enter')sendMessage()" oninput="updateSendBtn()" style="flex:1;font-size:14px;color:var(--t1);font-weight:300;background:transparent;border:none;outline:none;font-family:inherit">
+            <div class="bb-input-actions">
+              <div class="bb-input-btn" onclick="toggleVoice()"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+              <div class="bb-input-btn" onclick="showToast('Camera opening...')"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+              <div class="bb-input-btn send-btn" id="bbSendBtn" onclick="sendMessage()"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Voice Overlay -->
+    <div class="bb-voice-overlay" id="voiceOverlay">
+      <div class="bb-voice-ring"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg></div>
+      <div class="bb-voice-label">Listening...</div>
+      <div class="bb-voice-transcript" id="voiceTranscript"></div>
+      <div class="bb-voice-cancel" onclick="toggleVoice()">Tap to cancel</div>
+    </div>
+    <div class="ctx-bar">
+      <div class="ctx-bar-inner">
+        <div class="ctx-nav">
+          <div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="ctx-tab active" onclick="goTo('barbot')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>BarBot</span></div>
+          <div class="ctx-tab" onclick="goTo('control')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        </div>
+        <div class="ctx-actions">
+          <div class="ctx-action" onclick="toggleVoice()"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div>
+          <div class="ctx-action" onclick="showToast('Camera opening...')"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13. CONTROL -->
+  <div class="screen" id="control">
+    <div class="ctrl-header">
+      <h1><strong>Control</strong></h1>
+      <div class="ctrl-device-badge"><div class="cdb-dot"></div><span>BarBot Elite · Connected</span></div>
+    </div>
+    <div class="ctrl-body">
+      <div class="ctrl-stats-row">
+        <div class="ctrl-hero-stat"><div class="ctrl-hero-val">4°C</div><div class="ctrl-hero-label">Temperature</div></div>
+        <div class="ctrl-hero-stat"><div class="ctrl-hero-val">47</div><div class="ctrl-hero-label">Crafted this month</div></div>
+        <div class="ctrl-hero-stat"><div class="ctrl-hero-val">2d</div><div class="ctrl-hero-label">Since last clean</div></div>
+      </div>
+      <div class="ctrl-section-label">Stations</div>
+      <div class="ctrl-station"><div class="ctrl-station-num">A</div><div class="ctrl-station-info"><h4>Maker's Mark</h4><p>Bourbon · 3 days ago</p></div><div class="ctrl-station-level"><div class="fill" style="width:72%"></div></div></div>
+      <div class="ctrl-station"><div class="ctrl-station-num">B</div><div class="ctrl-station-info"><h4>Campari</h4><p>Bitter · 5 days ago</p></div><div class="ctrl-station-level"><div class="fill" style="width:45%"></div></div></div>
+      <div class="ctrl-station"><div class="ctrl-station-num">C</div><div class="ctrl-station-info"><h4>Angostura</h4><p>Bitters · 2 weeks ago</p></div><div class="ctrl-station-level"><div class="fill" style="width:88%"></div></div></div>
+      <div class="ctrl-station"><div class="ctrl-station-num">D</div><div class="ctrl-station-info"><h4>Sweet Vermouth</h4><p>Fortified · 4 days ago</p></div><div class="ctrl-station-level"><div class="fill" style="width:60%"></div></div></div>
+      <div class="ctrl-station"><div class="ctrl-station-num">E</div><div class="ctrl-station-info"><h4>Simple Syrup</h4><p>Sweetener · 1 week ago</p></div><div class="ctrl-station-level"><div class="fill" style="width:35%"></div></div></div>
+      <div class="ctrl-station"><div class="ctrl-station-num">F</div><div class="ctrl-station-info"><h4>Empty</h4><p>Tap to assign</p></div><div class="ctrl-station-level"><div class="fill" style="width:0%"></div></div></div>
+    </div>
+    <div class="ctx-bar">
+      <div class="ctx-bar-inner">
+        <div class="ctx-nav">
+          <div class="ctx-tab" onclick="goTo('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="ctx-tab" onclick="goTo('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="ctx-tab" onclick="goTo('barbot')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div class="ctx-tab active" onclick="goTo('control')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Control</span></div>
+        </div>
+        <div class="ctx-actions">
+          <div class="ctx-action" onclick="showToast('Cleaning cycle started')"><svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>Clean</div>
+          <div class="ctx-action" onclick="showToast('Calibrating...')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Calibrate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentScreen='splash',navHistory=[],isLoggedIn=false;
+const tabScreens=['home','discover','barbot','control'];
+
+function goTo(id){
+  if(currentScreen===id)return;
+  navHistory.push(currentScreen);
+  document.getElementById(currentScreen).classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  currentScreen=id;
+  if(id==='crafting')startCrafting();
+}
+function goBack(){if(!navHistory.length)return;const p=navHistory.pop();document.getElementById(currentScreen).classList.remove('active');document.getElementById(p).classList.add('active');currentScreen=p}
+function haptic(el){el.classList.add('haptic');setTimeout(()=>el.classList.remove('haptic'),160)}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function doAuth(){isLoggedIn=true;goTo('welcome');setTimeout(()=>goTo('home'),2500)}
+
+setTimeout(()=>goTo('onboarding'),2200);
+
+function selectMood(m){
+  document.querySelectorAll('.mood-card').forEach(c=>c.classList.remove('selected'));
+  const card=document.querySelector('.mood-card.'+m);if(card){card.classList.add('selected');haptic(card)}
+  const n={unwind:'Unwind',celebrate:'Celebrate',impress:'Impress',explore:'Explore'};
+  const t={unwind:'Time to <strong>unwind.</strong>',celebrate:"Let's <strong>celebrate.</strong>",impress:'Time to <strong>impress.</strong>',explore:"Let's <strong>explore.</strong>"};
+  const s={unwind:'BarBot picked these just for you. Aged spirits, low-proof sips — drinks meant to be nursed.',celebrate:'BarBot knows this energy. Sparkling, citrusy, dangerously easy to drink.',impress:'BarBot went sophisticated. Bitter aperitifs, complex stirred cocktails, drinks that look devastating.',explore:'BarBot went off-script. Unusual ingredients, impossible pairings, drinks that scare you a little.'};
+  const c={unwind:'var(--unwind)',celebrate:'var(--celebrate)',impress:'var(--impress)',explore:'var(--explore)'};
+  document.getElementById('stream-tag').innerHTML=`<div class="dot" style="background:${c[m]}"></div>${n[m]}`;
+  document.getElementById('stream-title').innerHTML=t[m];document.getElementById('stream-sub').textContent=s[m];
+  setTimeout(()=>goTo('stream'),350);
+}
+
+function startCrafting(){
+  let pct=0;const ring=document.getElementById('craftProgress'),pctEl=document.getElementById('craftPct'),stepEl=document.getElementById('craftStep');
+  const steps=[{at:0,text:'Dispensing bourbon...',a:1},{at:25,text:'Adding sugar & bitters...',a:2},{at:55,text:'Stirring over ice...',a:3},{at:85,text:'Finishing touches...',a:4}];let si=0;
+  for(let i=1;i<=4;i++){const el=document.getElementById('csd'+i);el.classList.remove('active');if(i===1)el.classList.add('active')}stepEl.textContent=steps[0].text;
+  const iv=setInterval(()=>{pct++;pctEl.textContent=pct;ring.style.strokeDashoffset=678-(678*pct/100);
+    if(si<steps.length-1&&pct>=steps[si+1].at){si++;stepEl.style.opacity='0';setTimeout(()=>{stepEl.textContent=steps[si].text;stepEl.style.opacity='1'},200);for(let i=1;i<=4;i++)document.getElementById('csd'+i).classList.toggle('active',i<=steps[si].a)}
+    if(pct>=100){clearInterval(iv);setTimeout(()=>{goTo('cheers');spawnSparkles()},600)}
+  },38);
+}
+
+function spawnSparkles(){const c=document.getElementById('cheersSparkle');c.innerHTML='';for(let i=0;i<30;i++){const sp=document.createElement('div');sp.className='sp';sp.style.left=Math.random()*100+'%';sp.style.bottom=Math.random()*40+'%';sp.style.animationDelay=(Math.random()*3)+'s';sp.style.animationDuration=(2.5+Math.random()*2.5)+'s';c.appendChild(sp)}}
+
+// BarBot Chat functions
+let streamTimeout=null;
+const demoResponses=[
+  'Great choice. With <strong>steak</strong>, you want something that stands up to the richness. A <strong>Boulevardier</strong> would be perfect — it\'s got the bitterness to cut through fat and enough warmth to complement the char. Want me to craft one?',
+  'Based on your stations, I\'d suggest a <strong>Manhattan</strong>. The rye and vermouth you\'ve got are a perfect match. Dry and bold — exactly what you need.',
+  'I\'d go with an <strong>Espresso Martini</strong> to end the night. It\'s got enough kick to keep the conversation going.',
+  'How about a <strong>Penicillin</strong>? Scotch, honey, ginger — it\'s like medicine for the soul. I can make it with the Maker\'s Mark if you want a bourbon twist.'
+];
+let demoIdx=0;
+
+function sendMessage(){
+  const input=document.getElementById('bbInput');
+  const text=input.value.trim();
+  if(!text){sendDemoMessage();return}
+  addMessage('user',text);
+  input.value='';
+  updateSendBtn();
+  setTimeout(()=>addAIResponse(),800);
+}
+function sendDemoMessage(){
+  addMessage('user','What pairs well with steak tonight?');
+  setTimeout(()=>addAIResponse(),800);
+}
+function updateSendBtn(){
+  const btn=document.getElementById('bbSendBtn');
+  const input=document.getElementById('bbInput');
+  if(!btn||!input)return;
+  if(input.value.trim())btn.classList.remove('disabled');
+  else btn.classList.add('disabled');
+}
+function toggleVoice(){
+  const ov=document.getElementById('voiceOverlay');
+  if(ov.classList.contains('active')){ov.classList.remove('active')}
+  else{ov.classList.add('active');simulateVoice()}
+}
+function simulateVoice(){
+  const tr=document.getElementById('voiceTranscript');
+  const words=['Make','me','something','with','bourbon...'];
+  let i=0;tr.textContent='';
+  const iv=setInterval(()=>{if(i>=words.length){clearInterval(iv);setTimeout(()=>{toggleVoice();addMessage('user','Make me something with bourbon');setTimeout(()=>addAIResponse(),800)},600);return}
+    tr.textContent+=(i>0?' ':'')+words[i];i++;
+  },400);
+}
+function newChat(){
+  document.getElementById('bbMessages').innerHTML='';
+  addMessage('ai','Hey Akshet. What are we making tonight?');
+}
+function addMessage(type,text){
+  const m=document.createElement('div');m.className='bb-msg '+type;
+  m.innerHTML='<div class="bb-msg-label">'+(type==='ai'?'BarBot':'You')+'</div><div class="bb-bubble">'+text+'</div>';
+  document.getElementById('bbMessages').appendChild(m);
+  document.getElementById('bbMessages').scrollTop=999999;
+}
+function addAIResponse(){
+  const msgs=document.getElementById('bbMessages');
+  const m=document.createElement('div');m.className='bb-msg ai';
+  m.innerHTML='<div class="bb-msg-label">BarBot</div><div class="bb-shimmer"><div class="sh-dot"></div><div class="sh-dot"></div><div class="sh-dot"></div></div>';
+  const cancel=document.createElement('div');
+  cancel.className='bb-cancel-stream';
+  cancel.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Stop generating';
+  cancel.onclick=function(){cancelStream(m,cancel)};
+  msgs.appendChild(m);msgs.appendChild(cancel);
+  msgs.scrollTop=999999;
+  streamTimeout=setTimeout(()=>{
+    cancel.remove();
+    const resp=demoResponses[demoIdx%demoResponses.length];demoIdx++;
+    m.innerHTML='<div class="bb-msg-label">BarBot</div><div class="bb-bubble">'+resp+'</div>';
+    msgs.scrollTop=999999;
+  },2500);
+}
+function cancelStream(msgEl,cancelEl){
+  if(streamTimeout)clearTimeout(streamTimeout);
+  cancelEl.remove();
+  msgEl.innerHTML='<div class="bb-msg-label">BarBot</div><div class="bb-bubble" style="color:var(--t3);font-style:italic">Stream cancelled.</div>';
+  document.getElementById('bbMessages').scrollTop=999999;
+}
+function showError(){
+  const m=document.createElement('div');m.className='bb-msg ai error';
+  m.innerHTML='<div class="bb-msg-label">BarBot</div><div class="bb-bubble" style="position:relative">Something went wrong.<div class="bb-error-badge">!</div></div><div class="bb-retry" onclick="retryMessage(this)">Tap to retry</div>';
+  document.getElementById('bbMessages').appendChild(m);
+  document.getElementById('bbMessages').scrollTop=999999;
+}
+function retryMessage(el){el.parentElement.remove();addAIResponse()}
+function showHardwareConfirm(){
+  addMessage('ai','I recommend cleaning <strong>Station B</strong>. The Campari has been sitting for 5 days. Shall I start a cleaning cycle?');
+  const hw=document.createElement('div');
+  hw.className='bb-hw-confirm';
+  hw.innerHTML='<h4>Clean Station B?</h4><p>This will run a 60-second cleaning cycle. Station B will be unavailable during this time.</p><div class="bb-hw-actions"><button class="hw-confirm" onclick="this.closest(\'.bb-hw-confirm\').remove();showToast(\'Cleaning Station B...\');addMessage(\'ai\',\'Station B cleaning started. I will let you know when it is done.\')">Confirm</button><button class="hw-cancel" onclick="this.closest(\'.bb-hw-confirm\').remove();addMessage(\'ai\',\'No problem. Let me know when you want to clean it.\')">Cancel</button></div>';
+  document.getElementById('bbMessages').appendChild(hw);
+  document.getElementById('bbMessages').scrollTop=999999;
+}
+function toggleBookmark(el){
+  el.classList.toggle('saved');
+  showToast(el.classList.contains('saved')?'Saved to AI Bookmarks':'Removed from bookmarks');
+}
+
+// Discover filter clicks
+document.querySelectorAll('.disc-filter').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.disc-filter').forEach(x=>x.classList.remove('active'));c.classList.add('active');filterDiscover()})});
+function filterDiscover(){
+  const q=(document.getElementById('discSearch')?.value||'').toLowerCase();
+  const cl=document.getElementById('discClear');
+  if(cl)cl.style.display=q?'flex':'none';
+  const items=document.querySelectorAll('#discGrid .disc-item');
+  let count=0;
+  items.forEach(i=>{
+    const txt=i.textContent.toLowerCase();
+    const show=!q||txt.includes(q);
+    i.style.display=show?'':'none';
+    if(show)count++;
+  });
+  const ce=document.getElementById('discCount');
+  if(ce)ce.textContent=q?count.toLocaleString():'10,247';
+}
+function clearDiscSearch(){
+  const s=document.getElementById('discSearch');
+  if(s){s.value='';filterDiscover();s.focus()}
+}
+
+// Haptics
+document.querySelectorAll('.ob-cta,.auth-btn,.cheers-btn,.feat-craft,.trending-pill,.pro-card,.mood-card,.bb-new-chat,.bb-rc,.ctrl-action').forEach(el=>{el.addEventListener('click',()=>haptic(el))});
+</script>
+</body>
+</html>

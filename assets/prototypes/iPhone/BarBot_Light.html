@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARSYS — BarBot AI · Light</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none}
+:root{
+  --bg:#FAFAF8;--s1:#F2F1EF;--s2:#E8E7E4;--s3:#D8D7D4;
+  --gold:#A68B5B;--gold-l:#C8A97E;--gold-d:rgba(200,169,126,0.08);
+  --t1:#1A1A1A;--t2:rgba(0,0,0,0.50);--t3:rgba(0,0,0,0.30);--t4:rgba(0,0,0,0.25);
+  --glass:rgba(0,0,0,0.035);--glass-b:rgba(0,0,0,0.08);
+  --border:rgba(0,0,0,0.08);
+  --unwind:#8A9490;--celebrate:#B8A67A;--impress:#9A7B7F;--explore:#7E8B96;
+  --success:#7A9A82;--warning:#B8A67A;--error:#A07272;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#E8E7E4;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;color:var(--t1)}
+
+.device{width:1194px;height:834px;background:var(--bg);border-radius:22px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,0.06),0 80px 200px rgba(0,0,0,0.15)}
+
+/* Status Bar */
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px 0;z-index:200;font-size:13px;font-weight:600}
+.status-icons{display:flex;gap:6px;align-items:center}
+.status-icons svg{width:auto;height:11px}
+
+/* Screens */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.5s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.screen.active{opacity:1;pointer-events:auto}
+
+/* Animations */
+@keyframes fadeScale{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.35}50%{transform:scale(1.05);opacity:0.65}}
+@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes orbFloat{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.02) translateY(-6px)}}
+@keyframes sparkleFloat{0%{opacity:0;transform:translateY(0) scale(0)}20%{opacity:0.6;transform:translateY(-80px) scale(1)}80%{opacity:0.15;transform:translateY(-200px) scale(0.3)}100%{opacity:0;transform:translateY(-260px) scale(0)}}
+@keyframes haptic{0%{transform:scale(1)}50%{transform:scale(0.97)}100%{transform:scale(1)}}
+@keyframes typingDot{0%,60%,100%{opacity:0.2;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,169,126,0.3)}50%{box-shadow:0 0 0 16px rgba(200,169,126,0)}}
+.haptic{animation:haptic 0.15s ease!important}
+
+/* ═══ 1. WELCOME ═══ */
+#screen-1{background:var(--bg);justify-content:flex-end;overflow:hidden}
+#screen-1::before{content:'';position:absolute;top:35%;right:15%;width:700px;height:600px;background:radial-gradient(ellipse at center,rgba(200,169,126,0.12) 0%,rgba(200,169,126,0.04) 30%,transparent 60%);animation:breathe 6s ease-in-out infinite;pointer-events:none}
+#screen-1::after{content:'';position:absolute;top:20%;right:25%;width:300px;height:300px;background:radial-gradient(circle,rgba(200,169,126,0.08) 0%,transparent 50%);animation:breathe 8s ease-in-out 2s infinite;pointer-events:none}
+.w-glow{position:absolute;top:50%;right:20%;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(200,169,126,0.06) 0%,transparent 70%);filter:blur(60px);animation:breathe 10s ease-in-out 1s infinite;pointer-events:none}
+.w-content{position:relative;z-index:5;padding:0 80px 100px;max-width:680px}
+.w-eyebrow{font-size:9px;letter-spacing:6px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:28px;opacity:0;animation:fadeUp 0.8s ease 0.2s forwards}
+.w-hero{font-size:54px;font-weight:200;line-height:1.12;letter-spacing:-1.5px;opacity:0;animation:fadeUp 0.9s ease 0.5s forwards}
+.w-hero em{font-style:italic;color:var(--gold);font-weight:300}
+.w-divider{width:40px;height:1px;background:rgba(200,169,126,0.25);margin:32px 0;opacity:0;animation:fadeIn 0.6s ease 1.1s forwards}
+.w-reveal{opacity:0;animation:fadeUp 0.8s ease 1.3s forwards}
+.w-reveal-name{font-size:28px;font-weight:200;letter-spacing:-0.5px}
+.w-reveal-name strong{font-weight:700}
+.w-reveal-desc{font-size:14px;color:var(--t3);font-weight:300;line-height:1.7;margin-top:10px;max-width:420px}
+.w-caps{display:flex;gap:8px;margin-top:28px;opacity:0;animation:fadeUp 0.8s ease 1.6s forwards}
+.w-cap{padding:7px 16px;border-radius:100px;font-size:11px;font-weight:500;border:0.5px solid var(--glass-b);color:var(--t3);background:var(--glass);display:flex;align-items:center;gap:6px}
+.w-cap svg{width:13px;height:13px;stroke:var(--gold);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.w-cta{padding:16px 48px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:32px;letter-spacing:-0.2px;transition:transform 0.2s,opacity 0.2s;opacity:0;animation:fadeUp 0.8s ease 1.9s forwards}
+.w-cta:active{transform:scale(0.97);opacity:0.9}
+.w-tagline{margin-top:16px;font-size:11px;color:var(--t4);letter-spacing:0.3px;font-style:italic;opacity:0;animation:fadeIn 0.8s ease 2.3s forwards}
+
+/* ═══ 2–7. BARBOT CHAT ═══ */
+.bb-header{padding:56px 64px 0;display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
+.bb-header-left h1{font-size:36px;font-weight:200;letter-spacing:-0.5px}
+.bb-header-left h1 strong{font-weight:700}
+.bb-header-left p{font-size:13px;color:var(--t3);font-weight:300;font-style:italic;margin-top:4px}
+.bb-new-chat{display:flex;align-items:center;gap:8px;padding:12px 24px;background:var(--gold);color:#000;border:none;border-radius:12px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform 0.2s}
+.bb-new-chat:active{transform:scale(0.97)}
+.bb-new-chat svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+.bb-body{flex:1;display:grid;grid-template-columns:320px 1fr;gap:0;min-height:0;padding:0 0 84px}
+.bb-sidebar{border-right:0.5px solid var(--border);padding:0 24px 0 64px;overflow-y:auto}
+.bb-sidebar::-webkit-scrollbar{display:none}
+.bb-sidebar-label{font-size:9px;letter-spacing:3px;color:var(--t4);font-weight:500;text-transform:uppercase;margin-bottom:12px;padding-top:4px}
+.bb-conv{padding:16px;border-radius:14px;cursor:pointer;transition:background 0.3s;margin-bottom:4px}
+.bb-conv:active,.bb-conv.active{background:var(--glass)}
+.bb-conv h4{font-size:14px;font-weight:600;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-conv p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-conv .bb-conv-time{font-size:10px;color:var(--t4);margin-top:4px}
+.bb-chat{display:flex;flex-direction:column;min-height:0}
+.bb-messages{flex:1;overflow-y:auto;padding:0 64px 20px 32px;display:flex;flex-direction:column;gap:16px}
+.bb-messages::-webkit-scrollbar{display:none}
+.bb-msg{max-width:580px;display:flex;flex-direction:column;animation:slideUp 0.4s ease}
+.bb-msg.user{align-self:flex-end}
+.bb-msg.ai{align-self:flex-start}
+.bb-msg .bb-bubble{padding:16px 20px;border-radius:18px;font-size:14px;line-height:1.7;font-weight:300}
+.bb-msg.user .bb-bubble{background:rgba(200,169,126,0.12);border:0.5px solid rgba(200,169,126,0.15);border-bottom-right-radius:4px;color:var(--t1)}
+.bb-msg.ai .bb-bubble{background:var(--glass);border:0.5px solid var(--glass-b);border-bottom-left-radius:4px;color:var(--t2)}
+.bb-msg.ai .bb-bubble strong{color:var(--t1);font-weight:600}
+.bb-msg-label{font-size:10px;color:var(--t4);margin-bottom:4px;font-weight:500}
+.bb-msg.user .bb-msg-label{text-align:right}
+
+/* Recipe Cards in Chat */
+.bb-recipe-cards{display:flex;gap:12px;margin-top:8px}
+.bb-rc{width:200px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.25s;flex-shrink:0}
+.bb-rc:active{transform:scale(0.97)}
+.bb-rc-hero{height:100px;background:linear-gradient(160deg,var(--s2),var(--s1));display:flex;align-items:center;justify-content:center;position:relative}
+.bb-rc-hero svg{width:32px;height:32px;stroke:var(--t4);stroke-width:0.8;fill:none;opacity:0.15}
+.bb-rc-body{padding:14px 16px 16px}
+.bb-rc-body h4{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.bb-rc-body p{font-size:11px;color:var(--t3);margin-top:3px;font-weight:300}
+.bb-rc-body .bb-rc-craft{display:inline-block;margin-top:8px;padding:6px 14px;background:var(--gold);color:#000;border-radius:8px;font-size:11px;font-weight:600}
+.bb-rc-bookmark{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.6);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;z-index:2}
+.bb-rc-bookmark svg{width:14px;height:14px;stroke:var(--gold-l);stroke-width:1.5;fill:none}
+.bb-rc-bookmark.saved svg{fill:var(--gold)}
+
+/* Shimmer */
+.bb-shimmer{width:260px;height:60px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:18px;border-bottom-left-radius:4px;padding:16px 20px;display:flex;gap:6px;align-items:center}
+.bb-shimmer .sh-dot{width:6px;height:6px;border-radius:50%;background:var(--t4)}
+.bb-shimmer .sh-dot:nth-child(1){animation:typingDot 1.4s ease infinite 0s}
+.bb-shimmer .sh-dot:nth-child(2){animation:typingDot 1.4s ease infinite 0.2s}
+.bb-shimmer .sh-dot:nth-child(3){animation:typingDot 1.4s ease infinite 0.4s}
+
+/* Chat Input */
+.bb-input-area{padding:12px 64px 12px 32px;display:flex;gap:8px;align-items:center}
+.bb-input{flex:1;display:flex;align-items:center;padding:6px 6px 6px 20px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:100px;height:52px}
+.bb-input span{flex:1;font-size:14px;color:var(--t4);font-weight:300}
+.bb-input-actions{display:flex;gap:4px;align-items:center}
+.bb-input-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;background:transparent;border:none}
+.bb-input-btn:hover{background:rgba(0,0,0,0.04)}
+.bb-input-btn svg{width:18px;height:18px;stroke:var(--t3);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.bb-input-btn.send-btn{background:var(--gold)}
+.bb-input-btn.send-btn svg{stroke:#000;width:16px;height:16px;stroke-width:2.5}
+
+/* Proactive Card */
+.bb-proactive{display:flex;align-items:center;justify-content:center;flex:1;padding:0 64px}
+.bb-pro-card{max-width:520px;width:100%;background:rgba(200,169,126,0.02);border:0.5px solid rgba(200,169,126,0.15);border-radius:20px;padding:32px;animation:slideUp 0.6s cubic-bezier(0.16,1,0.3,1)}
+.bb-pro-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(122,154,130,0.1);border:0.5px solid rgba(122,154,130,0.15);border-radius:100px;font-size:10px;color:var(--success);font-weight:500;margin-bottom:16px}
+.bb-pro-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulse 2s ease infinite}
+.bb-pro-text{font-size:15px;color:var(--t2);line-height:1.8;font-weight:300}
+.bb-pro-text strong{color:var(--t1);font-weight:600}
+.bb-pro-actions{display:flex;gap:10px;margin-top:20px}
+.bb-pro-btn{padding:12px 28px;border-radius:12px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:transform 0.2s}
+.bb-pro-btn:active{transform:scale(0.97)}
+.bb-pro-btn.gold{background:var(--gold);color:#000}
+.bb-pro-btn.glass{background:var(--glass);color:var(--t2);border:0.5px solid var(--glass-b)}
+
+/* Error & Cancel & Hardware */
+.bb-msg.error .bb-bubble{border-color:var(--error);position:relative}
+.bb-msg.error .bb-error-badge{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--error);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.bb-msg.error .bb-retry{font-size:11px;color:var(--error);margin-top:6px;cursor:pointer;font-weight:500}
+.bb-cancel-stream{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(160,114,114,0.1);border:0.5px solid rgba(160,114,114,0.2);border-radius:100px;font-size:11px;color:var(--error);cursor:pointer;margin-top:8px;font-weight:500;animation:fadeIn 0.3s ease;align-self:flex-start}
+.bb-hw-confirm{background:var(--glass);border:0.5px solid rgba(200,169,126,0.15);border-radius:16px;padding:20px;margin-top:8px;animation:slideUp 0.4s ease}
+.bb-hw-confirm h4{font-size:15px;font-weight:600;margin-bottom:4px}
+.bb-hw-confirm p{font-size:12px;color:var(--t3);margin-bottom:14px;font-weight:300}
+.bb-hw-actions{display:flex;gap:8px}
+.bb-hw-actions button{padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:transform 0.2s}
+.bb-hw-actions button:active{transform:scale(0.97)}
+.bb-hw-actions .hw-confirm{background:var(--gold);color:#000}
+.bb-hw-actions .hw-cancel{background:var(--glass);color:var(--t2);border:0.5px solid var(--glass-b)}
+
+/* Voice Overlay */
+.bb-voice-overlay{position:absolute;inset:0;background:rgba(250,250,248,0.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.bb-voice-overlay.active{display:flex}
+.bb-voice-ring{width:160px;height:160px;border-radius:50%;border:1px solid rgba(200,169,126,0.2);display:flex;align-items:center;justify-content:center;animation:recordPulse 2s ease-in-out infinite}
+.bb-voice-ring svg{width:40px;height:40px;stroke:var(--gold);stroke-width:1.5;fill:none;stroke-linecap:round}
+.bb-voice-label{font-size:13px;color:var(--t2);margin-top:24px;font-weight:300}
+.bb-voice-transcript{font-size:18px;color:var(--t1);margin-top:12px;font-weight:400;max-width:400px}
+.bb-voice-cancel{margin-top:32px;font-size:13px;color:var(--t3);cursor:pointer;font-weight:400}
+
+/* Camera Overlay */
+.bb-cam-overlay{position:absolute;inset:0;background:rgba(250,250,248,0.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.bb-cam-overlay.active{display:flex}
+.bb-cam-frame{width:320px;height:240px;border:0.5px solid rgba(200,169,126,0.15);border-radius:4px;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(200,169,126,0.03),transparent)}
+.bb-cam-corner{position:absolute;width:24px;height:24px}
+.bb-cam-corner.tl{top:-1px;left:-1px;border-top:2px solid var(--gold);border-left:2px solid var(--gold)}
+.bb-cam-corner.tr{top:-1px;right:-1px;border-top:2px solid var(--gold);border-right:2px solid var(--gold)}
+.bb-cam-corner.bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--gold);border-left:2px solid var(--gold)}
+.bb-cam-corner.br{bottom:-1px;right:-1px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold)}
+.bb-cam-frame svg{width:48px;height:48px;stroke:var(--t4);stroke-width:1;fill:none;opacity:0.2}
+.bb-cam-label{font-size:15px;color:var(--t2);margin-top:24px;font-weight:300}
+.bb-cam-detected{margin-top:20px;padding:16px 28px;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:14px}
+.bb-cam-det-title{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.bb-cam-det-list{font-size:13px;color:var(--t2);line-height:1.8;font-weight:300}
+.bb-cam-actions{display:flex;gap:12px;margin-top:28px}
+.bb-cam-btn{padding:12px 28px;border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:transform 0.2s;background:var(--glass);border:0.5px solid var(--glass-b);color:var(--t2)}
+.bb-cam-btn:active{transform:scale(0.96)}
+.bb-cam-btn.primary{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+.bb-cam-close{margin-top:24px;font-size:13px;color:var(--t3);cursor:pointer}
+
+/* ═══ 8. CELEBRATION ═══ */
+#screen-8{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#screen-8::before{content:'';position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:600px;height:450px;background:radial-gradient(ellipse,rgba(200,169,126,0.10) 0%,transparent 45%);pointer-events:none}
+.cheers-sparkle{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.cheers-sparkle .sp{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:sparkleFloat 3.5s ease-in-out infinite}
+.cel-center{position:relative;z-index:2;max-width:400px}
+.cel-heart{margin-bottom:16px;opacity:0.5}
+.cel-heart svg{width:36px;height:36px;stroke:var(--gold);stroke-width:1.2;fill:none;stroke-linecap:round}
+.cel-label{font-size:10px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.cel-name{font-size:36px;font-weight:200;margin-top:8px;letter-spacing:-0.8px}
+.cel-sub{font-size:13px;color:var(--t3);margin-top:6px;font-weight:300;font-style:italic}
+.cel-divider{width:40px;height:1px;background:var(--border);margin:28px auto}
+.cel-sections{display:flex;gap:48px;text-align:left;margin-top:0}
+.cel-section .cel-sect-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-bottom:6px;text-transform:uppercase}
+.cel-section .cel-sect-text{font-size:13px;color:var(--t2);line-height:1.7;font-weight:300;max-width:200px}
+.cel-stars{display:flex;gap:4px;justify-content:center;margin-top:28px}
+.cel-stars svg{width:24px;height:24px;stroke:var(--gold);stroke-width:1.2;fill:none}
+.cel-rate{font-size:11px;color:var(--t4);margin-top:6px}
+.cel-btns{display:flex;gap:12px;margin-top:28px}
+.cel-btn{padding:14px 32px;border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:transform 0.2s;display:flex;align-items:center;gap:8px;border:none}
+.cel-btn:active{transform:scale(0.96)}
+.cel-btn.gold{background:var(--gold);color:#000;font-weight:600}
+.cel-btn.glass{background:var(--glass);border:0.5px solid var(--glass-b);color:var(--t2)}
+.cel-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* Dynamic Context Bar */
+.ctx-bar{position:absolute;bottom:0;left:0;right:0;z-index:200;padding:0 32px 20px;background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.ctx-bar-inner{display:flex;align-items:center;justify-content:space-between;background:var(--glass);border:0.5px solid var(--glass-b);border-radius:20px;padding:8px;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+.ctx-nav{display:flex;gap:2px}
+.ctx-tab{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:14px;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);color:var(--t4);border:none;background:transparent;font-family:inherit}
+.ctx-tab svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ctx-tab span{font-size:12px;font-weight:500;display:none;letter-spacing:-0.2px}
+.ctx-tab.active{background:var(--gold);color:#000}
+.ctx-tab.active span{display:inline}
+.ctx-actions{display:flex;gap:4px}
+.ctx-action{display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:14px;cursor:pointer;color:var(--t3);border:none;background:transparent;font-family:inherit;font-size:11px;font-weight:500;transition:all 0.25s}
+.ctx-action:hover{background:var(--glass);color:var(--t2)}
+.ctx-action svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* Toast */
+.toast{position:absolute;top:52px;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(200,169,126,0.15);border:0.5px solid rgba(200,169,126,0.18);border-radius:14px;padding:10px 24px;z-index:500;font-size:13px;color:var(--gold-l);font-weight:500;white-space:nowrap;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ═══ IPHONE OVERRIDES ═══ */
+.device{width:390px;height:844px;border-radius:44px}
+.bb-header{padding:52px 20px 0;margin-bottom:12px}
+.bb-header-left h1{font-size:24px}
+.bb-body{grid-template-columns:1fr;padding:0 0 72px;overflow:hidden}
+.bb-sidebar{display:none}
+.bb-chat{overflow:hidden}
+.bb-messages{padding:0 16px 16px 16px;gap:14px}
+.bb-msg{max-width:100%}
+.bb-input-area{padding:8px 16px}
+.bb-proactive{padding:0 16px}
+.bb-pro-card{max-width:100%}
+.bb-pro-text{font-size:14px}
+.bb-pro-actions{flex-wrap:wrap}
+.ctx-bar{padding:0 12px 12px}
+.ctx-action{display:none}
+.ctx-tab{padding:9px 12px;gap:5px}
+.w-content{padding:0 28px 80px}
+.w-hero{font-size:36px;letter-spacing:-1px}
+.w-reveal-name{font-size:22px}
+.w-reveal-desc{font-size:13px}
+.w-cta{padding:14px 40px;font-size:13px}
+.bb-new-chat span{display:none}
+.bb-new-chat{padding:10px 10px;gap:0}
+.cel-name{font-size:28px}
+.cel-sections{flex-direction:column;gap:20px}
+.cel-btns{flex-wrap:wrap;justify-content:center;gap:8px}
+.cel-btn{padding:12px 20px}
+.bb-rc{width:160px}
+.bb-cam-frame{width:260px;height:200px}
+.bb-recipe-cards{overflow-x:auto;padding-bottom:4px}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+  <div class="status-bar"><span>9:41</span><div class="status-icons"><svg viewBox="0 0 16 12" fill="#1A1A1A"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="#1A1A1A" stroke-opacity="0.25"/><rect x="22.5" y="3.5" width="2" height="5" rx="0.5" fill="#1A1A1A" fill-opacity="0.2"/><rect x="2" y="2" width="18" height="8" rx="1" fill="#1A1A1A"/></svg></div></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- 1. WELCOME -->
+  <div class="screen active" id="screen-1">
+    <div class="w-glow"></div>
+    <div class="w-content">
+      <div class="w-eyebrow">Barsys</div>
+      <div class="w-hero">What if your bar<br>had a <em>soul?</em></div>
+      <div class="w-divider"></div>
+      <div class="w-reveal">
+        <div class="w-reveal-name">Meet Bar<strong>Bot</strong>.</div>
+        <div class="w-reveal-desc">Not another cocktail app. A new relationship between people and the drinks they share. It starts with how you feel, and works backward to what you should drink.</div>
+      </div>
+      <div class="w-caps">
+        <div class="w-cap"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Text</div>
+        <div class="w-cap"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div>
+        <div class="w-cap"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Camera</div>
+      </div>
+      <button class="w-cta" onclick="goTo('screen-2')">Begin</button>
+      <div class="w-tagline">Your confidant. Not a chatbot.</div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>BarBot</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 2. CHAT HOME (Proactive) -->
+  <div class="screen" id="screen-2">
+    <div class="bb-header">
+      <div class="bb-header-left"><h1>Bar<strong>Bot</strong></h1><p>Your confidant.</p></div>
+      <button class="bb-new-chat"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Chat</button>
+    </div>
+    <div class="bb-body">
+      <div class="bb-sidebar">
+        <div class="bb-sidebar-label">Today</div>
+        <div class="bb-conv active"><h4>Bourbon recommendations</h4><p>Based on what's loaded in Station A...</p><div class="bb-conv-time">2 min ago</div></div>
+        <div class="bb-conv"><h4>Dinner party menu</h4><p>Here are 3 cocktails that pair with...</p><div class="bb-conv-time">Yesterday</div></div>
+        <div class="bb-sidebar-label" style="margin-top:16px">This week</div>
+        <div class="bb-conv"><h4>Clean Station B</h4><p>Station B has been cleaned and...</p><div class="bb-conv-time">2 days ago</div></div>
+        <div class="bb-conv"><h4>What can I make?</h4><p>With what's loaded, you can make...</p><div class="bb-conv-time">3 days ago</div></div>
+      </div>
+      <div class="bb-chat">
+        <div class="bb-proactive">
+          <div class="bb-pro-card">
+            <div class="bb-pro-badge"><div class="dot"></div>Stations online</div>
+            <div class="bb-pro-text">I noticed you've got <strong>Maker's Mark</strong> in Station A and <strong>Angostura</strong> in Station C. You're 30 seconds away from an Old Fashioned. Want me to craft one, or feeling something different tonight?</div>
+            <div class="bb-pro-actions"><button class="bb-pro-btn gold" onclick="goTo('screen-4')">Craft it</button><button class="bb-pro-btn glass" onclick="goTo('screen-3')">Show me more</button></div>
+          </div>
+        </div>
+        <div class="bb-input-area"><div class="bb-input"><span>Ask BarBot anything...</span><div class="bb-input-actions"><div class="bb-input-btn" onclick="goTo('screen-5')"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="bb-input-btn" onclick="goTo('screen-6')"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div class="bb-input-btn send-btn" onclick="goTo('screen-3')"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div></div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>BarBot</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action" onclick="goTo('screen-5')"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action" onclick="goTo('screen-6')"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 3. CHAT TEXT + SHIMMER -->
+  <div class="screen" id="screen-3">
+    <div class="bb-header">
+      <div class="bb-header-left"><h1>Bar<strong>Bot</strong></h1><p>Your confidant.</p></div>
+      <button class="bb-new-chat"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Chat</button>
+    </div>
+    <div class="bb-body">
+      <div class="bb-sidebar">
+        <div class="bb-sidebar-label">Today</div>
+        <div class="bb-conv active"><h4>Steak pairing</h4><p>With steak, you want something bold...</p><div class="bb-conv-time">Just now</div></div>
+        <div class="bb-conv"><h4>Bourbon recommendations</h4><p>Based on what's loaded in Station A...</p><div class="bb-conv-time">10 min ago</div></div>
+        <div class="bb-sidebar-label" style="margin-top:16px">This week</div>
+        <div class="bb-conv"><h4>Dinner party menu</h4><p>Here are 3 cocktails that pair with...</p><div class="bb-conv-time">2 days ago</div></div>
+      </div>
+      <div class="bb-chat">
+        <div class="bb-messages">
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">Hey Akshet. What are we making tonight?</div></div>
+          <div class="bb-msg user"><div class="bb-msg-label">You</div><div class="bb-bubble">What pairs well with steak?</div></div>
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-shimmer"><div class="sh-dot"></div><div class="sh-dot"></div><div class="sh-dot"></div></div></div>
+          <div class="bb-cancel-stream" onclick="goTo('screen-4')"><svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Stop generating</div>
+        </div>
+        <div class="bb-input-area"><div class="bb-input"><span>Ask BarBot anything...</span><div class="bb-input-actions"><div class="bb-input-btn"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="bb-input-btn send-btn"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div></div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>BarBot</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 4. RECIPE CARDS -->
+  <div class="screen" id="screen-4">
+    <div class="bb-header">
+      <div class="bb-header-left"><h1>Bar<strong>Bot</strong></h1><p>Your confidant.</p></div>
+      <button class="bb-new-chat"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Chat</button>
+    </div>
+    <div class="bb-body">
+      <div class="bb-sidebar">
+        <div class="bb-sidebar-label">Today</div>
+        <div class="bb-conv active"><h4>Steak pairing</h4><p>With steak, you want something bold...</p><div class="bb-conv-time">Just now</div></div>
+        <div class="bb-conv"><h4>Bourbon recommendations</h4><p>Based on what's loaded in Station A...</p><div class="bb-conv-time">10 min ago</div></div>
+        <div class="bb-sidebar-label" style="margin-top:16px">This week</div>
+        <div class="bb-conv"><h4>Dinner party menu</h4><p>Here are 3 cocktails that pair with...</p><div class="bb-conv-time">2 days ago</div></div>
+      </div>
+      <div class="bb-chat">
+        <div class="bb-messages">
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">Hey Akshet. What are we making tonight?</div></div>
+          <div class="bb-msg user"><div class="bb-msg-label">You</div><div class="bb-bubble">What pairs well with steak?</div></div>
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">With <strong>steak</strong>, you want something that stands up to the richness. Bitterness to cut through fat, warmth to complement the char. Here are my picks:</div>
+            <div class="bb-recipe-cards">
+              <div class="bb-rc" onclick="goTo('screen-8')"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div class="bb-rc-bookmark" onclick="event.stopPropagation();toggleBookmark(this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div><div class="bb-rc-body"><h4>Boulevardier</h4><p>40 sec · 3 ingredients</p><div class="bb-rc-craft" onclick="event.stopPropagation();goTo('screen-8')">Craft</div></div></div>
+              <div class="bb-rc"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div class="bb-rc-bookmark" onclick="event.stopPropagation();toggleBookmark(this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div><div class="bb-rc-body"><h4>Manhattan</h4><p>40 sec · 4 ingredients</p><div class="bb-rc-craft">Craft</div></div></div>
+              <div class="bb-rc"><div class="bb-rc-hero"><svg viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2z"/><path d="M12 12v6"/></svg><div class="bb-rc-bookmark" onclick="event.stopPropagation();toggleBookmark(this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div></div><div class="bb-rc-body"><h4>Old Fashioned</h4><p>45 sec · 4 ingredients</p><div class="bb-rc-craft">Craft</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="bb-input-area"><div class="bb-input"><span>Ask BarBot anything...</span><div class="bb-input-actions"><div class="bb-input-btn"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="bb-input-btn send-btn"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div></div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>BarBot</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 5. VOICE -->
+  <div class="screen" id="screen-5">
+    <div class="bb-voice-overlay active">
+      <div class="bb-voice-ring"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg></div>
+      <div class="bb-voice-label">Listening...</div>
+      <div class="bb-voice-transcript">Make me something with bourbon...</div>
+      <div class="bb-voice-cancel" onclick="goTo('screen-2')">Tap to cancel</div>
+    </div>
+  </div>
+
+  <!-- 6. CAMERA -->
+  <div class="screen" id="screen-6">
+    <div class="bb-cam-overlay active">
+      <div class="bb-cam-frame">
+        <div class="bb-cam-corner tl"></div><div class="bb-cam-corner tr"></div><div class="bb-cam-corner bl"></div><div class="bb-cam-corner br"></div>
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <div class="bb-cam-label">Point at your bar</div>
+      <div class="bb-cam-detected">
+        <div class="bb-cam-det-title">Bottles detected</div>
+        <div class="bb-cam-det-list">Maker's Mark Bourbon<br>Angostura Bitters</div>
+      </div>
+      <div class="bb-cam-actions"><button class="bb-cam-btn primary" onclick="goTo('screen-2')">Add to stations</button><button class="bb-cam-btn">Scan more</button></div>
+      <div class="bb-cam-close" onclick="goTo('screen-2')">Close</div>
+    </div>
+  </div>
+
+  <!-- 7. HARDWARE -->
+  <div class="screen" id="screen-7">
+    <div class="bb-header">
+      <div class="bb-header-left"><h1>Bar<strong>Bot</strong></h1><p>Your confidant.</p></div>
+      <button class="bb-new-chat"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Chat</button>
+    </div>
+    <div class="bb-body">
+      <div class="bb-sidebar">
+        <div class="bb-sidebar-label">Today</div>
+        <div class="bb-conv active"><h4>Station maintenance</h4><p>I recommend cleaning Station B...</p><div class="bb-conv-time">Just now</div></div>
+        <div class="bb-conv"><h4>Bourbon recommendations</h4><p>Based on what's loaded in Station A...</p><div class="bb-conv-time">10 min ago</div></div>
+        <div class="bb-sidebar-label" style="margin-top:16px">This week</div>
+        <div class="bb-conv"><h4>What can I make?</h4><p>With what's loaded, you can make...</p><div class="bb-conv-time">3 days ago</div></div>
+      </div>
+      <div class="bb-chat">
+        <div class="bb-messages">
+          <div class="bb-msg user"><div class="bb-msg-label">You</div><div class="bb-bubble">Can you clean station B?</div></div>
+          <div class="bb-msg ai"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">I recommend cleaning <strong>Station B</strong>. The Campari has been sitting for 5 days. Shall I start a cleaning cycle?</div></div>
+          <div class="bb-hw-confirm"><h4>Clean Station B?</h4><p>This will run a 60-second cleaning cycle. Station B will be unavailable during this time.</p><div class="bb-hw-actions"><button class="hw-confirm" onclick="showToast('Cleaning Station B...')">Confirm</button><button class="hw-cancel">Cancel</button></div></div>
+          <div class="bb-msg ai error"><div class="bb-msg-label">BarBot</div><div class="bb-bubble">Connection lost. Station B didn't respond.<div class="bb-error-badge">!</div></div><div class="bb-retry">Tap to retry</div></div>
+        </div>
+        <div class="bb-input-area"><div class="bb-input"><span>Ask BarBot anything...</span><div class="bb-input-actions"><div class="bb-input-btn"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="bb-input-btn send-btn"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><polyline points="5 12 12 5 19 12"/></svg></div></div></div></div>
+      </div>
+    </div>
+    <div class="ctx-bar"><div class="ctx-bar-inner"><div class="ctx-nav"><div class="ctx-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="ctx-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>BarBot</span></div><div class="ctx-tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div></div><div class="ctx-actions"><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Voice</div><div class="ctx-action"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan bar</div></div></div></div>
+  </div>
+
+  <!-- 8. CELEBRATION -->
+  <div class="screen" id="screen-8">
+    <div class="cheers-sparkle" id="cheersSparkle"></div>
+    <div class="cel-center">
+      <div class="cel-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <div class="cel-label">Cheers</div>
+      <div class="cel-name">Boulevardier</div>
+      <div class="cel-sub">Crafted with BarBot.</div>
+      <div class="cel-divider"></div>
+      <div class="cel-sections">
+        <div class="cel-section"><div class="cel-sect-label">Garnish</div><div class="cel-sect-text">Express an orange peel over the glass. Let the oils catch the light.</div></div>
+        <div class="cel-section"><div class="cel-sect-label">Tasting Note</div><div class="cel-sect-text">Warm and bittersweet. Campari cuts the bourbon's caramel. Finishes long.</div></div>
+      </div>
+      <div class="cel-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="cel-rate">Rate this drink</div>
+      <div class="cel-btns">
+        <button class="cel-btn gold" onclick="goTo('screen-2')">Make Another</button>
+        <button class="cel-btn glass" onclick="showToast('Saved to favorites')"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>Save</button>
+        <button class="cel-btn glass"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentScreen='screen-1',navHistory=[];
+function goTo(id){if(currentScreen===id)return;navHistory.push(currentScreen);document.getElementById(currentScreen).classList.remove('active');document.getElementById(id).classList.add('active');currentScreen=id;if(id==='screen-8')spawnSparkles()}
+function goBack(){if(!navHistory.length)return;const p=navHistory.pop();document.getElementById(currentScreen).classList.remove('active');document.getElementById(p).classList.add('active');currentScreen=p}
+function haptic(el){el.classList.add('haptic');setTimeout(()=>el.classList.remove('haptic'),160)}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function toggleBookmark(el){el.classList.toggle('saved');showToast(el.classList.contains('saved')?'Saved to AI Bookmarks':'Removed from bookmarks')}
+function spawnSparkles(){const c=document.getElementById('cheersSparkle');c.innerHTML='';for(let i=0;i<30;i++){const sp=document.createElement('div');sp.className='sp';sp.style.left=Math.random()*100+'%';sp.style.bottom=Math.random()*40+'%';sp.style.animationDelay=(Math.random()*3)+'s';sp.style.animationDuration=(2.5+Math.random()*2.5)+'s';c.appendChild(sp)}}
+document.querySelectorAll('.bb-new-chat,.bb-pro-btn,.bb-rc,.cel-btn,.bb-cam-btn,.w-cta').forEach(el=>{el.addEventListener('click',()=>haptic(el))});
+</script>
+</body>
+</html>
