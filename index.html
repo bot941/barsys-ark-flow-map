@@ -78,6 +78,51 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 .g-step-t{font-weight:600;color:var(--gold);margin-bottom:6px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
 .g-step-d{font-size:12.5px;color:var(--txt2);line-height:1.5}
 
+/* Tables */
+.table-wrap{overflow-x:auto;margin:12px 0}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px}
+.ref-table th{background:rgba(200,169,126,.15);color:var(--gold);padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--brd)}
+.ref-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--txt2);vertical-align:top;line-height:1.4}
+.ref-table tr:last-child td{border-bottom:none}
+.ref-table tr:hover td{background:rgba(200,169,126,.04)}
+
+/* Code blocks */
+.code-block{background:#0D0D0D;border:1px solid var(--brd);border-left:3px solid var(--gold);border-radius:6px;padding:16px;font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#C8C8C8;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin:12px 0;overflow-x:auto}
+
+/* Severity badges */
+.sev-badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:inline-block}
+.sev-critical{background:rgba(220,38,38,.2);color:#F87171;border:1px solid rgba(220,38,38,.3)}
+.sev-warning{background:rgba(217,119,6,.2);color:#FBB740;border:1px solid rgba(217,119,6,.3)}
+.sev-info{background:rgba(59,130,246,.2);color:#93C5FD;border:1px solid rgba(59,130,246,.3)}
+
+/* Duration badge */
+.dur-badge{display:inline-block;background:rgba(200,169,126,.12);color:var(--gold2);border:1px solid rgba(200,169,126,.25);border-radius:12px;padding:3px 10px;font-size:11px;font-weight:600;margin-left:10px;vertical-align:middle}
+
+/* Panel group - multiple collapsible panels */
+.panel-group{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.panel-btn{display:flex;align-items:center;gap:8px;padding:11px 16px;background:rgba(200,169,126,.06);border:1px solid rgba(200,169,126,.15);border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--txt2);font-weight:600;width:100%;transition:var(--tr);text-align:left}
+.panel-btn:hover{background:rgba(200,169,126,.1);color:var(--txt)}
+.panel-btn .arrow{transition:var(--tr);font-size:10px;color:var(--gold)}
+.panel-btn.open .arrow{transform:rotate(90deg)}
+.panel-body{display:none;padding:16px;background:rgba(10,10,10,.6);border:1px solid rgba(200,169,126,.1);border-top:none;border-radius:0 0 6px 6px}
+.panel-body.open{display:block}
+
+/* Reference section */
+.ref-section{margin-bottom:48px;scroll-margin-top:20px;padding:20px 24px;background:rgba(200,169,126,.03);border:1px solid rgba(200,169,126,.15);border-radius:12px}
+.ref-section-title{font-size:22px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.ref-section-desc{color:var(--txt2);font-size:13px;line-height:1.6;margin-bottom:16px}
+.ref-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:700;margin:16px 0 8px}
+
+/* Journey cards */
+.journey-card{padding:14px;background:rgba(200,169,126,.04);border-left:3px solid var(--gold);border-radius:4px;margin-bottom:12px}
+.journey-title{font-weight:700;color:var(--gold);font-size:13px;margin-bottom:4px}
+.journey-dur{font-size:11px;color:var(--txt2);margin-bottom:8px}
+.journey-path{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#C8C8C8;line-height:1.6;background:#0D0D0D;padding:10px;border-radius:4px;white-space:pre-wrap}
+.journey-dp{font-size:11.5px;color:var(--txt2);margin-top:8px}
+
+/* Section divider */
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:40px 0;opacity:.3}
+
 /* RESPONSIVE */
 @media(max-width:1024px){.side{width:200px}.main{margin-left:200px;width:calc(100% - 200px)}}
 @media(max-width:768px){.side{width:0;opacity:0}.main{margin-left:0;width:100%}.content{padding:16px}.ss-img{width:140px;height:280px}.ss-img.ipad{width:220px;height:165px}}
@@ -89,24 +134,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 <div class="side-hdr"><div class="logo">BARSYS ARK</div></div>
 <div class="side-label">Mode</div>
 <ul id="modeNav">
-<li><a class="active" data-mode="iphone-dark"><span class="icon">ð±</span>iPhone Dark</a></li>
-<li><a data-mode="iphone-light"><span class="icon">ð±</span>iPhone Light</a></li>
-<li><a data-mode="ipad-dark"><span class="icon">ð²</span>iPad Dark</a></li>
-<li><a data-mode="ipad-light"><span class="icon">ð²</span>iPad Light</a></li>
+<li><a class="active" data-mode="iphone-dark"><span class="icon">📱</span>iPhone Dark</a></li>
+<li><a data-mode="iphone-light"><span class="icon">📱</span>iPhone Light</a></li>
+<li><a data-mode="ipad-dark"><span class="icon">📲</span>iPad Dark</a></li>
+<li><a data-mode="ipad-light"><span class="icon">📲</span>iPad Light</a></li>
 </ul>
 <div class="side-label">Flows</div>
 <ul id="flowNav">
-<li><a data-flow="app-flow"><span class="icon">ð±</span>App Flow</a></li>
-<li><a data-flow="device-setup"><span class="icon">âï¸</span>Device Setup</a></li>
-<li><a data-flow="ble"><span class="icon">ð</span>BLE Connection</a></li>
-<li><a data-flow="barbot"><span class="icon">ð¤</span>BarBot AI</a></li>
-<li><a data-flow="recipe"><span class="icon">ð¹</span>Recipe Flow</a></li>
-<li><a data-flow="station"><span class="icon">ðï¸</span>Station Mgmt</a></li>
-<li><a data-flow="nav1"><span class="icon">ðºï¸</span>Nav Map 1</a></li>
-<li><a data-flow="nav2"><span class="icon">ðºï¸</span>Nav Map 2</a></li>
-<li><a data-flow="err1"><span class="icon">â ï¸</span>Error Handling 1</a></li>
-<li><a data-flow="err2"><span class="icon">â ï¸</span>Error Handling 2</a></li>
-<li><a data-flow="verify"><span class="icon">â</span>Verification</a></li>
+<li><a data-flow="app-flow"><span class="icon">📱</span>App Flow</a></li>
+<li><a data-flow="device-setup"><span class="icon">⚙️</span>Device Setup</a></li>
+<li><a data-flow="ble"><span class="icon">📡</span>BLE Connection</a></li>
+<li><a data-flow="barbot"><span class="icon">🤖</span>BarBot AI</a></li>
+<li><a data-flow="recipe"><span class="icon">🍹</span>Recipe Flow</a></li>
+<li><a data-flow="station"><span class="icon">🏪</span>Station Mgmt</a></li>
+<li><a data-flow="nav1"><span class="icon">🗺️</span>Nav Map 1</a></li>
+<li><a data-flow="nav2"><span class="icon">🗺️</span>Nav Map 2</a></li>
+<li><a data-flow="err1"><span class="icon">⚠️</span>Error Handling 1</a></li>
+<li><a data-flow="err2"><span class="icon">⚠️</span>Error Handling 2</a></li>
+<li><a data-flow="verify"><span class="icon">✓</span>Verification</a></li>
+</ul>
+<div class="side-label">Reference</div>
+<ul id="refNav">
+<li><a data-ref="architecture"><span class="icon">🏗️</span>Architecture</a></li>
+<li><a data-ref="journeys"><span class="icon">🗺️</span>User Journeys</a></li>
+<li><a data-ref="smoke"><span class="icon">🧪</span>Smoke Tests</a></li>
+<li><a data-ref="api-ref"><span class="icon">🔌</span>API Reference</a></li>
 </ul>
 </aside>
 
@@ -127,6 +179,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 </div>
 
 <script>
+// ===== HELPER FUNCTIONS =====
+function eH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function sevCls(s){return s==='Critical'?'sev-critical':s==='Warning'?'sev-warning':s==='Info'?'sev-info':''}
+function buildTable(headers, rows){
+  let h=`<div class="table-wrap"><table class="ref-table"><thead><tr>`;
+  headers.forEach(hd=>h+=`<th>${hd}</th>`);
+  h+=`</tr></thead><tbody>`;
+  rows.forEach(row=>{
+    h+=`<tr>`;
+    row.forEach((cell,i)=>{
+      if(headers[i]==='Severity'||headers[i]==='Level'){
+        h+=`<td><span class="sev-badge ${sevCls(cell)}">${cell}</span></td>`;
+      } else {
+        h+=`<td>${cell}</td>`;
+      }
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  return h;
+}
+function buildPanel(panel, uid){
+  let h=`<div class="panel-btn" onclick="togglePanel('${uid}',this)"><span class="arrow">▶</span> ${panel.label}</div>`;
+  h+=`<div class="panel-body" id="${uid}">`;
+  if(panel.duration) h+=`<p style="font-size:12px;color:var(--txt2);margin-bottom:12px">⏱ Duration: <strong style="color:var(--gold2)">${panel.duration}</strong></p>`;
+  if(panel.type==='code') h+=`<pre class="code-block">${eH(panel.content)}</pre>`;
+  else if(panel.type==='table') h+=buildTable(panel.headers, panel.rows);
+  else if(panel.type==='mixed'){
+    panel.items.forEach(item=>{
+      if(item.type==='code') h+=`<div class="ref-label">${item.label}</div><pre class="code-block">${eH(item.content)}</pre>`;
+      else if(item.type==='table') h+=`<div class="ref-label">${item.label}</div>`+buildTable(item.headers,item.rows);
+      else if(item.type==='text') h+=`<p style="font-size:13px;color:var(--txt2);line-height:1.6;margin:8px 0">${item.content}</p>`;
+    });
+  }
+  h+=`</div>`;
+  return h;
+}
+function togglePanel(id,btn){
+  const el=document.getElementById(id);
+  if(el){el.classList.toggle('open');btn.classList.toggle('open');}
+}
+
 // ===== DATA =====
 const FLOWS = [
 {id:'app-flow',title:'App Flow',
@@ -137,7 +231,51 @@ const FLOWS = [
  getCount:function(dev){return dev.includes('ipad')?this.ipad.files.length:this.iphone.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/App_${t}.html`},
  desc:'The core app experience from launch to drink completion. User opens the app, sees the splash screen with Barsys branding, progresses through an onboarding carousel introducing key features, selects their current mood (Unwind, Celebrate, Impress, Explore) which personalizes the experience, browses a curated drink stream matching their mood, views detailed recipe information with ingredients and tasting notes, authenticates via account creation or sign-in, receives a personalized welcome, lands on the home dashboard with recommendations, explores the full recipe catalog via Discover, interacts with the BarBot AI assistant for smart suggestions, accesses the device control panel to manage hardware, initiates crafting with live pour monitoring, and celebrates with the Cheers completion screen showing sharing options.',
- guide:[{t:'Splash',d:'App launches with animated Barsys logo. Brand identity established. Auto-transitions after 2 seconds.'},{t:'Onboarding',d:'Three-slide carousel introducing BarBot capabilities: AI-powered mixing, precision pouring, and social features. Skip option available.'},{t:'Mood Selection',d:'Four mood cards (Unwind, Celebrate, Impress, Explore) with distinct color accents. Selection personalizes the entire experience downstream.'},{t:'Drink Stream',d:'Vertically scrolling feed of cocktail cards filtered by selected mood. Each card shows photo, name, difficulty, and prep time.'},{t:'Drink Detail',d:'Full recipe view with hero image, ingredient list with quantities, tasting notes, difficulty rating, and "Craft This" CTA button.'},{t:'Authentication',d:'Sign in / Sign up with email, Apple, or Google. Secure account creation with password requirements displayed.'},{t:'Welcome',d:'Personalized greeting using the user\'s name. Brief orientation of app sections and features.'},{t:'Home',d:'Main dashboard with recommended drinks, recent activity, BarBot connection status, and quick-action buttons.'},{t:'Discover',d:'Browse full catalog by category, trending, favorites. Search bar with filters for ingredients, difficulty, and spirit type.'},{t:'BarBot AI',d:'AI chat interface for mood-based drink suggestions. Natural language input with inline recipe cards in response.'},{t:'Control Panel',d:'Device status dashboard showing connection state, station levels, and hardware diagnostics.'},{t:'Crafting',d:'Live pour monitoring with progress bar, ingredient sequence visualization, and estimated completion time.'},{t:'Cheers!',d:'Celebration screen with confetti animation, drink details summary, share to social options, and "Make Another" button.'}]
+ guide:[{t:'Splash',d:'App launches with animated Barsys logo. Brand identity established. Auto-transitions after 2 seconds.'},{t:'Onboarding',d:'Three-slide carousel introducing BarBot capabilities: AI-powered mixing, precision pouring, and social features. Skip option available.'},{t:'Mood Selection',d:'Four mood cards (Unwind, Celebrate, Impress, Explore) with distinct color accents. Selection personalizes the entire experience downstream.'},{t:'Drink Stream',d:'Vertically scrolling feed of cocktail cards filtered by selected mood. Each card shows photo, name, difficulty, and prep time.'},{t:'Drink Detail',d:'Full recipe view with hero image, ingredient list with quantities, tasting notes, difficulty rating, and "Craft This" CTA button.'},{t:'Authentication',d:'Sign in / Sign up with email, Apple, or Google. Secure account creation with password requirements displayed.'},{t:'Welcome',d:'Personalized greeting using the user\'s name. Brief orientation of app sections and features.'},{t:'Home',d:'Main dashboard with recommended drinks, recent activity, BarBot connection status, and quick-action buttons.'},{t:'Discover',d:'Browse full catalog by category, trending, favorites. Search bar with filters for ingredients, difficulty, and spirit type.'},{t:'BarBot AI',d:'AI chat interface for mood-based drink suggestions. Natural language input with inline recipe cards in response.'},{t:'Control Panel',d:'Device status dashboard showing connection state, station levels, and hardware diagnostics.'},{t:'Crafting',d:'Live pour monitoring with progress bar, ingredient sequence visualization, and estimated completion time.'},{t:'Cheers!',d:'Celebration screen with confetti animation, drink details summary, share to social options, and "Make Another" button.'}],
+ duration:'3–5 min (returning) | 10–15 min (first-time)',
+ extraPanels:[
+  {id:'fp',label:'Flow Path',type:'code',content:`Splash → Onboarding → Mood Selection → Drink Stream → Drink Detail → Authentication → Welcome → Home Dashboard\n  → [Discover | BarBot AI | Control Panel | Crafting] → Cheers!\n\nDecision: First launch → Onboarding. Returning user (valid Keychain token) → Home (skip onboarding).`},
+  {id:'dp',label:'Decision Points & Branching',type:'code',content:`Authentication Screen\n  ▸ Phone OTP (Ory Kratos)\n      POST /self-service/login/api (create flow)\n      POST /self-service/login?flow={id} (submit phone)\n      POST /self-service/login?flow={id} (submit OTP)\n      POST /api/v1/auth/exchange (JWT) → Welcome\n  ▸ Continue with Apple\n      Success → Auto-fill profile → Welcome\n      Failure → OAuth Failed Error (EH1-S1)\n  ▸ Continue with Google\n      Success → Auto-fill profile → Welcome\n      Failure → OAuth Failed Error (EH1-S1)\n\n[All paths converge at: Welcome Screen → Home Dashboard]`},
+  {id:'api',label:'API Endpoints Used',type:'table',
+   headers:['Screen','Endpoint','Method','Purpose'],
+   rows:[
+     ['Home','/api/v1/recipes/recommended','GET','Personalized recommendations'],
+     ['Home','/api/v1/my/made-drinks','GET','Recent craft history'],
+     ['Discover','/api/v1/recipes/trending','GET','Trending recipes'],
+     ['Discover','/api/v1/recipes/categories','GET','Category list'],
+     ['BarBot AI','/api/v1/chat (Bond)','POST','AI conversation'],
+     ['Control','/api/v1/my/devices','GET','Device list + status'],
+     ['Crafting','BLE POUR_START (0x03)','BLE','Initiate pour sequence'],
+     ['Cheers','/api/v1/my/made-drinks/:id','POST','Log completed craft'],
+     ['Cheers','/api/v1/recipes/:id/ratings','POST','Submit rating']
+   ]},
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T1.1','Cold start (first launch, no auth token)','Splash → Onboarding → Mood → Auth flow'],
+     ['T1.2','Returning user (valid token in Keychain)','Splash → Home (skip onboarding)'],
+     ['T1.3','Expired token on launch','Splash → Session Expired → Re-auth → Home'],
+     ['T1.4','Mood selection affects recommendations','Select "Celebrate" → Drink Stream shows party drinks'],
+     ['T1.5','Phone OTP full flow','Enter phone → receive OTP → submit → JWT → Home'],
+     ['T1.6','OAuth failure (cancel Apple Sign-In)','OAuth Failed error screen → "Try Again" or "Use Email"'],
+     ['T1.7','Tab bar navigation (all 4 tabs)','Each tab loads correct content, back navigation works'],
+     ['T1.8','Craft from Home recommendation','Tap recipe card → Detail → Craft → Pour → Cheers'],
+     ['T1.9','Emergency stop during pour','Pumps halt immediately, STOPPED screen shown'],
+     ['T1.10','Rate drink after craft','5-star selector, optional text, submit works']
+   ]},
+  {id:'errors',label:'Error Cases in This Flow',type:'table',
+   headers:['Trigger','Error Screen','Severity','User Impact','Recovery Path'],
+   rows:[
+     ['User cancels Apple/Google Sign-In','OAuth Failed (EH1-S1)','Critical','Cannot authenticate; blocked from app','Tap "Try Again" or "Use Email Instead"'],
+     ['OAuth token exchange failure (network timeout)','OAuth Failed (EH1-S1)','Critical','Auth handshake incomplete','Retry same method or switch provider'],
+     ['JWT token expired on app resume','Session Expired (EH1-S2)','Critical','User session invalid; cannot make API calls','Auto-redirect to login; re-authenticate'],
+     ['User enters wrong password 5 times','Wrong Password (EH1-S3)','Warning','Account locked for security','Use "Forgot Password" reset flow'],
+     ['Network drops during onboarding','All Networks Failed (EH1-S7)','Critical','Cannot complete auth or load content','Fix network, or retry when restored'],
+     ['API server unreachable at launch','Server Retry (EH1-S9)','Info','Home content fails to load','3 auto-retries; then "Try Now" manual retry'],
+     ['Emergency stop pressed during craft from Home','Emergency Stop (EH1-S4)','Critical','Pour halted mid-craft','Clean Spill, Resume Pour, or Start Over'],
+     ['BLE disconnects while navigating to Control tab','BLE Reconnect (EH1-S6)','Warning','Station data unavailable until reconnected','5 auto-retries; then Manual Connect']
+   ]}
+ ]
 },
 {id:'device-setup',title:'Device Setup',
  files:['Welcome','Physical_Setup','Account_Method','Profile_Name','Age_Verify','Taste_Prefs','Dietary_Prefs','Terms_Privacy','Turn_On_Device','Scanning','Device_Found','Connecting','Device_Ready','Bottle_Intro','Slot_Grid','Bottle_Assign','Slot_Confirmed','Prefs_Summary','Setup_Complete','First_Craft'],
@@ -146,7 +284,46 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/DeviceSetup_${t}.html`},
  desc:'Complete first-time device setup from unboxing to first drink. This 20-step onboarding journey guides users through physical hardware setup, account creation, preference configuration, device pairing via Bluetooth, and bottle station calibration. The flow ensures users understand the hardware, set up their profile with taste and dietary preferences, successfully connect their BarBot device, and configure their bottle stations before making their very first craft.',
- guide:[{t:'Welcome',d:'Greeting screen introducing the setup process. Overview of what to expect with estimated setup time.'},{t:'Physical Setup',d:'Step-by-step hardware assembly instructions with illustrations. Placement guidance and power connection.'},{t:'Account Method',d:'Choose sign-up method â email, Apple ID, or Google. Privacy-first approach with minimal data collection.'},{t:'Profile Name',d:'Enter display name and optional avatar selection. This name appears on shared recipes and social features.'},{t:'Age Verification',d:'Legal age verification for alcohol-related content. Date of birth entry with regional compliance.'},{t:'Taste Preferences',d:'Flavor profile quiz â sweet vs dry, light vs bold, adventurous vs classic. Creates personalized recommendations.'},{t:'Dietary Preferences',d:'Allergen and dietary restriction selection (gluten-free, vegan, nut-free, etc.). Filters incompatible recipes.'},{t:'Terms & Privacy',d:'Terms of service and privacy policy acceptance. Clear data handling explanations.'},{t:'Turn On Device',d:'Physical instruction to power on the BarBot hardware. LED indicator guide for device states.'},{t:'Scanning',d:'Automated Bluetooth scan for nearby BarBot devices. Animated radar/scanning visualization.'},{t:'Device Found',d:'BarBot detected â shows device name and signal strength. Confirmation prompt before pairing.'},{t:'Connecting',d:'BLE handshake in progress. Progress indicator with status messages.'},{t:'Device Ready',d:'Successful connection confirmation. Device firmware version and capabilities displayed.'},{t:'Bottle Intro',d:'Introduction to the bottle station system. Overview of how slots map to ingredients.'},{t:'Slot Grid',d:'Visual grid of all 8 stations (A through H). Empty state showing available slots.'},{t:'Bottle Assignment',d:'Assign a spirit/ingredient to a specific slot. Barcode scan or manual search.'},{t:'Slot Confirmed',d:'Confirmation that bottle is assigned and detected. Level calibration prompt.'},{t:'Preferences Summary',d:'Review all configured preferences â taste, dietary, device, bottles. Edit option for each section.'},{t:'Setup Complete',d:'Success screen with setup summary. Transition prompt to make first drink.'},{t:'First Craft',d:'Guided first drink experience. Simplified crafting flow with extra guidance and tips.'}]
+ guide:[{t:'Welcome',d:'Greeting screen introducing the setup process. Overview of what to expect with estimated setup time.'},{t:'Physical Setup',d:'Step-by-step hardware assembly instructions with illustrations. Placement guidance and power connection.'},{t:'Account Method',d:'Choose sign-up method – email, Apple ID, or Google. Privacy-first approach with minimal data collection.'},{t:'Profile Name',d:'Enter display name and optional avatar selection. This name appears on shared recipes and social features.'},{t:'Age Verification',d:'Legal age verification for alcohol-related content. Date of birth entry with regional compliance.'},{t:'Taste Preferences',d:'Flavor profile quiz – sweet vs dry, light vs bold, adventurous vs classic. Creates personalized recommendations.'},{t:'Dietary Preferences',d:'Allergen and dietary restriction selection (gluten-free, vegan, nut-free, etc.). Filters incompatible recipes.'},{t:'Terms & Privacy',d:'Terms of service and privacy policy acceptance. Clear data handling explanations.'},{t:'Turn On Device',d:'Physical instruction to power on the BarBot hardware. LED indicator guide for device states.'},{t:'Scanning',d:'Automated Bluetooth scan for nearby BarBot devices. Animated radar/scanning visualization.'},{t:'Device Found',d:'BarBot detected – shows device name and signal strength. Confirmation prompt before pairing.'},{t:'Connecting',d:'BLE handshake in progress. Progress indicator with status messages.'},{t:'Device Ready',d:'Successful connection confirmation. Device firmware version and capabilities displayed.'},{t:'Bottle Intro',d:'Introduction to the bottle station system. Overview of how slots map to ingredients.'},{t:'Slot Grid',d:'Visual grid of all 8 stations (A through H). Empty state showing available slots.'},{t:'Bottle Assignment',d:'Assign a spirit/ingredient to a specific slot. Barcode scan or manual search.'},{t:'Slot Confirmed',d:'Confirmation that bottle is assigned and detected. Level calibration prompt.'},{t:'Preferences Summary',d:'Review all configured preferences – taste, dietary, device, bottles. Edit option for each section.'},{t:'Setup Complete',d:'Success screen with setup summary. Transition prompt to make first drink.'},{t:'First Craft',d:'Guided first drink experience. Simplified crafting flow with extra guidance and tips.'}],
+ duration:'5–10 min',
+ extraPanels:[
+  {id:'fp',label:'Flow Path',type:'code',content:`Welcome → Physical Setup → Account Method → Profile Name → Age Verification → Taste Preferences\n→ Dietary Preferences → Terms & Privacy → Turn On Device → Scanning → Device Found → Connecting\n→ Device Ready → Bottle Intro → Slot Grid → Bottle Assignment → Slot Confirmed\n→ [Loop: assign more bottles] → Preferences Summary → Setup Complete → First Craft`},
+  {id:'api',label:'API Endpoints Used',type:'table',
+   headers:['Step','Endpoint','Method','Notes'],
+   rows:[
+     ['3','Ory Kratos /self-service/login/api','GET','Create auth flow'],
+     ['3','POST /api/v1/auth/exchange','POST','JWT token exchange'],
+     ['4–7','PATCH /api/v1/my/profile','PATCH','Save profile + preferences'],
+     ['10–12','BLE SCAN + CONNECT','BLE','Service UUID: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E'],
+     ['13','POST /api/v1/devices','POST','Register device on backend'],
+     ['16','POST /api/v1/my/bar','POST','Add bar inventory items'],
+     ['16','PATCH /api/v1/devices/:dn/stations/:name','PUT','Assign station']
+   ]},
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T2.1','Complete 20-step setup end-to-end','All steps complete, arrive at First Craft'],
+     ['T2.2','Age verification fails (under 21)','Cannot proceed past step 5'],
+     ['T2.3','BLE scan timeout (no device found)','After 30s, manual connect option appears'],
+     ['T2.4','BLE connection failure','Retry prompt with troubleshooting tips'],
+     ['T2.5','Assign 4+ bottles, verify slot grid updates','Grid shows assigned ingredients + levels'],
+     ['T2.6','Skip taste/dietary preferences','Defaults applied, setup continues normally'],
+     ['T2.7','Edit item from Preferences Summary','Navigate back to correct step, changes persist'],
+     ['T2.8','First Craft filters to assigned bottles only','Only recipes using configured ingredients shown']
+   ]},
+  {id:'errors',label:'Error Cases in This Flow',type:'table',
+   headers:['Trigger','Error Screen','Severity','User Impact','Recovery Path'],
+   rows:[
+     ['OAuth failure during account creation (step 3)','OAuth Failed (EH1-S1)','Critical','Cannot create account; setup blocked','Retry or use email/password instead'],
+     ['Age verification fails — user under 21 (step 5)','Custom: Age Gate','Critical','Legal block; cannot proceed with setup','Cannot bypass; legal requirement'],
+     ['BLE scan finds no device within 30s (step 10)','Custom: Scan Timeout','Warning','Device not discovered','Manual connect option appears; check device power'],
+     ['BLE pairing handshake fails (step 12)','Custom: Connection Error','Warning','Device found but pairing rejected','Retry with troubleshooting tips; check range'],
+     ['BLE pairing timeout — 20s exceeded (step 12)','Custom: Connection Timeout','Warning','Handshake never completes','Retry; restart device; move closer'],
+     ['Network drops during profile save (steps 4–7)','Server Retry (EH1-S9)','Info','Profile/preferences not saved to backend','Data cached locally; syncs when restored'],
+     ['Device registration API fails (step 13)','Server Retry (EH1-S9)','Warning','Device paired locally but not registered on backend','Auto-retry; manual retry if persists'],
+     ['Bluetooth permissions denied by iOS (step 10)','Custom: Permissions Required','Critical','Cannot scan for BLE devices at all','Prompt to enable in iOS Settings › Privacy › Bluetooth']
+   ]}
+ ]
 },
 {id:'ble',title:'BLE Connection',
  states:{files:['ble-search','ble-found','ble-connecting','ble-connected','ble-lost','ble-reconnecting','ble-reconnected','ble-manual'],labels:['Searching','Device Found','Connecting','Connected','Connection Lost','Reconnecting','Reconnected','Manual Connect']},
@@ -155,7 +332,50 @@ const FLOWS = [
  getSeqPath:function(i,dev){const f=dev==='iphone-dark'?'iPhone_Dark':dev==='iphone-light'?'iPhone_Light':dev==='ipad-dark'?'iPad_Dark':'iPad_Light';return`assets/screenshots/BLE_Flow/${f}/${this.seq.files[i]}.png`},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/BLE_${t}.html`},
  desc:'Bluetooth Low Energy device connection lifecycle covering all possible states. The primary flow handles automatic discovery and pairing, while edge cases cover connection loss, automatic reconnection, and manual fallback. The sequence section shows the step-by-step walkthrough a user follows during initial BLE setup.',
- guide:[{t:'Searching',d:'Bluetooth scan initiated. Animated radar visualization. Device must be powered on and in range.'},{t:'Device Found',d:'BarBot detected with name, model, and signal strength. User confirms pairing intent.'},{t:'Connecting',d:'BLE handshake underway. Progress animation with real-time status updates.'},{t:'Connected',d:'Successful connection. Green status indicator. Device capabilities synced.'},{t:'Connection Lost',d:'Unexpected disconnect detected. Warning notification with auto-retry countdown.'},{t:'Reconnecting',d:'Automatic reconnection attempt. Background retry with exponential backoff.'},{t:'Reconnected',d:'Connection restored successfully. Brief success toast notification.'},{t:'Manual Connect',d:'Fallback for auto-connect failures. Manual device selection from discovered list.'}]
+ guide:[{t:'Searching',d:'Bluetooth scan initiated. Animated radar visualization. Device must be powered on and in range.'},{t:'Device Found',d:'BarBot detected with name, model, and signal strength. User confirms pairing intent.'},{t:'Connecting',d:'BLE handshake underway. Progress animation with real-time status updates.'},{t:'Connected',d:'Successful connection. Green status indicator. Device capabilities synced.'},{t:'Connection Lost',d:'Unexpected disconnect detected. Warning notification with auto-retry countdown.'},{t:'Reconnecting',d:'Automatic reconnection attempt. Background retry with exponential backoff.'},{t:'Reconnected',d:'Connection restored successfully. Brief success toast notification.'},{t:'Manual Connect',d:'Fallback for auto-connect failures. Manual device selection from discovered list.'}],
+ duration:'30s–2 min',
+ extraPanels:[
+  {id:'sm',label:'Connection State Machine',type:'code',content:`[Disconnected] ──user taps connect──→ [Searching]\n                       device found ↓\n               [Device Found] ──user taps──→ [Connecting]\n                         success ↓               ↓ failure\n                      [Connected]            [Error → retry]\n                  connection lost ↓\n                [Connection Lost] ──→ [Reconnecting]\n                                    retry success ↑\n                                    after 5 fails ↓\n                              [Manual Connect] ──→ [Connecting]\n\nAuto-reconnect: exponential backoff, max 5 attempts\nIdle disconnect: 10 min inactivity → Connection Timeout (EH1-S5)`},
+  {id:'specs',label:'BLE Technical Specs',type:'table',
+   headers:['Parameter','Value'],
+   rows:[
+     ['BLE Version','4.2 or higher required'],
+     ['Service UUID','6E400001-B5A3-F393-E0A9-E50E24DCCA9E'],
+     ['Write Characteristic','6E400002-B5A3-F393-E0A9-E50E24DCCA9E'],
+     ['Read/Notify Characteristic','6E400003-B5A3-F393-E0A9-E50E24DCCA9E'],
+     ['Connection Timeout','20 seconds'],
+     ['Scan Duration','30 seconds before manual fallback'],
+     ['Auto-Reconnect Attempts','5 with exponential backoff'],
+     ['Idle Disconnect','10 minutes of inactivity'],
+     ['Optimal Range','30 ft / 10 meters']
+   ]},
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T3.1','Fresh BLE scan — device nearby and powered on','Device found within 30s, signal strength shown'],
+     ['T3.2','BLE scan — no device nearby','30s timeout, manual connect option appears'],
+     ['T3.3','Successful BLE pairing','Connecting animation → "Station linked" in 5–15s'],
+     ['T3.4','BLE pairing failure (device off)','Error after 20s timeout, retry/troubleshoot options'],
+     ['T3.5','Connection lost during idle','Connection Lost screen → auto-reconnect attempts'],
+     ['T3.6','Auto-reconnect succeeds (attempt 1–5)','"Connection restored" banner, resume normal'],
+     ['T3.7','Auto-reconnect fails (all 5 attempts)','Falls back to Manual Connect screen'],
+     ['T3.8','Idle disconnect after 10 min','"Connection timeout" notification'],
+     ['T3.9','Connection lost during active pour','Pour paused immediately, reconnect + resume'],
+     ['T3.10','Bluetooth permissions denied by OS','Graceful prompt to enable in Settings']
+   ]},
+  {id:'errors',label:'Error Cases in This Flow',type:'table',
+   headers:['Trigger','Error Screen','Severity','User Impact','Recovery Path'],
+   rows:[
+     ['BLE scan times out — no device found in 30s','Searching → Custom: Scan Timeout','Warning','User cannot auto-discover device','Manual Connect screen with previously paired list'],
+     ['BLE pairing handshake rejected by device','Connecting → Custom: Connection Error','Warning','Pairing fails at hardware level','Retry; ensure device is in pairing mode'],
+     ['Connection timeout — 20s exceeded during handshake','Connecting → Custom: Timeout Error','Warning','Handshake incomplete','Retry; restart device; verify firmware'],
+     ['Connection lost unexpectedly during use','Connection Lost (auto-triggered)','Warning','Active operations interrupted','Auto-reconnect starts within 3s'],
+     ['All 5 auto-reconnect attempts fail','Reconnecting → Manual Connect','Critical','Device unreachable; BLE features blocked','Manual Connect screen; hardware troubleshooting'],
+     ['Connection lost during active pour','Connection Lost + Pour Paused','Critical','Pour stopped mid-operation; spill risk','Pour paused immediately; reconnect + resume'],
+     ['Bluetooth disabled at OS level','Custom: BLE Disabled','Critical','All BLE functionality blocked','Prompt to enable Bluetooth in iOS Settings'],
+     ['Device firmware mismatch after reconnect','Custom: Firmware Alert','Warning','Commands may not be recognized','Firmware update prompt; check compatibility']
+   ]}
+ ]
 },
 {id:'barbot',title:'BarBot AI',
  files:['1_Welcome','2_ChatHome','3_ChatText','4_RecipeCards','5_Voice','6_Camera','7_Hardware','8_Celebration'],
@@ -164,7 +384,47 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/BarBot_${t}.html`},
  desc:'AI-powered cocktail assistant experience providing conversational drink recommendations. Users interact via text chat, voice input, or camera scanning. The AI understands mood, preferences, and available ingredients to suggest perfect cocktails. Includes hardware status monitoring and celebration screens.',
- guide:[{t:'Welcome',d:'Introduction to BarBot AI capabilities. Suggested conversation starters displayed.'},{t:'Chat Home',d:'Main chat interface with message history. Quick-action chips for common requests.'},{t:'Chat Text',d:'Active text conversation. AI responds with contextual suggestions based on mood and preferences.'},{t:'Recipe Cards',d:'Inline drink recommendation cards within the chat. Swipeable carousel with photos and key details.'},{t:'Voice Input',d:'Hands-free voice interaction. Real-time speech-to-text with waveform visualization.'},{t:'Camera Scan',d:'Bottle/ingredient scanning via device camera. AI identifies spirits and suggests compatible recipes.'},{t:'Hardware Status',d:'BarBot device diagnostics within the chat context. Station levels, connectivity, and maintenance alerts.'},{t:'Celebration',d:'Drink completion celebration within the AI chat flow. Rating prompt and social sharing options.'}]
+ guide:[{t:'Welcome',d:'Introduction to BarBot AI capabilities. Suggested conversation starters displayed.'},{t:'Chat Home',d:'Main chat interface with message history. Quick-action chips for common requests.'},{t:'Chat Text',d:'Active text conversation. AI responds with contextual suggestions based on mood and preferences.'},{t:'Recipe Cards',d:'Inline drink recommendation cards within the chat. Swipeable carousel with photos and key details.'},{t:'Voice Input',d:'Hands-free voice interaction. Real-time speech-to-text with waveform visualization.'},{t:'Camera Scan',d:'Bottle/ingredient scanning via device camera. AI identifies spirits and suggests compatible recipes.'},{t:'Hardware Status',d:'BarBot device diagnostics within the chat context. Station levels, connectivity, and maintenance alerts.'},{t:'Celebration',d:'Drink completion celebration within the AI chat flow. Rating prompt and social sharing options.'}],
+ duration:'2–10 min per session',
+ extraPanels:[
+  {id:'fp',label:'Flow Path',type:'code',content:`Welcome / Chat Home → [Text Input | Voice Input | Camera Scan]\n   → Chat Text → Recipe Cards → [Craft Now | Continue Chat]\n   → Hardware Status (if needed) → Celebration\n\nFallback chain: Streaming → Batch → Cached → Manual catalog`},
+  {id:'ql',label:'AI Query Processing Logic',type:'code',content:`User submits query\n  ▸ Content Filter Check\n      Prohibited → AI Content Filter Error (EH2-S1) → Rephrase\n      Clean → Continue\n  ▸ Query Type Detection\n      Specific drink name → Direct recipe lookup\n      Ingredient-based → Filter catalog by ingredient\n      Mood-based → Mood algorithm + recommendations\n      Occasion-based → Context-aware suggestions\n      General/vague → Clarification question\n  ▸ AI Processing (Bond service)\n      Success → Streaming response + Recipe Cards\n      Timeout (>30s) → AI Thinking screen (EH2-S4)\n      Service Error → AI Fallback (EH2-S2) → Manual Browse\n  ▸ Fallback Chain: Streaming → Batch → Cached → Manual catalog`},
+  {id:'api',label:'Bond AI API Endpoints',type:'table',
+   headers:['Endpoint','Method','Purpose','Auth'],
+   rows:[
+     ['/api/v1/chat','POST','Create new chat session','JWT'],
+     ['/api/v1/chat/:id/messages','POST','Send message to chat','JWT'],
+     ['/api/v1/chat/:id/messages','GET','Get chat history','JWT'],
+     ['/api/v1/chat/:id/stream','GET (SSE)','Stream AI response','JWT'],
+     ['/api/v1/recipes/suggest','POST','Get recipe suggestions','JWT'],
+     ['/api/v1/recipes/scan','POST','Camera ingredient scan','JWT'],
+     ['/api/v1/feedback','POST','Submit chat feedback','JWT']
+   ]},
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T4.1','Text query: "Something refreshing with gin"','AI responds with 2–4 gin-based recipe cards'],
+     ['T4.2','Voice input: speak naturally','Waveform visible, transcription appears, AI responds'],
+     ['T4.3','Camera scan: point at bottle','Ingredient detected, matching recipes suggested'],
+     ['T4.4','"Craft Now" from inline recipe card','→ Ingredient Check → Pour flow'],
+     ['T4.5','AI service unavailable','Fallback screen: "Browse Catalog" + "Manual Search"'],
+     ['T4.6','Content filter trigger','"Unable to process" with alternative suggestion'],
+     ['T4.7','AI timeout (>30 seconds)','"Taking longer than usual" → cancel option'],
+     ['T4.8','Streaming response interrupted','Partial message + inline "Retry" button']
+   ]},
+  {id:'errors',label:'Error Cases in This Flow',type:'table',
+   headers:['Trigger','Error Screen','Severity','User Impact','Recovery Path'],
+   rows:[
+     ['AI query contains prohibited content','AI Content Filter (EH2-S1)','Warning','Query rejected; no recipe suggestions','Rephrase query within content guidelines'],
+     ['Bond AI service unavailable','AI Fallback (EH2-S2)','Warning','AI assistant completely non-functional','"Browse Recipe Catalog" or "Use Manual Search"'],
+     ['Streaming AI response interrupted mid-generation','AI Stream Retry (EH2-S3)','Info','Partial response shown (grayed out)','Tap "Retry" inline or ask different question'],
+     ['AI processing exceeds 10s (extended thinking)','AI Thinking (EH2-S4)','Info','Response delayed; user sees spinner','Wait (30s timeout), cancel, or use alternative'],
+     ['AI thinking exceeds 30s timeout','AI Thinking → Auto-Fallback','Warning','AI times out completely','Auto-redirect to manual search/browse'],
+     ['Voice input — microphone permission denied','Custom: Mic Permission','Warning','Voice input unavailable','Prompt to enable in iOS Settings; fall back to text'],
+     ['Camera scan — camera permission denied','Custom: Camera Permission','Warning','Camera ingredient scan unavailable','Prompt to enable in iOS Settings; manual entry'],
+     ['Network drops during AI conversation','All Networks Failed (EH1-S7)','Critical','AI requires internet; chat non-functional','Offline mode available for cached recipes only']
+   ]}
+ ]
 },
 {id:'recipe',title:'Recipe Flow',
  files:['Hub','Browse_Search','Browse_Trending','Recipe_Detail','Customize','Ingredient_Check','Craft_PlaceGlass','Craft_Pouring','Craft_Complete','PostCraft_Rate','PostCraft_Next'],
@@ -173,7 +433,49 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/RecipeFlow_${t}.html`},
  desc:'End-to-end recipe discovery and crafting journey from browsing to post-craft engagement. Users explore recipes through search, trending, and category browsing, then customize ingredients and proportions before initiating the automated crafting process.',
- guide:[{t:'Recipe Hub',d:'Central recipe dashboard with curated collections, recently viewed, and personalized picks.'},{t:'Browse & Search',d:'Full-text search with autocomplete. Filter by spirit, difficulty, occasion, prep time.'},{t:'Trending',d:'Currently popular recipes across the platform. Real-time popularity indicators.'},{t:'Recipe Detail',d:'Complete recipe view â ingredients, instructions, nutrition, reviews, similar drinks.'},{t:'Customize',d:'Adjust ingredient proportions, swap spirits, modify sweetness/strength levels.'},{t:'Ingredient Check',d:'Verify all required ingredients are available in stations. Suggests substitutions for missing items.'},{t:'Place Glass',d:'Physical prompt to place glass on the BarBot platform. Sensor confirmation before pouring.'},{t:'Pouring',d:'Live pour progress with ingredient-by-ingredient sequence. Estimated time remaining.'},{t:'Craft Complete',d:'Drink finished. Final garnish instructions if applicable. Removal prompt.'},{t:'Rate',d:'Post-craft rating and tasting notes. Feedback improves future recommendations.'},{t:"What's Next",d:'Recommendations based on what was just crafted. "Make Another" and exploration options.'}]
+ guide:[{t:'Recipe Hub',d:'Central recipe dashboard with curated collections, recently viewed, and personalized picks.'},{t:'Browse & Search',d:'Full-text search with autocomplete. Filter by spirit, difficulty, occasion, prep time.'},{t:'Trending',d:'Currently popular recipes across the platform. Real-time popularity indicators.'},{t:'Recipe Detail',d:'Complete recipe view – ingredients, instructions, nutrition, reviews, similar drinks.'},{t:'Customize',d:'Adjust ingredient proportions, swap spirits, modify sweetness/strength levels.'},{t:'Ingredient Check',d:'Verify all required ingredients are available in stations. Suggests substitutions for missing items.'},{t:'Place Glass',d:'Physical prompt to place glass on the BarBot platform. Sensor confirmation before pouring.'},{t:'Pouring',d:'Live pour progress with ingredient-by-ingredient sequence. Estimated time remaining.'},{t:'Craft Complete',d:'Drink finished. Final garnish instructions if applicable. Removal prompt.'},{t:'Rate',d:'Post-craft rating and tasting notes. Feedback improves future recommendations.'},{t:"What's Next",d:'Recommendations based on what was just crafted. "Make Another" and exploration options.'}],
+ duration:'3–8 min (browse to pour)',
+ extraPanels:[
+  {id:'fp',label:'Flow Path',type:'code',content:`Recipe Hub → Browse / Search / Trending → Recipe Detail\n  → [Optional: Customize] → Ingredient Check → Place Glass\n  → Pouring → Craft Complete → Rate Your Drink → What's Next`},
+  {id:'cr',label:'Crafting Readiness Validation (5-Step Check)',type:'code',content:`User taps "Craft" button\n  1. Device connected?\n       No  → Connection Error → Reconnect Flow\n       Yes → Continue\n  2. All ingredients assigned to stations?\n       No  → Missing Ingredient → Substitute or Different Recipe\n       Yes → Continue\n  3. Sufficient quantity for each ingredient?\n       <10% → Low Ingredient Warning (EH2-S9)\n           Enough for this drink → Warn + Continue\n           Not enough → Pour Adjusted (EH2-S5) or Refill\n       OK  → Continue\n  4. Device in cleaning mode?\n       Yes → Cleaning Block (EH2-S8) → Wait or Cancel\n       No  → Continue\n  5. All checks passed → Place Glass Screen`},
+  {id:'api',label:'API Endpoints Used',type:'table',
+   headers:['Screen','Endpoint','Method','Purpose'],
+   rows:[
+     ['Recipe Hub','/api/v1/recipes/trending','GET','Trending recipes'],
+     ['Browse & Search','/api/v1/cache/recipes','GET','Cached recipe catalog'],
+     ['Recipe Detail','/api/v1/my/recipes/:id','GET','Full recipe details'],
+     ['Ingredient Check','/api/v1/my/bar + BLE levels','GET','Check station inventory'],
+     ['Place Glass','BLE weight sensor check','BLE','Detect glass placement'],
+     ['Pouring','BLE POUR_START (0x03)','BLE','Begin pour sequence'],
+     ['Craft Complete','/api/v1/my/made-drinks/:id','POST','Log completed craft'],
+     ['Rate Your Drink','/api/v1/recipes/:id/ratings','POST','Submit rating']
+   ]},
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T5.1','Search for "Margarita"','Search results show matching recipes'],
+     ['T5.2','Customize strength to 150%','Ingredient quantities scale, warning if strong'],
+     ['T5.3','Ingredient check — all available','Green checkmarks, "Continue to Pour" enabled'],
+     ['T5.4','Ingredient check — one missing','Red X, suggestions for substitution or different recipe'],
+     ['T5.5','Complete pour sequence end-to-end','Each ingredient poured in sequence, progress updates'],
+     ['T5.6','Emergency stop during pour','All pumps halt, partial pour info displayed'],
+     ['T5.7','Glass removed during pour','"POUR PAUSED" alert, resume when replaced'],
+     ['T5.8','Rate drink (5 stars + text)','Rating submitted, affects future recommendations'],
+     ['T5.9','Skip rating and go to What\'s Next','Similar drinks shown, "Craft Another" available']
+   ]},
+  {id:'errors',label:'Error Cases in This Flow',type:'table',
+   headers:['Trigger','Error Screen','Severity','User Impact','Recovery Path'],
+   rows:[
+     ['Ingredient check fails — missing required ingredient','Ingredient Check → Missing Alert','Warning','Cannot craft recipe as designed','Substitution suggestions or "Go to Station Management"'],
+     ['Ingredient level below 10% before pour','Low Ingredient (EH2-S9)','Warning','"Running low" warning with level %, recipe needs','"Craft Anyway", "Refill Now", or "Different Drink"'],
+     ['Ingredient depletes mid-pour','Pour Adjusted (EH2-S5)','Warning','Recipe auto-scaled to 75% strength','"Continue Adjusted", "Cancel Pour", or "Refill First"'],
+     ['Glass removed during active pour (weight sensor)','Glass Removed (EH2-S6)','Critical','Pour paused immediately; spill risk','Replace glass + tap "Resume"; or "Cancel Pour"'],
+     ['Emergency stop triggered during pour','Emergency Stop (EH1-S4)','Critical','All pumps halt; partial pour info shown','Clean Spill, Resume Pour, or Discard & Start Over'],
+     ['Pump failure during pour','Pump Failure (EH2-S7)','Critical','Affected station non-functional','Check connection, restart, "Skip Ingredient", or "Abort Pour"'],
+     ['BLE connection lost during active pour','Connection Lost + Pour Paused','Critical','Pour commands cannot reach device','Auto-reconnect; pour resumes on restore'],
+     ['Station cleaning in progress — pour blocked','Station Cleaning (EH2-S8)','Warning','Cannot start craft during maintenance','Wait for cleaning or "Cancel Cleaning"']
+   ]}
+ ]
 },
 {id:'station',title:'Station Management',
  files:['Hub','Station_Detail','Level_Monitoring','Bottle_Setup','Bottle_Management','Alert_Low','Alert_Empty','Maintenance','Cleaning_Steps','Cleaning_Progress','Quick_Flush'],
@@ -182,7 +484,42 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/StationMgmt_${t}.html`},
  desc:'Complete hardware station management and maintenance workflow. Users monitor liquid levels across all 8 stations, manage bottle assignments, receive proactive alerts for low and empty stations, and perform routine maintenance including automated cleaning cycles and quick flush operations.',
- guide:[{t:'Station Hub',d:'Overview of all 8 stations with color-coded level indicators. Quick status at a glance.'},{t:'Station Detail',d:'Individual station deep-dive â bottle info, level percentage, pour history, swap option.'},{t:'Level Monitoring',d:'Real-time liquid level tracking with trend graphs. Predictive empty-date estimation.'},{t:'Bottle Setup',d:'Initial bottle assignment workflow. Barcode scan, manual search, or voice entry.'},{t:'Bottle Management',d:'Edit, swap, or remove bottles from stations. Batch operations for full restock.'},{t:'Low Alert',d:'Push notification and in-app alert when a station drops below 20%. Reorder suggestions.'},{t:'Empty Alert',d:'Critical alert for depleted stations. Affected recipes highlighted. Replacement flow.'},{t:'Maintenance',d:'Maintenance schedule dashboard. Cleaning reminders, firmware updates, diagnostics.'},{t:'Cleaning Steps',d:'Step-by-step cleaning instructions with illustrations. Safety precautions highlighted.'},{t:'Cleaning Progress',d:'Automated cleaning cycle progress. Stage indicator and estimated completion.'},{t:'Quick Flush',d:'One-tap flush operation for individual stations. Confirmation with water usage estimate.'}]
+ guide:[{t:'Station Hub',d:'Overview of all 8 stations with color-coded level indicators. Quick status at a glance.'},{t:'Station Detail',d:'Individual station deep-dive – bottle info, level percentage, pour history, swap option.'},{t:'Level Monitoring',d:'Real-time liquid level tracking with trend graphs. Predictive empty-date estimation.'},{t:'Bottle Setup',d:'Initial bottle assignment workflow. Barcode scan, manual search, or voice entry.'},{t:'Bottle Management',d:'Edit, swap, or remove bottles from stations. Batch operations for full restock.'},{t:'Low Alert',d:'Push notification and in-app alert when a station drops below 20%. Reorder suggestions.'},{t:'Empty Alert',d:'Critical alert for depleted stations. Affected recipes highlighted. Replacement flow.'},{t:'Maintenance',d:'Maintenance schedule dashboard. Cleaning reminders, firmware updates, diagnostics.'},{t:'Cleaning Steps',d:'Step-by-step cleaning instructions with illustrations. Safety precautions highlighted.'},{t:'Cleaning Progress',d:'Automated cleaning cycle progress. Stage indicator and estimated completion.'},{t:'Quick Flush',d:'One-tap flush operation for individual stations. Confirmation with water usage estimate.'}],
+ duration:'2–45 min depending on task',
+ extraPanels:[
+  {id:'thresholds',label:'Alert Thresholds',type:'table',
+   headers:['Level','Color','Status','Behavior'],
+   rows:[
+     ['>20%','Green','Healthy','Normal operation, no alerts'],
+     ['10–20%','Yellow','Low Warning','Notification reminder to refill; crafting allowed with warning'],
+     ['<10%','Red','Critical','Alert before every pour; auto-adjust portions available'],
+     ['0%','Gray/Empty','Empty','Blocks all recipes requiring this ingredient']
+   ]},
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T6.1','View all 8 stations on Station Hub','All stations displayed with correct levels + colors'],
+     ['T6.2','Tap station → see detail with usage graph','Station Detail shows level, stats, action buttons'],
+     ['T6.3','Assign new bottle to empty station','4-step wizard completes, slot grid updates'],
+     ['T6.4','Remove bottle — check impact warning','"X recipes will become unavailable" warning shown'],
+     ['T6.5','Low alert triggers at 20% threshold','Yellow notification banner with refill options'],
+     ['T6.6','Empty station blocks recipe','Recipe Detail shows missing ingredient, cannot craft'],
+     ['T6.7','Run Quick Flush (2–3 min)','Progress bar, completion confirmation'],
+     ['T6.8','Attempt craft during cleaning','Cleaning Block error: wait or cancel cleaning']
+   ]},
+  {id:'errors',label:'Error Cases in This Flow',type:'table',
+   headers:['Trigger','Error Screen','Severity','User Impact','Recovery Path'],
+   rows:[
+     ['Station communication failure','Station Offline (EH2-S10)','Critical','Cannot read levels or send commands','Retry Connection, Disable Station, or Run Diagnostics'],
+     ['Pump malfunction detected during maintenance','Pump Failure (EH2-S7)','Critical','Station cannot dispense from affected pump','Hardware troubleshooting; Contact Support'],
+     ['Cleaning cycle interrupted by connection loss','BLE Reconnect (EH1-S6) + Cleaning Paused','Warning','Cleaning cannot continue without BLE','Auto-reconnect; cleaning resumes on restore'],
+     ['Calibration fails — sensor not responding','Custom: Calibration Error','Warning','Station readings may be inaccurate','Re-run calibration; check physical sensor'],
+     ['Station shows 0% but bottle not empty (sensor drift)','Custom: Sensor Alert','Info','Incorrect level reading blocks recipes','Manual level override; recalibrate station'],
+     ['Bottle assignment conflict (same ingredient twice)','Custom: Duplicate Warning','Info','Two slots assigned same ingredient','Confirm or reassign one slot'],
+     ['Network drops during station data sync','All Networks Failed (EH1-S7)','Info','Station data not synced to cloud','Local data preserved; syncs when restored'],
+     ['Quick flush timeout — water reservoir empty','Custom: Reservoir Alert','Warning','Flush cannot complete; station dirty','Refill water reservoir and retry']
+   ]}
+ ]
 },
 {id:'nav1',title:'Navigation Map 1',
  files:['home','discover','recipe-detail','craft-confirm','active-pour','drink-complete','mybar','station-detail','bottle-slots','category-results','cleaning','create-recipe','customize-drink','full-history','maintenance','reviews','search-results','similar-drinks','trending-grid'],
@@ -191,7 +528,20 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/NavMap_${t}.html`},
  desc:'Primary navigation architecture mapping all main screens accessible through the app\'s core navigation. Covers the 4 main tabs (Home, Discover, My Bar, BarBot) and all screens reachable from them including recipe details, crafting flow, station management, content discovery, recipe creation, drink customization, history, maintenance, reviews, and search.',
- guide:[{t:'Home',d:'Main dashboard with personalized recommendations, recent activity, and quick actions.'},{t:'Discover',d:'Full recipe catalog with category browsing, search, and filtering.'},{t:'Recipe Detail',d:'Complete recipe information with ingredients, instructions, and reviews.'},{t:'Craft Confirm',d:'Pre-craft confirmation with ingredient verification and glass placement.'},{t:'Active Pour',d:'Real-time pour monitoring with progress and ingredient sequence.'},{t:'Drink Complete',d:'Post-craft completion with garnish instructions and celebration.'},{t:'My Bar',d:'Personal station management dashboard with device overview.'},{t:'Station Detail',d:'Individual station information and bottle management.'},{t:'Bottle Slots',d:'Visual grid of all bottle positions with assignment status.'},{t:'Category Results',d:'Filtered recipe results by selected category.'},{t:'Cleaning',d:'Station cleaning workflow with step-by-step guidance.'},{t:'Create Recipe',d:'Custom recipe builder with ingredient selection and proportions.'},{t:'Customize Drink',d:'Modify existing recipe with ingredient swaps and adjustments.'},{t:'Full History',d:'Complete crafting history with dates, recipes, and ratings.'},{t:'Maintenance',d:'Device maintenance dashboard with schedule and diagnostics.'},{t:'Reviews',d:'Recipe reviews and community ratings.'},{t:'Search Results',d:'Search results with relevance sorting and filters.'},{t:'Similar Drinks',d:'Related recipe suggestions based on current selection.'},{t:'Trending Grid',d:'Grid view of currently trending recipes across the platform.'}]
+ guide:[{t:'Home',d:'Main dashboard with personalized recommendations, recent activity, and quick actions.'},{t:'Discover',d:'Full recipe catalog with category browsing, search, and filtering.'},{t:'Recipe Detail',d:'Complete recipe information with ingredients, instructions, and reviews.'},{t:'Craft Confirm',d:'Pre-craft confirmation with ingredient verification and glass placement.'},{t:'Active Pour',d:'Real-time pour monitoring with progress and ingredient sequence.'},{t:'Drink Complete',d:'Post-craft completion with garnish instructions and celebration.'},{t:'My Bar',d:'Personal station management dashboard with device overview.'},{t:'Station Detail',d:'Individual station information and bottle management.'},{t:'Bottle Slots',d:'Visual grid of all bottle positions with assignment status.'},{t:'Category Results',d:'Filtered recipe results by selected category.'},{t:'Cleaning',d:'Station cleaning workflow with step-by-step guidance.'},{t:'Create Recipe',d:'Custom recipe builder with ingredient selection and proportions.'},{t:'Customize Drink',d:'Modify existing recipe with ingredient swaps and adjustments.'},{t:'Full History',d:'Complete crafting history with dates, recipes, and ratings.'},{t:'Maintenance',d:'Device maintenance dashboard with schedule and diagnostics.'},{t:'Reviews',d:'Recipe reviews and community ratings.'},{t:'Search Results',d:'Search results with relevance sorting and filters.'},{t:'Similar Drinks',d:'Related recipe suggestions based on current selection.'},{t:'Trending Grid',d:'Grid view of currently trending recipes across the platform.'}],
+ extraPanels:[
+  {id:'navrel',label:'Navigation Relationships',type:'table',
+   headers:['From Screen','Available Destinations'],
+   rows:[
+     ['Home','Discover (tab), Control (tab), BarBot (tab), Recipe Detail (recommendation tap), Full History, My Bar'],
+     ['Discover','Recipe Detail (card tap), Category Results, Search Results, Trending Grid'],
+     ['Recipe Detail','Customize Drink, Craft Confirm, Similar Drinks, Reviews'],
+     ['Craft Confirm','Active Pour (start), Recipe Detail (back/cancel)'],
+     ['Active Pour','Drink Complete (auto), Home (emergency stop)'],
+     ['Drink Complete','Reviews (rate), Similar Drinks (next), Home (done), Active Pour (craft another)'],
+     ['Control Panel','Station Detail (tap), Bottle Slots (grid), Maintenance, Cleaning']
+   ]}
+ ]
 },
 {id:'nav2',title:'Navigation Map 2',
  files:['profile','barbot-chat','party-setup','party-dashboard','party-analytics','recipe-builder','photo-scan','voice-input','queue-mgmt','taste-profile','app-theme','avatar-edit','change-password','delete-account','guest-join','linked-accounts','name-creation','notifications','qr-share','add-mixers','ai-recipe-card','create','set-proportions','units'],
@@ -200,7 +550,21 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/NavMap2_${t}.html`},
  desc:'Extended navigation mapping covering secondary and social features. Includes profile management, BarBot AI chat, party mode (setup, dashboard, analytics), recipe builder with photo scan and voice input, drink queue management, taste profiling, app theming, avatar customization, account settings (password, delete, linked accounts), guest features, notifications, QR sharing, mixer additions, AI recipe cards, recipe creation, proportion settings, and unit preferences.',
- guide:[{t:'Profile',d:'User profile with stats, preferences, and account settings.'},{t:'BarBot Chat',d:'AI assistant conversation interface with natural language interaction.'},{t:'Party Setup',d:'Configure party mode with guest count, drink menu, and preferences.'},{t:'Party Dashboard',d:'Live party monitoring with queue status and drink counts.'},{t:'Party Analytics',d:'Post-party analytics with popular drinks and consumption data.'},{t:'Recipe Builder',d:'Custom recipe creation tool with ingredient database.'},{t:'Photo Scan',d:'Camera-based ingredient identification and recipe matching.'},{t:'Voice Input',d:'Voice command interface for hands-free operation.'},{t:'Queue Management',d:'Drink queue ordering and priority management.'},{t:'Taste Profile',d:'Detailed taste preference configuration with flavor mapping.'},{t:'App Theme',d:'Light/dark mode and accent color customization.'},{t:'Avatar Edit',d:'Profile avatar selection and customization.'},{t:'Change Password',d:'Secure password update with current password verification.'},{t:'Delete Account',d:'Account deletion flow with data export option.'},{t:'Guest Join',d:'Guest access flow for party mode without full account.'},{t:'Linked Accounts',d:'Manage connected social and authentication providers.'},{t:'Name Creation',d:'Display name setup or modification.'},{t:'Notifications',d:'Notification preferences and history.'},{t:'QR Share',d:'QR code generation for recipe and profile sharing.'},{t:'Add Mixers',d:'Non-spirit ingredient additions to station configuration.'},{t:'AI Recipe Card',d:'AI-generated recipe suggestion card format.'},{t:'Create',d:'Recipe creation entry point with template options.'},{t:'Set Proportions',d:'Ingredient ratio adjustment interface.'},{t:'Units',d:'Measurement unit preferences (oz, ml, cl, parts).'}]
+ guide:[{t:'Profile',d:'User profile with stats, preferences, and account settings.'},{t:'BarBot Chat',d:'AI assistant conversation interface with natural language interaction.'},{t:'Party Setup',d:'Configure party mode with guest count, drink menu, and preferences.'},{t:'Party Dashboard',d:'Live party monitoring with queue status and drink counts.'},{t:'Party Analytics',d:'Post-party analytics with popular drinks and consumption data.'},{t:'Recipe Builder',d:'Custom recipe creation tool with ingredient database.'},{t:'Photo Scan',d:'Camera-based ingredient identification and recipe matching.'},{t:'Voice Input',d:'Voice command interface for hands-free operation.'},{t:'Queue Management',d:'Drink queue ordering and priority management.'},{t:'Taste Profile',d:'Detailed taste preference configuration with flavor mapping.'},{t:'App Theme',d:'Light/dark mode and accent color customization.'},{t:'Avatar Edit',d:'Profile avatar selection and customization.'},{t:'Change Password',d:'Secure password update with current password verification.'},{t:'Delete Account',d:'Account deletion flow with data export option.'},{t:'Guest Join',d:'Guest access flow for party mode without full account.'},{t:'Linked Accounts',d:'Manage connected social and authentication providers.'},{t:'Name Creation',d:'Display name setup or modification.'},{t:'Notifications',d:'Notification preferences and history.'},{t:'QR Share',d:'QR code generation for recipe and profile sharing.'},{t:'Add Mixers',d:'Non-spirit ingredient additions to station configuration.'},{t:'AI Recipe Card',d:'AI-generated recipe suggestion card format.'},{t:'Create',d:'Recipe creation entry point with template options.'},{t:'Set Proportions',d:'Ingredient ratio adjustment interface.'},{t:'Units',d:'Measurement unit preferences (oz, ml, cl, parts).'}],
+ extraPanels:[
+  {id:'partypath',label:'Party Mode Flow Path',type:'code',content:`Profile → Party Setup → Set Name → Guest Invitation (QR) → Configure Queue\n→ Start Party → Party Dashboard\n→ Guest Join (scan QR) → Guest Selects Drink → Added to Queue\n→ Queue Management → Active Pour Loop → Craft Complete\n→ Next in Queue Auto-Loads → Repeat → Party Analytics → End Party\n\nDecision Points: QR join, Queue ordering, Guest permissions, Analytics`},
+  {id:'recipepath',label:'Custom Recipe Creation Flow',type:'code',content:`Home → Profile → Create Recipe → Recipe Builder\n→ Name: e.g. "My Old Fashioned"\n→ Add Ingredients (bourbon, bitters, sugar)\n→ Set Proportions → Add Mixers (optional)\n→ Preview → Save to My Bar → Test Craft → Taste Test\n→ Edit (adjust sweetness) → Save Final → Share with Friends\n\nDecision Points: Ingredient selection, Ratio adjustment, Save, Test craft`},
+  {id:'errors',label:'Error Cases in This Flow',type:'table',
+   headers:['Trigger','Error Screen','Severity','User Impact','Recovery Path'],
+   rows:[
+     ['Profile API fails on load','Server Retry (EH1-S9)','Info','Profile screen shows stale cached data','Auto-retry; pull-to-refresh'],
+     ['Party session creation fails (network)','Server Retry (EH1-S9)','Warning','Cannot create party; no session ID','Retry; check network connection'],
+     ['Party WebSocket connection drops','Custom: Party Connection Lost','Warning','Live queue updates stop; dashboard stale','Auto-reconnect WebSocket; manual refresh'],
+     ['QR code scan fails (camera permission denied)','Custom: Camera Permission','Warning','Guest cannot join party via QR','Enable camera in iOS Settings; manual code entry'],
+     ['Custom recipe save fails (API error)','Server Retry (EH1-S9)','Warning','Recipe not saved to cloud','Local save preserved; syncs when restored'],
+     ['Theme change fails to apply','None (inline warning)','Info','UI reverts to default theme','Retry or restart app']
+   ]}
+ ]
 },
 {id:'err1',title:'Error Handling 1',
  files:['Auth_OAuthFailed','Auth_SessionExpired','Auth_WrongPassword','BLE_EmergencyStop','BLE_IdleDisconnect','BLE_Reconnect','Network_AllFailed','Network_Offline','Network_ServerRetry','ConnectionRestored','ErrorHub'],
@@ -209,7 +573,28 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/ErrHandling_${t}.html`},
  desc:'Core error handling states covering authentication failures, BLE disconnections, and network issues. Each error state provides clear user messaging, actionable recovery steps, and graceful degradation options. Covers OAuth failures, session expiry, wrong password, emergency stop, idle BLE disconnect, BLE reconnection, total network failure, offline mode, server retry logic, connection restoration, and the central error hub dashboard.',
- guide:[{t:'OAuth Failed',d:'Third-party authentication failure. Retry option with alternative sign-in methods.'},{t:'Session Expired',d:'Auth token expiration. Automatic re-authentication prompt with session restoration.'},{t:'Wrong Password',d:'Invalid credentials. Attempt counter with lockout warning. Forgot password link.'},{t:'Emergency Stop',d:'Hardware emergency stop triggered. Safety messaging. Manual reset instructions.'},{t:'Idle Disconnect',d:'BLE timeout after inactivity. Background reconnect with notification.'},{t:'BLE Reconnect',d:'Active BLE reconnection attempt. Progress indicator with manual fallback.'},{t:'All Networks Failed',d:'Complete network failure. Offline mode activation with cached data.'},{t:'Offline Mode',d:'Limited functionality without network. Available features clearly marked.'},{t:'Server Retry',d:'Backend service error. Automatic retry with exponential backoff. Status page link.'},{t:'Connection Restored',d:'Network/BLE recovery confirmation. Data sync initiated.'},{t:'Error Hub',d:'Central error dashboard. Active issues, resolution history, support contact.'}]
+ guide:[{t:'OAuth Failed',d:'Third-party authentication failure. Retry option with alternative sign-in methods.'},{t:'Session Expired',d:'Auth token expiration. Automatic re-authentication prompt with session restoration.'},{t:'Wrong Password',d:'Invalid credentials. Attempt counter with lockout warning. Forgot password link.'},{t:'Emergency Stop',d:'Hardware emergency stop triggered. Safety messaging. Manual reset instructions.'},{t:'Idle Disconnect',d:'BLE timeout after inactivity. Background reconnect with notification.'},{t:'BLE Reconnect',d:'Active BLE reconnection attempt. Progress indicator with manual fallback.'},{t:'All Networks Failed',d:'Complete network failure. Offline mode activation with cached data.'},{t:'Offline Mode',d:'Limited functionality without network. Available features clearly marked.'},{t:'Server Retry',d:'Backend service error. Automatic retry with exponential backoff. Status page link.'},{t:'Connection Restored',d:'Network/BLE recovery confirmation. Data sync initiated.'},{t:'Error Hub',d:'Central error dashboard. Active issues, resolution history, support contact.'}],
+ extraPanels:[
+  {id:'severity',label:'Severity Reference Guide',type:'table',
+   headers:['Severity','Color','Description','User Action Required'],
+   rows:[
+     ['Critical','Red','User completely blocked; cannot proceed without resolution','Immediate action needed'],
+     ['Warning','Amber','Functionality degraded; workaround available','Action recommended'],
+     ['Info','Blue','Non-blocking notification; app continues normally','No action needed']
+   ]},
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T11.1','OAuth cancel (tap cancel on Apple Sign-In)','OAuth Failed screen with retry options'],
+     ['T11.2','Force expire JWT (wait 24h or clear Keychain)','Session Expired → login screen'],
+     ['T11.3','Enter wrong password 5 times','Account lockout after 5 attempts'],
+     ['T11.4','Hit Emergency Stop during pour','STOPPED screen, partial pour info accurate'],
+     ['T11.5','Enable airplane mode during app use','"No internet" → Offline Mode available'],
+     ['T11.6','Disable airplane mode','"Connection restored" banner, data syncs'],
+     ['T11.7','Walk out of BLE range during idle','Idle Disconnect after timeout'],
+     ['T11.8','Walk back into range after disconnect','Auto-reconnect succeeds']
+   ]}
+ ]
 },
 {id:'err2',title:'Error Handling 2',
  files:['AI_ContentFilter','AI_Fallback','AI_StreamRetry','AI_Thinking','Pour_Adjusted','Pour_GlassRemoved','Pour_PumpFailure','Station_Cleaning','Station_LowIngredient','Station_Offline','ErrorHub'],
@@ -218,7 +603,20 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:function(dev){const d=dev.includes('iphone')?'iPhone':'iPad';const t=dev.includes('dark')?'Dark':'Light';return`assets/prototypes/${d}/ErrHandling2_${t}.html`},
  desc:'Extended error handling for AI processing, pour operations, and station hardware errors. Covers AI content moderation, fallback responses, streaming issues, thinking states, pour adjustments due to availability, glass removal during active pour, pump failures, station cleaning requirements, low ingredient warnings, station offline handling, and the secondary error hub.',
- guide:[{t:'AI Content Filter',d:'Inappropriate content detected in AI response. Filtered replacement with explanation.'},{t:'AI Fallback',d:'AI service unavailable. Pre-cached suggestions displayed as fallback.'},{t:'AI Stream Retry',d:'Streaming response interrupted. Auto-retry with partial response preserved.'},{t:'AI Thinking',d:'Extended AI processing indicator. Animated thinking state with estimated wait.'},{t:'Pour Adjusted',d:'Recipe automatically adjusted due to ingredient availability. Changes highlighted.'},{t:'Glass Removed',d:'Glass removed during active pour. Pause with spill prevention messaging.'},{t:'Pump Failure',d:'Hardware pump malfunction. Affected station identified. Service guidance.'},{t:'Station Cleaning',d:'Station requires cleaning before next use. Cleaning flow shortcut.'},{t:'Low Ingredient',d:'Insufficient ingredient for full recipe. Adjusted pour or substitute offered.'},{t:'Station Offline',d:'Individual station hardware offline. Diagnostics and restart options.'},{t:'Error Hub',d:'Extended error dashboard for AI, pour, and station issues.'}]
+ guide:[{t:'AI Content Filter',d:'Inappropriate content detected in AI response. Filtered replacement with explanation.'},{t:'AI Fallback',d:'AI service unavailable. Pre-cached suggestions displayed as fallback.'},{t:'AI Stream Retry',d:'Streaming response interrupted. Auto-retry with partial response preserved.'},{t:'AI Thinking',d:'Extended AI processing indicator. Animated thinking state with estimated wait.'},{t:'Pour Adjusted',d:'Recipe automatically adjusted due to ingredient availability. Changes highlighted.'},{t:'Glass Removed',d:'Glass removed during active pour. Pause with spill prevention messaging.'},{t:'Pump Failure',d:'Hardware pump malfunction. Affected station identified. Service guidance.'},{t:'Station Cleaning',d:'Station requires cleaning before next use. Cleaning flow shortcut.'},{t:'Low Ingredient',d:'Insufficient ingredient for full recipe. Adjusted pour or substitute offered.'},{t:'Station Offline',d:'Individual station hardware offline. Diagnostics and restart options.'},{t:'Error Hub',d:'Extended error dashboard for AI, pour, and station issues.'}],
+ extraPanels:[
+  {id:'tests',label:'Test Scenarios',type:'table',
+   headers:['#','Scenario','Expected Behavior'],
+   rows:[
+     ['T12.1','Ask AI prohibited content','Content Filter screen, rephrase suggestion'],
+     ['T12.2','AI service down (simulate Bond timeout)','Fallback screen with Browse/Manual Search'],
+     ['T12.3','Low ingredient (8% remaining, recipe needs 45ml)','Warning with "Craft Anyway" or "Refill Now"'],
+     ['T12.4','Remove glass during pour (weight sensor)','"POUR PAUSED", resume when replaced'],
+     ['T12.5','Pump failure during pour','"Pump Error" with error code, troubleshooting steps'],
+     ['T12.6','Try to craft during cleaning cycle','"Cannot start craft during maintenance" block'],
+     ['T12.7','Pour with auto-adjusted proportions','75% strength warning, user can accept or cancel']
+   ]}
+ ]
 },
 {id:'verify',title:'Verification',
  files:['home','discover','control','barbot'],
@@ -227,8 +625,131 @@ const FLOWS = [
  getLabels:function(){return this.labels},getCount:function(){return this.files.length},
  proto:null,
  desc:'Final verification screenshots confirming all 4 main tab bar screens render correctly across device and theme variants. Cross-reference against design specs for pixel-perfect implementation across Home, Discover, Control, and BarBot tabs.',
- guide:[{t:'Home Tab',d:'Verify home screen layout, spacing, typography, and content rendering.'},{t:'Discover Tab',d:'Verify discover screen grid layout, search bar, and category chips.'},{t:'Control Tab',d:'Verify control panel station grid, status indicators, and device info.'},{t:'BarBot Tab',d:'Verify AI chat interface, message bubbles, and input area.'}]
+ guide:[{t:'Home Tab',d:'Verify home screen layout, spacing, typography, and content rendering.'},{t:'Discover Tab',d:'Verify discover screen grid layout, search bar, and category chips.'},{t:'Control Tab',d:'Verify control panel station grid, status indicators, and device info.'},{t:'BarBot Tab',d:'Verify AI chat interface, message bubbles, and input area.'}],
+ extraPanels:[
+  {id:'checklist',label:'QA Verification Checklist',type:'table',
+   headers:['Tab','What to Verify','Pass/Fail'],
+   rows:[
+     ['Home Tab','Layout, spacing, typography, recommendation cards, device status indicator',''],
+     ['Discover Tab','Grid layout, search bar functional, category chips, filter pills',''],
+     ['Control Tab','Station grid, level indicators (color-coded), connection status, firmware version',''],
+     ['BarBot Tab','Chat interface, message bubbles, input area, voice/camera buttons','']
+   ]}
+ ]
 }];
+
+const REFERENCE = [
+  {id:'architecture',icon:'🏗️',title:'App Architecture Overview',
+   desc:'Navigation structure, information architecture hierarchy, and screen inventory summary across all 11 flows.',
+   panels:[
+     {id:'navstruct',label:'2.1 Navigation Structure',type:'table',
+      headers:['Tab','Section','Key Screens','Primary Function'],
+      rows:[
+        ['Home','Dashboard','Recommendations, History, Quick Actions, Device Status','Command center'],
+        ['Discover','Recipe Catalog','Search, Filters, Categories, Trending, Recipe Detail','Content discovery'],
+        ['Control','Device Mgmt','Station Hub, Station Detail, Levels, Maintenance, Cleaning','Hardware management'],
+        ['BarBot','AI Assistant','Chat, Voice Input, Camera Scan, Recipe Cards','AI-powered suggestions']
+      ]},
+     {id:'infoarch',label:'2.2 Information Architecture',type:'code',content:`App Root\n  ▸ Onboarding (First Launch Only)\n      Splash → Onboarding Carousel → Mood Selection\n      Authentication (Phone OTP → JWT)\n      Device Setup (20-step wizard)\n\n  ▸ Main App (Tab Bar — 4 tabs)\n      Home Tab: Dashboard, Recommendations, History\n      Discover Tab: Search, Browse, Categories, Trending\n      Control Tab: Stations, Levels, Maintenance, Cleaning\n      BarBot Tab: AI Chat, Voice, Camera, Suggestions\n\n  ▸ Crafting Flow (Full-screen Modal)\n      Ingredient Check → Place Glass → Active Pour\n      Craft Complete → Rate → What's Next\n\n  ▸ Profile & Settings (Push navigation from Profile icon)\n      Account, Preferences, Theme, Notifications\n      Party Mode (Create/Join/Dashboard/Analytics)\n      Custom Recipe Builder\n\n  ▸ Error States (Overlays / Sheets)\n      Auth Errors (OAuth, Session, Password)\n      Network Errors (Offline, Server, Retry)\n      BLE Errors (Disconnect, Reconnect, Timeout)\n      Hardware Errors (Pump, Station, Cleaning Block)\n      AI Errors (Content Filter, Fallback, Stream, Timeout)`},
+     {id:'inventory',label:'2.3 Screen Inventory Summary',type:'table',
+      headers:['Flow','Screens','Build Status','Owner'],
+      rows:[
+        ['App Flow (Onboarding + Core Loop)','13','Built','Shailendra + Raghav'],
+        ['Device Setup','20','Built (H1)','Raghav'],
+        ['BLE Connection','16','Built (H2)','Raghav'],
+        ['BarBot AI','8','Built','Shailendra'],
+        ['Recipe & Crafting','11','Built','Shailendra'],
+        ['Station Management','11','Built (H3)','Raghav'],
+        ['Navigation Map 1','19','Built','Shailendra'],
+        ['Navigation Map 2 (Profile/Party/Settings)','24','Partial','Shailendra'],
+        ['Error Handling 1 (Auth/Network/BLE)','11','Built (H4)','Raghav'],
+        ['Error Handling 2 (AI/Hardware/Pour)','11','Built (H5)','Raghav'],
+        ['Verification (QA)','4','Built','Both'],
+        ['TOTAL','148','~95% coverage','—']
+      ]}
+   ]},
+  {id:'journeys',icon:'🗺️',title:'Complete User Journeys',
+   desc:'8 end-to-end scenarios that cross multiple flows. Use as integration test scripts — each journey exercises auth, BLE, API, and UI together.',
+   panels:[
+     {id:'j-all',label:'All 8 Journeys',type:'mixed',items:[
+       {type:'text',content:'<strong style="color:var(--gold)">13.1 — First-Time User Cold Start</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 10–15 min</span>'},
+       {type:'code',content:`App Launch → Splash (2s) → Onboarding Carousel (3 slides) → Mood Selection\n→ Authentication (Phone OTP) → Device Setup (20 steps) → First Craft Selection\n→ Recipe Detail → Ingredient Check → Place Glass → Active Pour\n→ Craft Complete → Rate Drink → What's Next → Home Dashboard\n\nDecision Points: Mood selection, Auth method, Bottle assignments (4–8), First recipe choice`},
+       {type:'text',content:'<strong style="color:var(--gold)">13.2 — Returning User Quick Craft</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 2–3 min</span>'},
+       {type:'code',content:`App Launch → Splash (2s) → Home Dashboard → Browse Recommendations\n→ Recipe Card Tap → Recipe Detail → Craft Button\n→ Ingredient Check (auto-pass) → Place Glass → Active Pour\n→ Craft Complete → Rate (skip) → Home\n\nDecision Points: None — straight-through golden path`},
+       {type:'text',content:'<strong style="color:var(--gold)">13.3 — AI-Assisted Discovery</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 3–5 min</span>'},
+       {type:'code',content:`Home → BarBot AI Tab → Voice Input Button\n→ Speak: "Something refreshing with gin" → AI Processing\n→ Recipe Card Suggestions (3–4) → Select Recipe → Recipe Detail\n→ Customize Strength → Ingredient Check → Place Glass\n→ Active Pour → Craft Complete → AI Celebration → Rating → Continue Chat\n\nDecision Points: Voice vs text input, Recipe customization`},
+       {type:'text',content:'<strong style="color:var(--gold)">13.4 — Browse & Explore</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 5–10 min</span>'},
+       {type:'code',content:`Home → Discover Tab → Search Bar → Type: "margarita"\n→ Search Results → Filter: Difficulty=Easy → Recipe List → Scroll\n→ Recipe Detail → View Ingredients → Save to Favorites\n→ View Similar Drinks → Select New Recipe → Recipe Detail → Craft → Pour → Rate → Browse More\n\nDecision Points: Search, Filtering, Favorites, Similar drinks navigation`},
+       {type:'text',content:'<strong style="color:var(--gold)">13.5 — Maintenance Routine</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 45–60 min</span>'},
+       {type:'code',content:`Home → Control Tab → Station Overview (low levels)\n→ Maintenance Button → Select "Full Cleaning Cycle"\n→ Cleaning Steps → Follow Instructions → Start Cleaning\n→ Cleaning Progress (wait 30–40 min) → Completion\n→ Station Hub → Refill Stations → Bottle Assignment (×8) → Resume Normal\n\nDecision Points: None — sequential maintenance flow`},
+       {type:'text',content:'<strong style="color:var(--gold)">13.6 — Party Mode</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 2–4 hours</span>'},
+       {type:'code',content:`Profile → Party Setup → Set Name → Guest Invitation (QR)\n→ Configure Queue → Start Party → Party Dashboard\n→ Guest Join (scan QR) → Guest Selects Drink → Added to Queue\n→ Queue Management → Active Pour (first guest)\n→ Craft Complete → Next in Queue Auto-Loads → Repeat\n→ Party Analytics → End Party\n\nDecision Points: QR join, Queue ordering, Guest permissions, Analytics`},
+       {type:'text',content:'<strong style="color:var(--gold)">13.7 — Custom Recipe Creation</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 10–15 min</span>'},
+       {type:'code',content:`Home → Profile → Create Recipe → Recipe Builder\n→ Name: "My Old Fashioned"\n→ Add Ingredients (bourbon, bitters, sugar)\n→ Set Proportions → Preview → Save to My Bar\n→ Test Craft → Taste Test → Edit (adjust sweetness)\n→ Save Final → Share with Friends\n\nDecision Points: Ingredient selection, Ratio adjustment, Save, Test craft`},
+       {type:'text',content:'<strong style="color:var(--gold)">13.8 — Error Recovery During Pour</strong> &nbsp;<span style="color:var(--txt2);font-size:11px">Duration: 5–7 min</span>'},
+       {type:'code',content:`Recipe Detail → Craft → Ingredient Check → Place Glass\n→ Active Pour (20% complete) → CONNECTION LOST\n→ Pour Paused Immediately → Connection Lost Screen\n→ Auto-Reconnect (5 attempts) → Reconnecting Progress\n→ Connection Restored → Resume Pour Option\n→ Place Glass Again → Resume → Pour Continues → Craft Complete\n\nDecision Points: Connection loss, Auto-reconnect, Resume from pause point`}
+     ]}
+   ]},
+  {id:'smoke',icon:'🧪',title:'Smoke Test Checklist',
+   desc:'Quick validation pass for H6 Integration. Run these 10 tests after merging all branches to develop. Each test maps to a flow section for deep-dive if it fails.',
+   panels:[
+     {id:'smoketests',label:'S1–S10 Smoke Tests',type:'table',
+      headers:['#','Smoke Test','What to Verify','Flow Ref','Pass/Fail'],
+      rows:[
+        ['S1','App launches without crash','Splash → Home loads cleanly on develop branch. No Xcode warnings','Section 3',''],
+        ['S2','Authentication flow','Phone OTP → JWT exchange → land on Home with valid session','Section 3.2',''],
+        ['S3','BLE device scan + connect','Scan finds device, connect succeeds, "Station linked" shown','Section 5',''],
+        ['S4','Tab bar navigation (all 4 tabs)','Home, Discover, Control, BarBot all load content correctly','Section 9',''],
+        ['S5','Recipe browse + detail','Discover shows recipes, tap opens detail with ingredients','Section 7',''],
+        ['S6','Craft flow end-to-end','Ingredient Check → Place Glass → Pour → Cheers!','Section 7',''],
+        ['S7','Station Hub displays levels','8 stations visible with color-coded level indicators','Section 8',''],
+        ['S8','Error screen renders (spot check)','Force one error state (e.g., airplane mode) — error screen appears','Section 11',''],
+        ['S9','BLE reconnection','Disconnect BLE, verify auto-reconnect attempts and recovery','Section 5',''],
+        ['S10','Profile screen loads','Profile with settings, preferences, account info accessible','Section 10','']
+      ]},
+     {id:'postsmoke',label:'Post-Smoke Deep Tests (if smoke passes)',type:'table',
+      headers:['Area','Tests to Run','Section'],
+      rows:[
+        ['Device Setup (20-step)','Complete end-to-end as new user','Section 4'],
+        ['Error Handling 1 (H4)','All 11 error states from EH1','Section 11'],
+        ['Error Handling 2 (H5)','All 11 error states from EH2','Section 12'],
+        ['Party Mode','Create party, QR join, queue, analytics','Section 10.2'],
+        ['Custom Recipe','Build, save, test craft, share','Section 10.3'],
+        ['All 8 User Journeys','Walk through each scenario end-to-end','Section 13']
+      ]}
+   ]},
+  {id:'api-ref',icon:'🔌',title:'API Endpoint Cross-Reference',
+   desc:'Maps every flow to its required API endpoints. Use alongside the Barsys Ark API Integration Reference (25-page companion doc) for request/response details.',
+   panels:[
+     {id:'endpoints',label:'API Endpoints by Domain',type:'table',
+      headers:['Flow/Domain','Key Endpoints','Auth','Notes'],
+      rows:[
+        ['Authentication','Ory: /self-service/login/api, /self-service/login?flow={id}\nDefteros: POST /api/v1/auth/exchange','None → JWT','Phone OTP → JWT exchange'],
+        ['Profile','GET/PATCH /api/v1/my/profile\nGET/PATCH /api/v1/my/preferences','JWT','Profile + preferences CRUD'],
+        ['Recipes','GET /api/v1/my/recipes, POST /api/v1/my/recipes\nGET /api/v1/recipes/trending\nGET /api/v1/recipes/categories','JWT/Ory','Browse + user recipes'],
+        ['Crafting','POST /api/v1/my/made-drinks/:recipe_id\nPOST /api/v1/my/recipes/:id/ratings\nGET /api/v1/my/craft-history','JWT','Log crafts + ratings'],
+        ['Devices','GET /api/v1/my/devices\nPOST /api/v1/my/devices\nPATCH /api/v1/my/devices/:dn\nPOST /api/v1/my/devices/:dn/firmware-check','JWT','Device CRUD + firmware'],
+        ['Bar/Stations','GET /api/v1/my/bar\nPOST /api/v1/my/bar\nDELETE /api/v1/my/bar/base\nPUT /devices/:dn/stations/:name','JWT','Inventory + station config'],
+        ['Social','GET /api/v1/feed\nPOST/DELETE /api/v1/users/:id/follow\nGET /api/v1/my/followers','Ory/JWT','Feed + follow system'],
+        ['Party Mode','POST /api/v1/party/sessions\nPOST /api/v1/party/sessions/:id/join\nWebSocket: /ws/party/:id','JWT/Guest','Create/join/queue/WS events'],
+        ['BarBot AI','POST /api/v1/chat (Bond)\nGET /api/v1/chat/:id/messages\nPOST /api/v1/recipes/suggest','JWT','Bond AI service'],
+        ['Push Notifs','PUT /api/v1/my/push-token','JWT','NOT WIRED in current main branch'],
+        ['Cache/Sync','GET /api/v1/cache/recipes\nGET /api/v1/cache/mixlists\nGET /api/v1/my/cache/recipes/favorites','Ory/JWT','Delta sync by timestamp']
+      ]},
+     {id:'ble-commands',label:'BLE Commands Used Across Flows',type:'table',
+      headers:['Command','Opcode','Used In','Description'],
+      rows:[
+        ['POUR_START','0x03','Recipe Crafting (Section 7)','Begin pour sequence for recipe'],
+        ['POUR_STOP','0x04','Emergency Stop (EH1-S4)','Immediately halt all pumps'],
+        ['SCAN_START','0x01','BLE Connection (Section 5)','Begin BLE device discovery'],
+        ['CONNECT','0x02','Device Setup (Section 4)','Initiate BLE pairing handshake'],
+        ['STATUS_READ','0x05','Station Management (Section 8)','Read station levels and status'],
+        ['CLEAN_START','0x06','Maintenance (Section 8)','Begin cleaning cycle'],
+        ['FLUSH_START','0x07','Quick Flush (Section 8)','Begin water flush'],
+        ['CALIBRATE','0x08','Station Setup (Section 4/8)','Calibrate station sensor']
+      ]}
+   ]}
+];
 
 const MODES = ['iphone-dark','iphone-light','ipad-dark','ipad-light'];
 const MODE_NAMES = {'iphone-dark':'iPhone Dark Mode','iphone-light':'iPhone Light Mode','ipad-dark':'iPad Dark Mode','ipad-light':'iPad Light Mode'};
@@ -238,108 +759,174 @@ function buildImgClass(dev){return dev.includes('ipad')?'ss-img ipad':'ss-img'}
 function buildLblClass(dev){return dev.includes('ipad')?'ss-lbl ipad':'ss-lbl'}
 
 function buildFlowHTML(flow, dev) {
-  const isIPad = dev.includes('ipad');
-  const imgCls = buildImgClass(dev);
-  const lblCls = buildLblClass(dev);
-  let html = `<div class="flow-block" id="${flow.id}-${dev}"><div class="flow-hdr"><div class="flow-title"><h2>${flow.title}</h2>`;
-
-  // Screen count
-  let count;
-  if (flow.id === 'ble') count = flow.states.files.length + flow.seq.files.length;
-  else if (flow.id === 'app-flow') count = flow.getCount(dev);
-  else count = flow.getCount ? flow.getCount() : flow.files.length;
-
-  html += `<span class="badge">${count} Screens</span></div>`;
-  html += `<p class="flow-desc">${flow.desc}</p>`;
-  if (flow.proto) html += `<a href="${flow.proto(dev)}" target="_blank" class="proto-btn">â¶ View ${isIPad?'iPad':'iPhone'} Prototype</a>`;
+  let html = `<div class="flow-block" id="flow-${flow.id}">`;
+  html += `<div class="flow-hdr">`;
+  html += `<div class="flow-title"><h2>${flow.title}</h2><span class="badge">Flow</span>`;
+  if (flow.duration) {
+    html += `<span class="dur-badge">⏱ ${flow.duration}</span>`;
+  }
   html += `</div>`;
-
-  // Screenshots
-  if (flow.id === 'ble') {
-    // States strip
-    html += `<div class="strip-wrap"><div class="strip-label">Connection States â</div><div class="strip">`;
-    flow.states.files.forEach((f,i) => {
-      html += `<div class="ss-item"><img src="${flow.getStatePath(i,dev)}" alt="${flow.states.labels[i]}" class="${imgCls}" loading="lazy" onerror="this.style.opacity='0.3'"><div class="ss-num">${i+1}</div><div class="${lblCls}">${flow.states.labels[i]}</div></div>`;
-    });
-    html += `</div></div>`;
-    // Sequence strip
-    html += `<div class="strip-wrap"><div class="strip-label">Connection Sequence â</div><div class="strip">`;
-    flow.seq.files.forEach((f,i) => {
-      html += `<div class="ss-item"><img src="${flow.getSeqPath(i,dev)}" alt="${flow.seq.labels[i]}" class="${imgCls}" loading="lazy" onerror="this.style.opacity='0.3'"><div class="ss-num">${i+1}</div><div class="${lblCls}">${flow.seq.labels[i]}</div></div>`;
-    });
+  html += `<p class="flow-desc">${flow.desc}</p>`;
+  if(flow.proto){
+    const p=flow.proto(dev);
+    html += `<a href="${p}" target="_blank" class="proto-btn">📱 View Prototype</a>`;
+  }
+  html += `</div>`;
+  
+  const labels = flow.getLabels(dev);
+  const count = flow.getCount(dev);
+  
+  if(flow.iphone && flow.ipad){
+    html += `<div class="strip-wrap"><div class="strip-label">Screens</div><div class="strip">`;
+    for(let i=0;i<count;i++){
+      html += `<div class="ss-item"><img src="${flow.getPath(i,dev)}" class="${buildImgClass(dev)}" alt="${labels[i]}"><div class="${buildLblClass(dev)}">${i+1}. ${labels[i]}</div><div class="ss-num">${i+1}</div></div>`;
+    }
     html += `</div></div>`;
   } else {
-    const labels = flow.id === 'app-flow' ? flow.getLabels(dev) : (flow.getLabels ? flow.getLabels() : flow.labels);
-    const cnt = flow.id === 'app-flow' ? flow.getCount(dev) : (flow.getCount ? flow.getCount() : flow.files.length);
-    html += `<div class="strip-wrap"><div class="strip-label">Scroll to explore all steps â</div><div class="strip">`;
-    for (let i = 0; i < cnt; i++) {
-      const path = flow.getPath(i, dev);
-      html += `<div class="ss-item"><img src="${path}" alt="${labels[i]}" class="${imgCls}" loading="lazy" onerror="this.style.opacity='0.3'"><div class="ss-num">${i+1}</div><div class="${lblCls}">${labels[i]}</div></div>`;
+    html += `<div class="strip-wrap"><div class="strip-label">Screens</div><div class="strip">`;
+    for(let i=0;i<count;i++){
+      html += `<div class="ss-item"><img src="${flow.getPath(i,dev)}" class="${buildImgClass(dev)}" alt="${labels[i]}"><div class="${buildLblClass(dev)}">${i+1}. ${labels[i]}</div><div class="ss-num">${i+1}</div></div>`;
     }
     html += `</div></div>`;
   }
-
-  // Guide
-  if (flow.guide && flow.guide.length > 0) {
-    const gid = `guide-${flow.id}-${dev}`;
-    html += `<div class="guide-wrap"><div class="guide-btn" onclick="toggleGuide('${gid}',this)"><span class="arrow">â¶</span> In-Depth Guide â Step-by-Step Breakdown</div>`;
-    html += `<div class="guide-body" id="${gid}"><div class="guide-grid">`;
-    flow.guide.forEach(g => {
-      html += `<div class="g-step"><div class="g-step-t">${g.t}</div><div class="g-step-d">${g.d}</div></div>`;
-    });
-    html += `</div></div></div>`;
+  
+  if(flow.states && flow.seq){
+    html += `<div class="strip-wrap"><div class="strip-label">BLE States</div><div class="strip">`;
+    for(let i=0;i<flow.states.files.length;i++){
+      html += `<div class="ss-item"><img src="${flow.getStatePath(i,dev)}" class="${buildImgClass(dev)}" alt="${flow.states.labels[i]}"><div class="${buildLblClass(dev)}">${flow.states.labels[i]}</div></div>`;
+    }
+    html += `</div></div>`;
+    html += `<div class="strip-wrap"><div class="strip-label">BLE Sequence</div><div class="strip">`;
+    for(let i=0;i<flow.seq.files.length;i++){
+      html += `<div class="ss-item"><img src="${flow.getSeqPath(i,dev)}" class="${buildImgClass(dev)}" alt="${flow.seq.labels[i]}"><div class="${buildLblClass(dev)}">${flow.seq.labels[i]}</div></div>`;
+    }
+    html += `</div></div>`;
   }
-
+  
+  html += `<div class="guide-wrap">`;
+  html += `<div class="guide-btn" onclick="toggleGuide(this)"><span class="arrow">▼</span> Guide & Steps</div>`;
+  html += `<div class="guide-body">`;
+  html += `<div class="guide-grid">`;
+  flow.guide.forEach(g => {
+    html += `<div class="g-step"><div class="g-step-t">${g.t}</div><div class="g-step-d">${g.d}</div></div>`;
+  });
+  html += `</div></div></div>`;
+  
+  if (flow.extraPanels && flow.extraPanels.length > 0) {
+    html += `<div class="panel-group">`;
+    flow.extraPanels.forEach((panel, idx) => {
+      const pid = `xp-${flow.id}-${idx}-${dev}`;
+      html += buildPanel(panel, pid);
+    });
+    html += `</div>`;
+  }
+  
   html += `</div>`;
+  return html;
+}
+
+function buildReferenceHTML(dev) {
+  let html = `<div class="section-divider"></div>`;
+  REFERENCE.forEach(ref => {
+    html += `<div class="ref-section" id="ref-${ref.id}-${dev}">`;
+    html += `<div class="ref-section-title">${ref.icon} ${ref.title}</div>`;
+    html += `<p class="ref-section-desc">${ref.desc}</p>`;
+    html += `<div class="panel-group">`;
+    ref.panels.forEach((panel, idx) => {
+      const pid = `rp-${ref.id}-${idx}-${dev}`;
+      html += buildPanel(panel, pid);
+    });
+    html += `</div></div>`;
+  });
   return html;
 }
 
 function buildModePage(dev) {
   let html = `<div class="mode-page" id="page-${dev}" ${dev===activeMode?'style="display:block"':''}>`;
   FLOWS.forEach(flow => { html += buildFlowHTML(flow, dev); });
+  html += buildReferenceHTML(dev);
   html += `</div>`;
   return html;
 }
 
-// Build all 4 mode pages
-const contentArea = document.getElementById('contentArea');
-MODES.forEach(dev => { contentArea.innerHTML += buildModePage(dev); });
-
-// Initially show first mode
-document.getElementById('page-'+activeMode).classList.add('active');
-
-function toggleGuide(id, btn) {
-  const el = document.getElementById(id);
-  if (el) { el.classList.toggle('open'); btn.classList.toggle('open'); }
+function toggleGuide(btn) {
+  const body = btn.nextElementSibling;
+  if (body && body.classList.contains('guide-body')) {
+    body.classList.toggle('open');
+    btn.classList.toggle('open');
+  }
 }
 
-function switchMode(dev) {
-  activeMode = dev;
-  document.querySelectorAll('.mode-page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
-  const page = document.getElementById('page-'+dev);
-  if (page) { page.style.display = 'block'; page.classList.add('active'); }
-  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll(`.mode-tab[data-mode="${dev}"]`).forEach(t => t.classList.add('active'));
-  document.querySelectorAll('#modeNav a').forEach(a => { a.classList.toggle('active', a.dataset.mode === dev); });
-  document.getElementById('topTitle').textContent = MODE_NAMES[dev];
-}
-
-// Mode tab clicks (top bar)
-document.querySelectorAll('.mode-tab').forEach(btn => {
-  btn.addEventListener('click', () => switchMode(btn.dataset.mode));
-});
-
-// Mode nav clicks (sidebar)
-document.querySelectorAll('#modeNav a').forEach(a => {
-  a.addEventListener('click', () => switchMode(a.dataset.mode));
-});
-
-// Flow nav clicks (sidebar) â scroll to flow in active mode
-document.querySelectorAll('#flowNav a').forEach(a => {
-  a.addEventListener('click', () => {
-    const flowId = a.dataset.flow;
-    const target = document.getElementById(`${flowId}-${activeMode}`);
-    if (target) target.scrollIntoView({behavior:'smooth',block:'start'});
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  const contentArea = document.getElementById('contentArea');
+  
+  // Build all pages
+  MODES.forEach(mode => {
+    contentArea.innerHTML += buildModePage(mode);
+    document.getElementById(`page-${mode}`).classList.add('active');
+  });
+  
+  // Show only active mode
+  const updatePageVisibility = () => {
+    document.querySelectorAll('.mode-page').forEach(p => {
+      p.style.display = p.id === `page-${activeMode}` ? 'block' : 'none';
+    });
+  };
+  updatePageVisibility();
+  
+  // Mode nav clicks
+  document.querySelectorAll('#modeNav a').forEach(a => {
+    a.addEventListener('click', () => {
+      const mode = a.dataset.mode;
+      if(mode){
+        activeMode = mode;
+        document.querySelectorAll('#modeNav a').forEach(x => x.classList.remove('active'));
+        a.classList.add('active');
+        document.querySelectorAll('.mode-tab').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.mode-tab[data-mode="${mode}"]`)?.classList.add('active');
+        document.getElementById('topTitle').textContent = MODE_NAMES[mode];
+        updatePageVisibility();
+      }
+    });
+  });
+  
+  // Flow nav clicks
+  document.querySelectorAll('#flowNav a').forEach(a => {
+    a.addEventListener('click', () => {
+      const flowId = a.dataset.flow;
+      if(flowId){
+        const target = document.getElementById(`flow-${flowId}`);
+        if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  });
+  
+  // Reference nav clicks
+  document.querySelectorAll('#refNav a').forEach(a => {
+    a.addEventListener('click', () => {
+      const refId = a.dataset.ref;
+      if(refId){
+        const target = document.getElementById(`ref-${refId}-${activeMode}`);
+        if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  });
+  
+  // Mode tab clicks
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode;
+      if(mode){
+        activeMode = mode;
+        document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('#modeNav a').forEach(x => x.classList.remove('active'));
+        document.querySelector(`#modeNav a[data-mode="${mode}"]`)?.classList.add('active');
+        document.getElementById('topTitle').textContent = MODE_NAMES[mode];
+        updatePageVisibility();
+      }
+    });
   });
 });
 </script>
