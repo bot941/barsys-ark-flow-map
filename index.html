@@ -473,7 +473,9 @@ const FLOWS = [
      ['Emergency stop triggered during pour','Emergency Stop (EH1-S4)','Critical','All pumps halt; partial pour info shown','Clean Spill, Resume Pour, or Discard & Start Over'],
      ['Pump failure during pour','Pump Failure (EH2-S7)','Critical','Affected station non-functional','Check connection, restart, "Skip Ingredient", or "Abort Pour"'],
      ['BLE connection lost during active pour','Connection Lost + Pour Paused','Critical','Pour commands cannot reach device','Auto-reconnect; pour resumes on restore'],
-     ['Station cleaning in progress — pour blocked','Station Cleaning (EH2-S8)','Warning','Cannot start craft during maintenance','Wait for cleaning or "Cancel Cleaning"']
+     ['Station cleaning in progress — pour blocked','Station Cleaning (EH2-S8)','Warning','Cannot start craft during maintenance','Wait for cleaning or "Cancel Cleaning"'],
+     ['Network drops during recipe fetch','Server Retry (EH1-S9)','Info','Recipe details fail to load','Auto-retry; cached version if available'],
+     ['Rating API call fails after craft','Server Retry (EH1-S9)','Info','Rating not submitted','Auto-retry; rating queued for sync']
    ]}
  ]
 },
@@ -562,7 +564,11 @@ const FLOWS = [
      ['Party WebSocket connection drops','Custom: Party Connection Lost','Warning','Live queue updates stop; dashboard stale','Auto-reconnect WebSocket; manual refresh'],
      ['QR code scan fails (camera permission denied)','Custom: Camera Permission','Warning','Guest cannot join party via QR','Enable camera in iOS Settings; manual code entry'],
      ['Custom recipe save fails (API error)','Server Retry (EH1-S9)','Warning','Recipe not saved to cloud','Local save preserved; syncs when restored'],
-     ['Theme change fails to apply','None (inline warning)','Info','UI reverts to default theme','Retry or restart app']
+     ['Theme change fails to apply','None (inline warning)','Info','UI reverts to default theme','Retry or restart app'],
+     ['Push notification registration fails','None (silent)','Info','User won\'t receive push notifications','Retry at next app launch; check notification settings'],
+     ['Settings preferences fail to sync','Server Retry (EH1-S9)','Info','Changes not persisted to backend','Local cache used; auto-sync on next success'],
+     ['Social follow/unfollow API fails','Server Retry (EH1-S9)','Info','Follow state not updated on backend','Retry; eventual consistency on refresh'],
+     ['Party analytics data fails to load','Server Retry (EH1-S9)','Info','Analytics screen shows loading state','Pull-to-refresh; check network']
    ]}
  ]
 },
