@@ -3,496 +3,871 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BARSYS ARK — Complete User Flow Map</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Barsys ARK — Complete User Flow Map</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#050505;--s1:#0D0D0D;--gold:#C8A97E;--t1:#fff;--t2:rgba(255,255,255,.55);--t3:rgba(255,255,255,.25);--border:rgba(255,255,255,.06)}
-html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1)}
-#topbar{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(5,5,5,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:14px;z-index:200;backdrop-filter:blur(16px)}
-#topbar a{color:var(--gold);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.2px}
-#topbar h1{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-#topbar .meta{font-size:10px;color:var(--t3);letter-spacing:.3px}
-.tb-sep{width:1px;height:18px;background:var(--border)}
-.tb-right{margin-left:auto;display:flex;gap:6px;align-items:center}
-.tb-btn{padding:5px 12px;border-radius:7px;font-size:10px;font-weight:600;font-family:inherit;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--t2);transition:background .2s}
-.tb-btn:hover{background:rgba(255,255,255,.05);color:var(--t1)}
-#vp{position:fixed;top:52px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab;user-select:none}
-#vp.dragging{cursor:grabbing}
-#pl{position:absolute;transform-origin:0 0}
-.lane-band{position:absolute;left:0;right:0;height:200px;pointer-events:none}
-.lane-label{position:absolute;left:10px;display:flex;align-items:center;gap:7px;pointer-events:none;z-index:2}
-.ll-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
-.ll-text{font-size:8px;letter-spacing:3px;text-transform:uppercase;font-weight:700;opacity:.7}
-.node{position:absolute;border-radius:11px;padding:9px 12px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .2s;border:1px solid rgba(255,255,255,.07)}
-.node:hover{transform:scale(1.06) translateY(-1px);box-shadow:0 10px 40px rgba(0,0,0,.7);border-color:rgba(255,255,255,.18);z-index:10}
-.node-label{font-size:11px;font-weight:700;letter-spacing:-.1px;line-height:1.25}
-.node-sub{font-size:8.5px;color:rgba(255,255,255,.42);margin-top:3px;line-height:1.45;font-weight:400}
-#sv{position:absolute;top:0;left:0;pointer-events:none;overflow:visible}
-.e-path{fill:none;stroke-width:1.4;stroke-linecap:round;opacity:.5}
-.e-label{font-size:8px;fill:rgba(255,255,255,.38);font-family:'Plus Jakarta Sans',sans-serif;font-weight:500}
-#dp{position:fixed;right:-340px;top:52px;bottom:0;width:320px;background:rgba(10,10,10,.98);border-left:1px solid var(--border);transition:right .3s cubic-bezier(.4,0,.2,1);z-index:190;overflow-y:auto;padding:24px 20px;backdrop-filter:blur(24px)}
-#dp.open{right:0}
-#dp-close{position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--t1);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .2s}
-#dp-close:hover{background:rgba(255,255,255,.1)}
-#dp-lane{font-size:8px;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:6px}
-#dp-title{font-size:20px;font-weight:200;letter-spacing:-.4px;line-height:1.2}
-#dp-title strong{font-weight:700}
-#dp-sub{font-size:11px;color:var(--t2);line-height:1.7;margin-top:8px}
-.dp-sect{font-size:8px;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase;margin-top:18px;margin-bottom:7px;font-weight:600}
-.dp-row{padding:7px 10px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:7px;margin-bottom:4px;font-size:10px;color:var(--t2);display:flex;align-items:flex-start;gap:7px;line-height:1.5}
-.dp-row .arr{flex-shrink:0;margin-top:1px}
-.dp-row .lbl{opacity:.5;font-size:9px;margin-left:4px}
-#hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.92);border:1px solid var(--border);border-radius:100px;padding:7px 18px;font-size:10px;color:var(--t3);pointer-events:none;z-index:100;white-space:nowrap}
-#legend{position:fixed;bottom:18px;right:18px;background:rgba(10,10,10,.92);border:1px solid var(--border);border-radius:11px;padding:12px 14px;z-index:100;min-width:180px}
-#legend h4{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:9px;font-weight:600}
-.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:9px;color:var(--t2)}
-.leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sans-serif;overflow:hidden;height:100vh}
+#toolbar{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(10,10,20,0.96);border-bottom:1px solid #222;display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;backdrop-filter:blur(10px)}
+#toolbar h1{font-size:15px;font-weight:700;color:#fff;letter-spacing:.5px;margin-right:8px}
+#toolbar span{font-size:12px;color:#666}
+.tbtn{background:rgba(255,255,255,0.07);border:1px solid #333;color:#ccc;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s}
+.tbtn:hover{background:rgba(255,255,255,0.13);color:#fff}
+#nodecount{margin-left:auto;font-size:11px;color:#555}
+#canvas-wrap{position:fixed;top:52px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab}
+#canvas-wrap.dragging{cursor:grabbing}
+#canvas{position:absolute;top:0;left:0;transform-origin:0 0}
+.node-rect{rx:8;cursor:pointer}
+.node-label{font-size:11px;font-weight:600;fill:#fff;pointer-events:none;dominant-baseline:middle;text-anchor:middle}
+.node-sub{font-size:9px;fill:rgba(255,255,255,0.5);pointer-events:none;dominant-baseline:middle;text-anchor:middle}
+.edge-path{fill:none;stroke-width:1.8;opacity:0.65}
+.edge-label{font-size:9px;fill:#888;pointer-events:none;text-anchor:middle}
+#detail{position:fixed;top:52px;right:-340px;width:320px;bottom:0;background:rgba(15,15,25,0.97);border-left:1px solid #2a2a3a;padding:20px;transition:right .25s cubic-bezier(.4,0,.2,1);z-index:200;overflow-y:auto}
+#detail.open{right:0}
+#detail h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
+#detail .dtag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-bottom:12px;opacity:.85}
+#detail .dsub{font-size:12px;color:#aaa;margin-bottom:14px;line-height:1.6}
+#detail .dsec{font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;margin-top:14px}
+#detail .dlink{display:flex;align-items:center;gap:6px;font-size:11px;padding:6px 8px;border-radius:5px;background:rgba(255,255,255,0.04);margin-bottom:4px;cursor:pointer;border:1px solid transparent;transition:all .15s}
+#detail .dlink:hover{background:rgba(255,255,255,0.09);border-color:#333}
+#detail .dlink .arr{font-size:9px;color:#555}
+#detail .dlink .lbl{color:#ddd}
+#detail #dclose{position:absolute;top:16px;right:16px;background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:4px}
+#detail #dclose:hover{color:#fff}
+#legend{position:fixed;bottom:16px;left:16px;background:rgba(10,10,20,0.92);border:1px solid #222;border-radius:10px;padding:12px 14px;z-index:100;backdrop-filter:blur(8px)}
+#legend h4{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.leg-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.leg-label{font-size:10px;color:#888}
+#hint{position:fixed;bottom:16px;right:16px;font-size:10px;color:#444;text-align:right;line-height:1.8}
 </style>
 </head>
 <body>
-
-<nav id="topbar">
-  <a href="index.html">&#8592; ARK</a>
-  <div class="tb-sep"></div>
-  <h1>Complete User Flow Map</h1>
-  <span class="meta">89 screens &middot; 8 flow lanes &middot; all paths</span>
-  <div class="tb-right">
-    <button class="tb-btn" onclick="fitToScreen(true)">[0] Fit</button>
-    <button class="tb-btn" onclick="changeScale(0.12)">+ Zoom</button>
-    <button class="tb-btn" onclick="changeScale(-0.12)">&#8722; Zoom</button>
-  </div>
-</nav>
-
-<div id="vp">
-  <div id="pl">
-    <svg id="sv"></svg>
-  </div>
+<div id="toolbar">
+  <h1>Barsys ARK — Complete User Flow Map</h1>
+  <span>All screens · all branches · all error states</span>
+  <button class="tbtn" onclick="fitToScreen()">Fit Screen</button>
+  <button class="tbtn" onclick="resetZoom()">100%</button>
+  <button class="tbtn" id="toggleLabels" onclick="toggleEdgeLabels()">Hide Labels</button>
+  <span id="zoomlbl" style="font-size:11px;color:#555">100%</span>
+  <span id="nodecount"></span>
 </div>
-
-<div id="dp">
-  <button id="dp-close" onclick="closePanel()">&#10005;</button>
-  <div id="dp-lane"></div>
-  <div id="dp-title"></div>
-  <p id="dp-sub"></p>
-  <div class="dp-sect">Leads to</div>
-  <div id="dp-out"></div>
-  <div class="dp-sect">Reached from</div>
-  <div id="dp-in"></div>
+<div id="canvas-wrap">
+  <svg id="canvas"></svg>
 </div>
-
-<div id="hint">Scroll to zoom &nbsp;&middot;&nbsp; Drag to pan &nbsp;&middot;&nbsp; Click node for detail &nbsp;&middot;&nbsp; [0] to fit</div>
-<div id="legend"><h4>Flow Lanes</h4></div>
-
+<div id="detail">
+  <button id="dclose" onclick="closeDetail()">&#x2715;</button>
+  <h3 id="d-title"></h3>
+  <span id="d-tag" class="dtag"></span>
+  <p id="d-sub" class="dsub"></p>
+  <div class="dsec">Leads to</div>
+  <div id="d-out"></div>
+  <div class="dsec">Reached from</div>
+  <div id="d-in"></div>
+</div>
+<div id="legend">
+  <h4>Swim Lanes</h4>
+  <div id="leg-rows"></div>
+</div>
+<div id="hint">Scroll to zoom &nbsp;|&nbsp; Drag to pan &nbsp;|&nbsp; Click node for details<br>Arrow keys to pan &nbsp;|&nbsp; +/- to zoom &nbsp;|&nbsp; 0 to fit</div>
 <script>
-var NW = 160, NH = 76;
+var CW = 4200, CH = 2420;
+var NW = 152, NH = 66, BW = 138, BH = 56;
 
 var LANES = [
-  ["ob","ONBOARDING",  30, "#C8A97E", .045],
-  ["ble","BLE / CONNECT", 260, "#6FB3C8", .035],
-  ["nav","CORE NAV",   490, "#7AAF85", .035],
-  ["rec","RECIPE FLOW",720, "#C49A5A", .04],
-  ["bb", "BARBOT AI",  950, "#9A7BAA", .04],
-  ["sm", "STATION MGMT",1180,"#B07878", .04],
-  ["ae", "AUTH ERRORS",1410,"#7878B0", .04],
-  ["re", "RUNTIME ERRORS",1640,"#A09070",.04]
+  ["OB",  "Onboarding / Device Setup", 22,  270, "#6C63FF"],
+  ["BLE", "Bluetooth and Pairing",     308, 228, "#00BCD4"],
+  ["NAV", "Core Navigation",           552, 228, "#4CAF50"],
+  ["REC", "Recipe Flow",               796, 238, "#FF9800"],
+  ["BB",  "BarBot AI",                 1050,228, "#E91E63"],
+  ["SM",  "Station Management",        1294,242, "#9C27B0"],
+  ["AE",  "Auth and Network Errors",   1552,228, "#F44336"],
+  ["RE",  "Runtime Errors",            1796,228, "#FF5722"]
 ];
 
-var RAW = [
-  ["ob1", 0,0,"Splash","App launch, BARSYS wordmark, loading animation"],
-  ["ob2", 1,0,"Welcome","Welcome to Barsys 360 greeting screen, Begin Setup CTA"],
-  ["ob3", 2,0,"Prep Station","Physical hardware checklist, unbox and power on steps"],
-  ["ob4", 3,0,"Create Account","Sign up via Email, Apple ID, or Google SSO"],
-  ["ob5", 4,0,"Your Name","First name entry, profile display name setup"],
-  ["ob6", 5,0,"Verify Age","Date of birth input, 21+ age gate enforcement"],
-  ["ob7", 6,0,"Taste Profile","Choose from Classic, Tropical, Citrus, Herbal, Sweet, Strong"],
-  ["ob8", 7,0,"Dietary Prefs","Vegan, Low-cal, Gluten-free, Nut-free toggles, skip option"],
-  ["ob9", 8,0,"Terms & Privacy","Review ToS and Privacy Policy, Accept & Continue"],
-  ["ob10",9,0,"Power On Device","Instructions to power on Barsys 360 hardware"],
-  ["ob11",10,0,"BLE Scanning","Bluetooth scanning animation, searching for station"],
-  ["ob12",11,0,"Device Found","Barsys 2.0 detected nearby, signal strength shown"],
-  ["ob13",12,0,"Connecting","Handshake step 1, Encrypting step 2, Sync state step 3"],
-  ["ob14",13,0,"Station Ready","Setup complete, firmware current, ready to build bar"],
-  ["ob15",14,0,"Build Your Bar","Bottle slot intro card, Set Up Now or Skip for Later"],
-  ["ob16",15,0,"Choose Slot","6 slots A-F displayed, tap any to assign a spirit"],
-  ["ob17",16,0,"Select Spirit","Search or browse spirits list, assign to chosen slot"],
-  ["ob18",17,0,"Slot Assigned","Confirmation screen, option to add more or finish"],
-  ["ob19",18,0,"All Set","Bar fully configured, summary of loaded slots shown"],
-  ["ob20",19,0,"Bar Awaits","Celebration screen, enter the Barsys experience"],
-  ["ble1",0,1,"Scan Devices","BLE scanning pulse animation, station must be powered on"],
-  ["ble2",1,1,"Device Found","Station detected nearby, name and signal bars shown"],
-  ["ble3",2,1,"Pairing","Steps: 01 Handshake, 02 Encrypt Channel, 03 Sync State"],
-  ["ble4",3,1,"Connected","Station linked, signal excellent, firmware current, ready"],
-  ["ble5",4,1,"Connection Lost","BLE link interrupted during active session"],
-  ["ble6",5,1,"Reconnecting","Auto-retry in progress, attempt counter, recovery ring"],
-  ["ble7",6,1,"Link Restored","Connection recovered, session intact, station back online"],
-  ["ble8",7,1,"Troubleshoot","Restart scan, Power cycle, Check Bluetooth, Move closer"],
-  ["nav1",0,2,"Home","Mood greeting, featured recipes, station widget, quick crafts"],
-  ["nav2",1,2,"Discover","Search bar, trending carousel, category pills, AI suggest"],
-  ["nav3",2,2,"Search Results","Text and voice query results, relevance ranked, filters"],
-  ["nav4",3,2,"Trending Grid","Popular now grid, filter by category, time period chips"],
-  ["nav5",4,2,"Category Results","Recipes filtered by spirit, style, or occasion tag"],
-  ["nav6",5,2,"My Bar","Saved recipes list, my stations panel, recent activity"],
-  ["nav7",6,2,"Station Detail","Device name, slot fill overview, signal, last synced"],
-  ["nav8",7,2,"Full History","All past pours, rating shown, date, recipe, Repeat CTA"],
-  ["nav9",8,2,"Profile","Account info, taste prefs, notifications, dark mode, logout"],
-  ["rec1",0,3,"Recipe Hub","Flow entry: Browse, Detail view, Customize, Craft direct"],
-  ["rec2",1,3,"Browse Trending","Trending cards carousel, featured cocktail grid sections"],
-  ["rec3",2,3,"Search","Type or voice query, filter by spirit type or occasion"],
-  ["rec4",3,3,"Recipe Detail","Ingredients, taste story, nutrition, reviews, Save button"],
-  ["rec5",4,3,"Check Ingredients","Station slot compatibility check, missing ingredient flag"],
-  ["rec6",5,3,"Customize","Adjust strength, sweetness, size, and ice level pre-pour"],
-  ["rec7",6,3,"Craft Confirm","Final review: recipe name, station, custom settings"],
-  ["rec8",7,3,"Active Pour","Animated pour progress bar, step labels, 40-60 second timer"],
-  ["rec9",8,3,"Pour Complete","Drink ready sparkle animation, cheers celebration moment"],
-  ["rec10",9,3,"Rate & Review","1-5 star rating tap, optional text comment, photo"],
-  ["rec11",10,3,"Done","Share to social, save to favorites, browse more or go home"],
-  ["bb1",0,4,"BarBot Welcome","AI bartender intro screen, capability overview, Begin CTA"],
-  ["bb2",1,4,"Chat Interface","Text input field, voice mic button, camera scan icon"],
-  ["bb3",2,4,"AI Streaming","BarBot generating response, streaming text output, Stop"],
-  ["bb4",3,4,"Recipe Suggestion","AI-recommended recipe card, Craft It or Show More CTAs"],
-  ["bb5",4,4,"Voice Input","Microphone active, live voice-to-text transcript, Cancel"],
-  ["bb6",5,4,"Camera Scan","Point at bar, AI identifies bottles, Add to Stations CTA"],
-  ["bb7",6,4,"Hardware Control","BarBot-triggered station clean, confirm dialog, run cycle"],
-  ["bb8",7,4,"Craft Celebrate","Pour complete via AI flow, Make Another or Return Home"],
-  ["sm1",0,5,"Station Hub","Overview, Level Monitor, Quick Flush, Bottles, Maintenance"],
-  ["sm2",1,5,"Station Overview","Device info, 6 bottle slots with fill %, signal strength"],
-  ["sm3",2,5,"Level Monitor","Animated volume bars per slot, health status, alerts"],
-  ["sm4",3,5,"Running Low","Slot at under 20%, Reorder Now prompt, alt recipe link"],
-  ["sm5",4,5,"Bottle Empty","Critical empty slot, Replace Bottle or Show Alternatives"],
-  ["sm6",5,5,"Quick Flush","Hold-and-release to drain all pumps, safety lock mechanic"],
-  ["sm7",6,5,"Bottle Mgmt","Action list: Insert New, Swap Contents, Remove Bottle"],
-  ["sm8",7,5,"Assign Bottle","Search spirit, pick fill level Full/3q/Half/Quarter, confirm"],
-  ["sm9",8,5,"Station Health","Firmware version, motor diagnostics, Start Clean CTA"],
-  ["sm10",9,5,"Cleaning Cycle","60-second pump clean, animated progress ring, schedule"],
-  ["sm11",10,5,"Flushing Pumps","Step progress display, Done state, return to overview"],
-  ["ae1",0,6,"Error Hub","Entry: Wrong password, Offline mode, Hardware error paths"],
-  ["ae2",1,6,"Wrong Password","Retry inline, Forgot Password link, Use Email option"],
-  ["ae3",2,6,"Forgot Password","Email reset link sent confirmation, back to sign in"],
-  ["ae4",3,6,"Provider Down","SSO provider unavailable toast, fallback to email login"],
-  ["ae5",4,6,"Offline","No network detected, retry CTA, limited offline mode banner"],
-  ["ae6",5,6,"Auto Recovery","Retrying connection, animated progress ring, attempt count"],
-  ["ae7",6,6,"Request Failed","API error detail card, error code shown, manual retry"],
-  ["ae8",7,6,"Auth Restored","Session recovered successfully, seamless return to app"],
-  ["ae9",8,6,"Emergency Stop","Hardware safety halt triggered, full system stop state"],
-  ["ae10",9,6,"Reconnect Station","BLE reconnection retry ring, attempt 1 of 3 counter"],
-  ["ae11",10,6,"Station Online","BLE reconnected successfully, session resumed, all live"],
-  ["re1",0,7,"Runtime Errors","Hub: Missing ingredient, Disconnection, Pour interruptions"],
-  ["re2",1,7,"Missing Ingredient","Required spirit not loaded, Swap Recipe or Reorder prompt"],
-  ["re3",2,7,"Station Disconn","Station lost mid-session, Reconnect or Troubleshoot CTA"],
-  ["re4",3,7,"Clean Required","Station needs flush before crafting, Start Cleaning prompt"],
-  ["re5",4,7,"Pour Interrupted","Hardware error mid-pour, pause state with Resume option"],
-  ["re6",5,7,"AI Timeout","BarBot no response after 8 seconds, auto-suggest alts"],
-  ["re7",6,7,"Recipe Alts","AI generates compatible alternatives matching your bar"],
-  ["re8",7,7,"Alt Recipe List","Swappable options shown, choose from compatible recipes"],
-  ["re9",8,7,"Pour Paused","In-progress pour paused state, Resume or Cancel options"],
-  ["re10",9,7,"Skip Ingredient","Option to omit one ingredient, continue adjusted pour"],
-  ["re11",10,7,"Skip Confirmed","Pour sequence adjusted for skip, continue confirmed"]
+var laneMap = {};
+LANES.forEach(function(l){ laneMap[l[0]] = l; });
+
+function mainY(lKey){ return laneMap[lKey][2] + 58; }
+function branchY(lKey){ return laneMap[lKey][2] + 163; }
+function laneColor(lKey){ return laneMap[lKey][4]; }
+
+var NODE_DEFS = [
+  // ONBOARDING main
+  ["ob1",  100, "OB",1,"Splash Screen",    "App launch, wordmark + loading animation"],
+  ["ob2",  268, "OB",1,"Welcome",          "Tagline, Sign In + Create Account CTAs"],
+  ["ob3",  436, "OB",1,"Sign In",          "Email and password login form"],
+  ["ob4",  604, "OB",1,"Create Account",   "Name, email, password fields"],
+  ["ob5",  772, "OB",1,"Verify Email",     "Check inbox prompt, resend link option"],
+  ["ob6",  940, "OB",1,"Profile Setup",    "Display name, avatar, preferences"],
+  ["ob7",  1108,"OB",1,"Age Verification", "Date of birth entry, must be 21+"],
+  ["ob8",  1276,"OB",1,"Taste Profile",    "Spirit and flavor preference survey"],
+  ["ob9",  1444,"OB",1,"Dietary Prefs",    "Allergens and dietary restrictions"],
+  ["ob10", 1612,"OB",1,"Terms and Privacy","Accept ToS + Privacy Policy required"],
+  ["ob11", 1780,"OB",1,"Notifications",    "Push permission request prompt"],
+  ["ob12", 1948,"OB",1,"Device Scan",      "Auto BLE scan for nearby ARK stations"],
+  ["ob13", 2116,"OB",1,"Device Found",     "Station discovered, signal strength shown"],
+  ["ob14", 2284,"OB",1,"Pairing Station",  "Connecting handshake, progress shown"],
+  ["ob15", 2452,"OB",1,"Build Your Bar",   "Choose spirits for each slot"],
+  ["ob16", 2620,"OB",1,"Assign Slot 1",    "Select spirit for slot 1"],
+  ["ob17", 2788,"OB",1,"Assign Slot 2",    "Select spirit for slot 2"],
+  ["ob18", 2956,"OB",1,"Assign Slot 3+",  "Assign remaining slots"],
+  ["ob19", 3124,"OB",1,"Setup Complete",  "Your ARK is ready! Celebration screen"],
+  // ONBOARDING branches
+  ["obs1", 268, "OB",0,"SSO Login",        "Google, Apple, Facebook sign-in options"],
+  ["obs2", 436, "OB",0,"Forgot Password",  "Enter email, receive reset link"],
+  ["obs3", 604, "OB",0,"Age Blocked",      "Under 21 — exit app message"],
+  ["obs4", 772, "OB",0,"Resend Verify",    "Resend verification email action"],
+  ["obs5", 940, "OB",0,"No Device Found",  "Scan timeout — retry or skip station"],
+  ["obs6", 1108,"OB",0,"Skip Device",      "Continue setup without pairing station"],
+  ["obs7", 2116,"OB",0,"Scan Timeout",     "Station not found after 30s scan"],
+  ["obs8", 2284,"OB",0,"Pairing Failed",   "Pair rejected — retry or skip station"],
+  ["obs9", 2956,"OB",0,"Skip Bottles",     "Finish setup, assign bottles later"],
+
+  // BLE main
+  ["ble1", 100, "BLE",1,"BLE Scan",        "Scanning for nearby ARK stations"],
+  ["ble2", 268, "BLE",1,"Station Found",   "Single station SSID + signal strength"],
+  ["ble3", 436, "BLE",1,"Multiple Found",  "Station picker list — select one"],
+  ["ble4", 604, "BLE",1,"Pairing",         "Handshake connecting, progress bar"],
+  ["ble5", 772, "BLE",1,"Connected",       "Paired! Station name confirmed"],
+  ["ble6", 940, "BLE",1,"Connection Lost", "BLE dropped unexpectedly"],
+  ["ble7", 1108,"BLE",1,"Reconnecting",    "Auto-reconnect attempt in progress"],
+  ["ble8", 1276,"BLE",1,"Restored",        "Connection reestablished successfully"],
+  ["ble9", 1444,"BLE",1,"Troubleshoot",    "Manual steps: move closer, restart ARK"],
+  // BLE branches
+  ["bles1",100, "BLE",0,"BT Disabled",     "Bluetooth off — prompt user to enable"],
+  ["bles2",268, "BLE",0,"Scan Timeout",    "No station found after 30 seconds"],
+  ["bles3",436, "BLE",0,"Wrong Station",   "Wrong device paired — disconnect it"],
+  ["bles4",604, "BLE",0,"Pair Rejected",   "Station refused pairing request"],
+  ["bles5",940, "BLE",0,"Lost Banner",     "Top banner: Station connection dropped"],
+  ["bles6",1108,"BLE",0,"Retry 2 of 3",   "Second auto-reconnect attempt"],
+  ["bles7",1444,"BLE",0,"Contact Support", "Support link shown after 3 failures"],
+
+  // CORE NAV main
+  ["nav1", 100, "NAV",1,"Home",            "Featured drinks, quick-craft, BarBot CTA"],
+  ["nav2", 268, "NAV",1,"Discover",        "Trending, categories, seasonal picks"],
+  ["nav3", 436, "NAV",1,"My Bar",          "Saved recipes, history, preferences"],
+  ["nav4", 604, "NAV",1,"Station Detail",  "ARK status, slot levels, actions"],
+  ["nav5", 772, "NAV",1,"Recipe Detail",   "Full recipe card, ingredients, steps"],
+  ["nav6", 940, "NAV",1,"Craft Confirm",   "Confirm pour, glass, strength, station"],
+  ["nav7", 1108,"NAV",1,"Active Pour",     "Live pour animation, progress ring"],
+  ["nav8", 1276,"NAV",1,"Drink Complete",  "Done! Rating prompt, share option"],
+  ["nav9", 1444,"NAV",1,"Search Results",  "Filtered search with facet chips"],
+  // CORE NAV branches
+  ["navs1",100, "NAV",0,"Category Browse", "Browse by spirit, occasion, or mood"],
+  ["navs2",268, "NAV",0,"Similar Drinks",  "Recommendations from selected recipe"],
+  ["navs3",436, "NAV",0,"Reviews",         "Community ratings and tasting notes"],
+  ["navs4",940, "NAV",0,"Cancel Pour",     "Stop active pour — confirmation dialog"],
+  ["navs5",1108,"NAV",0,"Full History",    "Complete pour log with date filters"],
+  ["navs6",1276,"NAV",0,"Trending Grid",   "Top 50 drinks, sortable grid view"],
+
+  // RECIPE FLOW main
+  ["rec1", 100, "REC",1,"Recipe Hub",      "Entry: browse, search, recommended"],
+  ["rec2", 268, "REC",1,"Browse Recipes",  "Grid view, filter chips, sort options"],
+  ["rec3", 436, "REC",1,"Search Recipes",  "Type to search with live suggestions"],
+  ["rec4", 604, "REC",1,"Recipe Detail",   "Name, description, full ingredient list"],
+  ["rec5", 772, "REC",1,"Ingredient Check","In-stock vs missing overlay check"],
+  ["rec6", 940, "REC",1,"Customize",       "Adjust ABV, sweetness, ice, garnish"],
+  ["rec7", 1108,"REC",1,"Craft Confirm",   "Final review, confirm station + glass"],
+  ["rec8", 1276,"REC",1,"Pour Progress",   "Real-time pour UI, step countdown"],
+  ["rec9", 1444,"REC",1,"Pour Complete",   "Success screen, photo prompt, share"],
+  ["rec10",1612,"REC",1,"Rate Drink",      "1-5 stars, optional tasting notes"],
+  ["rec11",1780,"REC",1,"Recipe Saved",    "Saved to My Bar confirmation"],
+  // RECIPE branches
+  ["recs1",268, "REC",0,"Save Bookmark",   "Heart recipe to save to My Bar"],
+  ["recs2",436, "REC",0,"Filter Results",  "By spirit, dietary, occasion, ABV"],
+  ["recs3",772, "REC",0,"All Missing",     "All required ingredients missing"],
+  ["recs4",940, "REC",0,"Change Station",  "Select a different paired station"],
+  ["recs5",1108,"REC",0,"Skip Customize",  "Use default recipe settings"],
+  ["recs6",1276,"REC",0,"Cancel Pour",     "Mid-pour cancel with waste warning"],
+  ["recs7",1444,"REC",0,"Skip Rating",     "Dismiss rating, return to home"],
+  ["recs8",1612,"REC",0,"Make Another",    "Re-queue same recipe immediately"],
+
+  // BARBOT AI main
+  ["bb1",  100, "BB",1,"BarBot Home",      "AI entry: suggested prompts, mic icon"],
+  ["bb2",  268, "BB",1,"Text Chat",        "Type message to BarBot AI"],
+  ["bb3",  436, "BB",1,"AI Streaming",     "BarBot generating response, live text"],
+  ["bb4",  604, "BB",1,"Drink Suggestion", "AI recommends cocktail with recipe card"],
+  ["bb5",  772, "BB",1,"Voice Input",      "Mic active, waveform, voice to text"],
+  ["bb6",  940, "BB",1,"Camera Scan",      "Point camera at bottles for AI ID"],
+  ["bb7",  1108,"BB",1,"Bottles ID'd",     "AI lists detected spirits, confirm"],
+  ["bb8",  1276,"BB",1,"Drink Queued",     "BarBot drink queued, fun celebration"],
+  // BARBOT branches
+  ["bbs1", 100, "BB",0,"Demo Mode",        "Try BarBot without station paired"],
+  ["bbs2", 268, "BB",0,"Suggested Prompts","Quick-tap starter prompts shown"],
+  ["bbs3", 436, "BB",0,"AI Error",         "BarBot failed to respond — retry CTA"],
+  ["bbs4", 604, "BB",0,"Refine Request",   "Adjust or re-query AI suggestion"],
+  ["bbs5", 772, "BB",0,"Voice Review",     "Review and edit voice-to-text result"],
+  ["bbs6", 940, "BB",0,"Save AI Recipe",   "Pin BarBot-generated recipe to My Bar"],
+  ["bbs7", 1108,"BB",0,"Clean Triggered",  "Bottle scan required clean cycle start"],
+  ["bbs8", 1276,"BB",0,"Share Session",    "Share or screenshot BarBot convo"],
+
+  // STATION MGMT main
+  ["sm1",  100, "SM",1,"Station Hub",      "All connected stations overview list"],
+  ["sm2",  268, "SM",1,"Station Overview", "Health, slot levels, active recipes"],
+  ["sm3",  436, "SM",1,"Liquid Levels",    "Per-slot fill percentage chart"],
+  ["sm4",  604, "SM",1,"Low Level Alert",  "Slot below 20% — refill prompt"],
+  ["sm5",  772, "SM",1,"Empty Slot Alert", "Slot empty — pour blocked until filled"],
+  ["sm6",  940, "SM",1,"Quick Flush",      "Initiate quick purge cycle"],
+  ["sm7",  1108,"SM",1,"Bottle Manager",   "All slots list — swap or reassign"],
+  ["sm8",  1276,"SM",1,"Assign Spirit",    "Search and select spirit for slot"],
+  ["sm9",  1444,"SM",1,"Station Health",   "Diagnostics: temp, pressure, errors"],
+  ["sm10", 1612,"SM",1,"Clean Cycle",      "Full cleaning sequence with steps"],
+  ["sm11", 1780,"SM",1,"Maintenance Done", "All checks passed, station ready"],
+  // STATION branches
+  ["sms1", 268, "SM",0,"Slot Detail",      "Tap slot for brand, level, history"],
+  ["sms2", 436, "SM",0,"Reorder Slots",    "Drag to reorder spirit assignments"],
+  ["sms3", 772, "SM",0,"Alt Recipes",      "Recipes possible with low-stock slot"],
+  ["sms4", 940, "SM",0,"Flush Confirm",    "Confirm flush — waste warning shown"],
+  ["sms5", 1108,"SM",0,"Remove Bottle",    "Mark slot empty, update bar inventory"],
+  ["sms6", 1276,"SM",0,"Manual Volume",    "Override spirit volume entry manually"],
+  ["sms7", 1444,"SM",0,"Diagnostics Log",  "Full sensor readout and error codes"],
+  ["sms8", 1612,"SM",0,"Firmware Update",  "OTA update available — install prompt"],
+  ["sms9", 1780,"SM",0,"Schedule Clean",   "Set recurring cleaning reminder"],
+
+  // AUTH ERRORS main
+  ["ae1",  100, "AE",1,"Login Attempt",    "User submits credentials for auth"],
+  ["ae2",  268, "AE",1,"Auth Failed",      "Wrong credentials error shown"],
+  ["ae3",  436, "AE",1,"Session Expired",  "Token expired — re-auth required"],
+  ["ae4",  604, "AE",1,"Provider Down",    "SSO / OAuth provider unreachable"],
+  ["ae5",  772, "AE",1,"Network Offline",  "No internet — offline mode banner"],
+  ["ae6",  940, "AE",1,"Auto Recovery",    "Background token refresh attempt"],
+  ["ae7",  1108,"AE",1,"Request Failed",   "API call failed with error code"],
+  ["ae8",  1276,"AE",1,"Auth Restored",    "Session re-established silently"],
+  ["ae9",  1444,"AE",1,"Emergency Stop",   "Critical auth error — force logout"],
+  ["ae10", 1612,"AE",1,"Reconnect BLE",    "Re-pair station after auth restore"],
+  ["ae11", 1780,"AE",1,"Fully Restored",   "Back online — all systems green"],
+  // AUTH branches
+  ["aes1", 268, "AE",0,"Account Locked",   "Too many attempts — account locked"],
+  ["aes2", 436, "AE",0,"Reset Email Sent", "Password reset email dispatched"],
+  ["aes3", 604, "AE",0,"Try SSO",          "Attempt different social login"],
+  ["aes4", 772, "AE",0,"Offline Browse",   "Browse cached recipes while offline"],
+  ["aes5", 1108,"AE",0,"Error Details",    "Full error log, trace, copy option"],
+  ["aes6", 1612,"AE",0,"Manual Reset",     "Factory reset account + station link"],
+
+  // RUNTIME ERRORS main
+  ["re1",  100, "RE",1,"Pour Requested",   "User confirms recipe, pour begins"],
+  ["re2",  268, "RE",1,"Missing Ingredient","Required spirit not in any slot"],
+  ["re3",  436, "RE",1,"BLE Lost Mid-Pour","Station BLE dropped mid-initiation"],
+  ["re4",  604, "RE",1,"Clean Required",   "Station needs clean before pour"],
+  ["re5",  772, "RE",1,"Pour Interrupted", "Unexpected stop during active pour"],
+  ["re6",  940, "RE",1,"AI Timeout",       "BarBot did not respond in time"],
+  ["re7",  1108,"RE",1,"Recipe Alts",      "Show substitute recipes for slots"],
+  ["re8",  1276,"RE",1,"Pour Paused",      "User paused mid-pour sequence"],
+  ["re9",  1444,"RE",1,"Skip Ingredient",  "Confirm omit non-critical ingredient"],
+  ["re10", 1612,"RE",1,"Restart Pour",     "Re-attempt pour from beginning"],
+  ["re11", 1780,"RE",1,"Error Resolved",   "Error cleared, return to normal flow"],
+  // RUNTIME branches
+  ["res1", 268, "RE",0,"Cancel Craft",     "Abandon current pour entirely"],
+  ["res2", 436, "RE",0,"Different Station","Route recipe to alternate station"],
+  ["res3", 604, "RE",0,"Auto Clean",       "Station auto-initiates clean cycle"],
+  ["res4", 772, "RE",0,"Save Partial",     "Save what was poured as partial"],
+  ["res5", 940, "RE",0,"Retry BarBot",     "Resend request to AI after timeout"],
+  ["res6", 1108,"RE",0,"Browse Manually",  "Dismiss AI, go to recipe browser"],
+  ["res7", 1276,"RE",0,"Extend Pause",     "Keep pour paused, extend timer"],
+  ["res8", 1612,"RE",0,"Save Modified",    "Save recipe without skipped ingredient"]
 ];
 
-var nodeMap = {};
+var EDGES = [
+  // ONBOARDING main flow
+  ["ob1","ob2","auto"],
+  ["ob2","ob3","Sign In"],
+  ["ob2","ob4","Create Account"],
+  ["ob3","ob6","authenticated"],
+  ["ob4","ob5","submit"],
+  ["ob5","ob6","verified"],
+  ["ob6","ob7","next"],
+  ["ob7","ob8","21+ confirmed"],
+  ["ob8","ob9","next"],
+  ["ob9","ob10","next"],
+  ["ob10","ob11","accepted"],
+  ["ob11","ob12","next"],
+  ["ob12","ob13","found"],
+  ["ob13","ob14","select device"],
+  ["ob14","ob15","paired"],
+  ["ob15","ob16","next"],
+  ["ob16","ob17","assigned"],
+  ["ob17","ob18","assigned"],
+  ["ob18","ob19","all done"],
+  // ONBOARDING branch connections
+  ["ob2","obs1","SSO tap"],
+  ["obs1","ob6","auth success"],
+  ["ob3","obs2","forgot pwd"],
+  ["obs2","ob3","link sent"],
+  ["ob7","obs3","under 21"],
+  ["ob5","obs4","resend tap"],
+  ["obs4","ob5","resent"],
+  ["ob12","obs7","timeout"],
+  ["obs7","ob12","retry"],
+  ["ob13","obs8","failed"],
+  ["obs8","ob14","retry pair"],
+  ["obs8","ob15","skip station"],
+  ["ob10","obs6","skip device"],
+  ["obs6","ob19","no device"],
+  ["ob18","obs9","skip remaining"],
+  ["obs9","ob19","skip"],
+  // Onboarding to Core Nav
+  ["ob19","nav1","enter app"],
+  ["obs6","nav1","without device"],
+
+  // BLE main flow
+  ["ble1","ble2","single found"],
+  ["ble1","ble3","multiple found"],
+  ["ble2","ble4","connect"],
+  ["ble3","ble4","select one"],
+  ["ble4","ble5","success"],
+  ["ble5","nav4","view station"],
+  ["ble6","ble7","auto retry"],
+  ["ble7","ble8","restored"],
+  ["ble7","ble9","3 failures"],
+  ["ble8","nav4","resume session"],
+  // BLE branches
+  ["ble1","bles1","BT off"],
+  ["bles1","ble1","BT enabled"],
+  ["ble1","bles2","30s timeout"],
+  ["bles2","ble1","retry scan"],
+  ["ble4","bles4","rejected"],
+  ["bles4","ble1","try again"],
+  ["ble5","bles3","wrong device"],
+  ["bles3","ble1","disconnect + rescan"],
+  ["ble6","bles5","banner shown"],
+  ["ble7","bles6","attempt 2"],
+  ["bles6","ble7","attempt 3"],
+  ["ble9","bles7","still failing"],
+  // BLE to Onboarding
+  ["ble5","ob15","first pairing"],
+
+  // CORE NAV main flow
+  ["nav1","nav2","Discover"],
+  ["nav1","nav3","My Bar"],
+  ["nav1","nav4","Station"],
+  ["nav1","nav5","recipe card tap"],
+  ["nav1","nav9","search"],
+  ["nav2","nav5","select recipe"],
+  ["nav9","nav5","result select"],
+  ["nav5","nav6","Craft It"],
+  ["nav6","nav7","confirm pour"],
+  ["nav7","nav8","pour done"],
+  ["nav8","nav1","go home"],
+  ["nav4","nav6","craft from station"],
+  // CORE NAV branches
+  ["nav2","navs1","category tap"],
+  ["navs1","nav5","select recipe"],
+  ["nav5","navs2","similar drinks"],
+  ["navs2","nav5","select"],
+  ["nav5","navs3","reviews tab"],
+  ["nav7","navs4","cancel"],
+  ["navs4","nav1","cancelled"],
+  ["nav3","navs5","full history"],
+  ["nav2","navs6","trending"],
+  ["navs6","nav5","select"],
+
+  // RECIPE FLOW main
+  ["rec1","rec2","browse"],
+  ["rec1","rec3","search"],
+  ["rec2","rec4","select"],
+  ["rec3","rec4","select result"],
+  ["rec4","rec5","check ingredients"],
+  ["rec5","rec6","all in stock"],
+  ["rec6","rec7","done customizing"],
+  ["rec7","rec8","start pour"],
+  ["rec8","rec9","complete"],
+  ["rec9","rec10","rate"],
+  ["rec10","rec11","submit"],
+  ["rec11","rec1","back to hub"],
+  // RECIPE branches
+  ["rec2","recs1","save recipe"],
+  ["recs1","rec2","saved"],
+  ["rec3","recs2","filter"],
+  ["recs2","rec2","applied"],
+  ["rec5","recs3","all missing"],
+  ["recs3","nav2","browse for sub"],
+  ["rec6","recs4","change station"],
+  ["recs4","rec7","station changed"],
+  ["rec7","recs5","skip customize"],
+  ["recs5","rec8","use defaults"],
+  ["rec8","recs6","cancel"],
+  ["recs6","rec1","cancelled"],
+  ["rec9","recs7","skip rating"],
+  ["recs7","nav1","home"],
+  ["rec9","recs8","make another"],
+  ["recs8","rec7","re-confirm"],
+  // Recipe to Error
+  ["rec5","re2","missing ingredient"],
+  ["rec8","re5","interrupted"],
+
+  // BARBOT main flow
+  ["bb1","bb2","type"],
+  ["bb1","bb5","mic tap"],
+  ["bb1","bb6","camera tap"],
+  ["bb2","bb3","send message"],
+  ["bb3","bb4","response ready"],
+  ["bb4","nav6","craft this drink"],
+  ["bb5","bb2","voice to text"],
+  ["bb6","bb7","scan complete"],
+  ["bb7","bb4","suggest recipe"],
+  ["bb4","bb8","queue drink"],
+  ["bb8","nav7","start pour"],
+  // BarBot branches
+  ["bb1","bbs1","no station"],
+  ["bbs1","bb2","demo chat"],
+  ["bb1","bbs2","prompt tap"],
+  ["bbs2","bb2","prompt filled"],
+  ["bb3","bbs3","AI error"],
+  ["bbs3","bb2","retry"],
+  ["bb4","bbs4","refine"],
+  ["bbs4","bb2","re-query"],
+  ["bb5","bbs5","review transcript"],
+  ["bbs5","bb2","edit and send"],
+  ["bb4","bbs6","save recipe"],
+  ["bbs6","rec11","saved to bar"],
+  ["bb7","bbs7","clean needed"],
+  ["bbs7","sm10","go clean"],
+  ["bb8","bbs8","share"],
+
+  // STATION MGMT main flow
+  ["sm1","sm2","select station"],
+  ["sm2","sm3","levels"],
+  ["sm3","sm4","low slot"],
+  ["sm4","sm5","slot empty"],
+  ["sm5","sm8","assign new spirit"],
+  ["sm2","sm6","flush"],
+  ["sm6","sm7","after flush"],
+  ["sm7","sm8","assign spirit"],
+  ["sm8","sm2","assigned"],
+  ["sm2","sm9","health"],
+  ["sm9","sm10","start clean"],
+  ["sm10","sm11","clean done"],
+  ["sm11","sm2","return"],
+  // STATION branches
+  ["sm3","sms1","tap slot"],
+  ["sms1","sm8","reassign slot"],
+  ["sm7","sms2","reorder"],
+  ["sms2","sm8","reordered"],
+  ["sm4","sms3","alt recipes"],
+  ["sms3","rec4","open recipe"],
+  ["sm6","sms4","confirm flush"],
+  ["sms4","sm6","confirmed"],
+  ["sm7","sms5","remove bottle"],
+  ["sms5","sm3","updated"],
+  ["sm8","sms6","manual entry"],
+  ["sms6","sm8","volume set"],
+  ["sm9","sms7","full diagnostics"],
+  ["sms7","sm9","back"],
+  ["sm9","sms8","firmware update"],
+  ["sms8","sm11","updated"],
+  ["sm10","sms9","schedule"],
+  ["sms9","sm11","scheduled"],
+  // Station to other flows
+  ["sm5","re2","blocks pour"],
+  ["sm10","re4","clean blocks pour"],
+
+  // AUTH ERRORS main flow
+  ["ae1","ae2","wrong password"],
+  ["ae1","ae3","token expired"],
+  ["ae1","ae4","provider down"],
+  ["ae1","ae5","no network"],
+  ["ae3","ae6","auto refresh"],
+  ["ae6","ae8","success"],
+  ["ae6","ae7","failed"],
+  ["ae7","ae9","critical"],
+  ["ae8","ae10","re-pair station"],
+  ["ae10","ae11","restored"],
+  ["ae11","nav1","back to app"],
+  // AUTH branches
+  ["ae2","aes1","too many fails"],
+  ["aes1","aes2","reset email"],
+  ["aes2","ae1","retry login"],
+  ["ae4","aes3","try SSO"],
+  ["aes3","ae1","retry"],
+  ["ae5","aes4","offline browse"],
+  ["aes4","nav2","cached content"],
+  ["ae7","aes5","view details"],
+  ["ae9","aes6","factory reset"],
+  ["aes6","ob1","restart app"],
+  // Auth to BLE
+  ["ae9","ble1","re-pair after reset"],
+
+  // RUNTIME ERRORS main flow
+  ["re1","re2","missing spirit"],
+  ["re1","re3","BLE lost"],
+  ["re1","re4","clean needed"],
+  ["re1","re5","pour interrupted"],
+  ["re1","re6","AI timeout"],
+  ["re5","re7","find alternatives"],
+  ["re7","rec4","open alt recipe"],
+  ["re5","re8","pause"],
+  ["re8","re5","resume"],
+  ["re5","re9","skip ingredient"],
+  ["re9","re10","confirmed skip"],
+  ["re10","re11","pour done"],
+  ["re11","nav8","complete"],
+  // RUNTIME branches
+  ["re2","res1","cancel craft"],
+  ["res1","nav1","go home"],
+  ["re3","res2","use alt station"],
+  ["res2","ble1","scan stations"],
+  ["re4","res3","auto-clean trigger"],
+  ["res3","sm10","clean now"],
+  ["re5","res4","save partial"],
+  ["res4","nav8","partial complete"],
+  ["re6","res5","retry AI"],
+  ["res5","bb2","retry chat"],
+  ["re6","res6","browse manually"],
+  ["res6","rec1","go to recipes"],
+  ["re8","res7","extend pause"],
+  ["res7","re8","extended"],
+  ["re9","res8","save modified"],
+  ["res8","rec11","saved"],
+  // Runtime to other flows
+  ["re3","ble1","reconnect BLE"],
+  ["re4","sm10","go to clean station"]
+];
+
+// Build node objects
 var NODES = [];
-RAW.forEach(function(r) {
-  var li = r[2];
-  var lane = LANES[li];
-  var obj = {
-    id:r[0], x:100+r[1]*210, y:lane[2]+63,
-    w:NW, h:NH, label:r[3], sub:r[4],
-    color:lane[3], laneName:lane[1], laneIdx:li
-  };
-  NODES.push(obj);
-  nodeMap[r[0]] = obj;
+var nodeMap = {};
+NODE_DEFS.forEach(function(d) {
+  var id=d[0], x=d[1], lKey=d[2], isMain=d[3], label=d[4], sub=d[5];
+  var w = isMain ? NW : BW;
+  var h = isMain ? NH : BH;
+  var y = isMain ? mainY(lKey) : branchY(lKey);
+  var lane = laneMap[lKey];
+  var n = {id:id, x:x, y:y, w:w, h:h, label:label, sub:sub, laneKey:lKey, laneName:lane[1], isMain:isMain, color:lane[4]};
+  NODES.push(n);
+  nodeMap[id] = n;
 });
 
-var RAW_EDGES = [
-  ["ob1","ob2","Tap to start"],["ob2","ob3","Begin Setup"],["ob3","ob4","Ready"],
-  ["ob4","ob5","Continue"],["ob5","ob6","Continue"],["ob6","ob7","Confirm age"],
-  ["ob7","ob8","Continue"],["ob7","ob9","Skip prefs"],["ob8","ob9","Continue"],
-  ["ob9","ob10","Accept & Continue"],["ob10","ob11","auto scan"],
-  ["ob11","ob12","Station found"],["ob12","ob13","Tap to pair"],
-  ["ob13","ob14","Connected"],["ob14","ob15","Continue"],
-  ["ob15","ob16","Set Up Now"],["ob15","ob19","Skip for Later"],
-  ["ob16","ob17","Select slot"],["ob17","ob18","Confirm assign"],
-  ["ob18","ob16","Add more slot"],["ob18","ob19","Done"],
-  ["ob19","ob20","Continue"],["ob20","nav1","Enter app"],
-  ["ble1","ble2","Device found"],["ble2","ble3","Tap to pair"],
-  ["ble3","ble4","Paired ok"],["ble4","ble5","Link drops"],
-  ["ble5","ble6","Reconnect"],["ble5","ble8","Troubleshoot"],
-  ["ble5","ble1","Scan again"],["ble6","ble7","Recovered"],
-  ["ble6","ble5","Failed"],["ble7","nav1","Continue to app"],
-  ["ble8","ble1","Restart scan"],
-  ["nav1","nav2","Discover tab"],["nav1","nav6","My Bar tab"],
-  ["nav1","bb2","BarBot tab"],["nav1","rec4","Tap recipe card"],
-  ["nav1","sm2","Tap station widget"],["nav1","nav9","Tap avatar"],
-  ["nav2","nav3","Tap search bar"],["nav2","nav4","See all trending"],
-  ["nav2","nav5","Tap category"],["nav2","rec4","Tap recipe"],
-  ["nav3","rec4","Select result"],["nav4","rec4","Tap recipe"],
-  ["nav5","rec4","Tap recipe"],["nav6","nav7","Tap station"],
-  ["nav6","nav8","View history"],["nav6","rec4","Tap saved recipe"],
-  ["nav7","sm1","Station settings"],["nav8","rec4","Tap past drink"],
-  ["rec1","rec2","Browse & Search"],["rec1","rec4","Recipe Detail"],
-  ["rec1","rec6","Customize direct"],["rec1","rec7","Craft direct"],
-  ["rec2","rec4","Tap recipe"],["rec3","rec4","Select result"],
-  ["rec4","rec5","Check Ingredients"],["rec4","rec6","Craft Now"],
-  ["rec5","rec6","All ingredients OK"],["rec5","re2","Missing ingredient"],
-  ["rec6","rec7","Craft This Drink"],["rec7","rec8","Confirm pour"],
-  ["rec7","re1","Station error"],["rec8","rec9","Pour complete"],
-  ["rec8","re5","Interrupted"],["rec9","rec10","Continue"],
-  ["rec10","rec11","Continue"],["rec11","nav1","Return home"],
-  ["rec11","rec2","Browse more"],
-  ["bb1","bb2","Begin"],["bb2","bb3","Send message"],
-  ["bb2","bb5","Voice input"],["bb2","bb6","Camera scan"],
-  ["bb3","bb4","Response done"],["bb4","rec7","Craft it"],
-  ["bb4","bb3","Show me more"],["bb5","bb2","Cancel"],
-  ["bb6","bb2","Add to stations"],["bb7","bb2","Clean confirmed"],
-  ["bb8","bb2","Make Another"],["bb8","nav1","Return home"],
-  ["sm1","sm2","Station Overview"],["sm1","sm3","Level Monitor"],
-  ["sm1","sm6","Quick Flush"],["sm1","sm7","Bottle Mgmt"],
-  ["sm1","sm9","Maintenance"],["sm2","sm7","Tap slot"],
-  ["sm2","sm3","Level view"],["sm3","sm4","Tap low slot"],
-  ["sm3","sm5","Tap critical slot"],["sm3","sm7","Tap healthy slot"],
-  ["sm4","sm3","Reorder Now"],["sm5","sm8","Replace Bottle"],
-  ["sm5","sm7","Show alts"],["sm7","sm8","Insert or Swap"],
-  ["sm8","sm2","Confirm assign"],["sm9","sm10","Start Clean"],
-  ["sm10","sm11","Start Cleaning"],["sm11","sm1","Done"],
-  ["ae1","ae2","Wrong password"],["ae1","ae5","Offline"],
-  ["ae1","ae9","Emergency stop"],["ae2","ae3","Forgot password"],
-  ["ae2","ae4","Provider down"],["ae2","ae1","Try again"],
-  ["ae3","ae1","Back to sign in"],["ae4","ae2","Email fallback"],
-  ["ae5","ae6","Auto retry"],["ae6","ae8","Recovered"],
-  ["ae6","ae7","Failed"],["ae7","ae6","Retry manually"],
-  ["ae8","nav1","Return home"],["ae9","ae10","Reconnect"],
-  ["ae10","ae11","Connected"],["ae11","nav1","Resume app"],
-  ["re1","re2","Missing ingredient"],["re1","re3","Disconnected"],
-  ["re1","re4","Clean required"],["re1","re5","Pour interrupted"],
-  ["re2","re7","Swap recipe"],["re2","rec7","Reorder and retry"],
-  ["re3","ble1","BLE reconnect flow"],["re3","ae1","Auth issue"],
-  ["re4","sm10","Start cleaning"],["re5","re9","Pause pour"],
-  ["re5","rec9","Force resume"],["re6","re7","Timeout alts"],
-  ["re7","re8","Choose alt"],["re8","rec7","Craft alternative"],
-  ["re9","rec8","Resume pour"],["re9","rec1","Cancel"],
-  ["re10","re11","Skip"],["re11","rec8","Continue adjusted"]
-];
+var showLabels = true;
 
-var EDGES = [];
-RAW_EDGES.forEach(function(r) {
-  var a = nodeMap[r[0]], b = nodeMap[r[1]];
-  if (a && b) EDGES.push({ from:a, to:b, label:r[2] });
-});
-
-var maxX = 0, maxY = 0;
-NODES.forEach(function(n) {
-  maxX = Math.max(maxX, n.x + n.w);
-  maxY = Math.max(maxY, n.y + n.h);
-});
-var CW = maxX + 120, CH = maxY + 120;
-
-var pl = document.getElementById("pl");
-var sv = document.getElementById("sv");
-pl.style.width = CW + "px";
-pl.style.height = CH + "px";
-sv.setAttribute("width", CW);
-sv.setAttribute("height", CH);
-sv.setAttribute("viewBox", "0 0 " + CW + " " + CH);
-
-function h2r(hex) {
+function hexToRgb(hex) {
   return parseInt(hex.slice(1,3),16)+","+parseInt(hex.slice(3,5),16)+","+parseInt(hex.slice(5,7),16);
 }
 
-LANES.forEach(function(lane) {
-  var band = document.createElement("div");
-  band.className = "lane-band";
-  band.style.top = lane[2] + "px";
-  band.style.background = "rgba("+h2r(lane[3])+","+lane[4]+")";
-  band.style.borderTop = "1px solid rgba("+h2r(lane[3])+",0.13)";
-  pl.appendChild(band);
-  var lbl = document.createElement("div");
-  lbl.className = "lane-label";
-  lbl.style.top = (lane[2]+10) + "px";
-  lbl.innerHTML = '<div class="ll-dot" style="background:'+lane[3]+'"></div><div class="ll-text" style="color:'+lane[3]+'">'+lane[1]+'</div>';
-  pl.appendChild(lbl);
-  document.getElementById("legend").innerHTML += '<div class="leg-row"><div class="leg-dot" style="background:'+lane[3]+'"></div>'+lane[1]+'</div>';
-});
-
-var defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
-var mkr = document.createElementNS("http://www.w3.org/2000/svg","marker");
-mkr.setAttribute("id","ah"); mkr.setAttribute("viewBox","0 0 8 8");
-mkr.setAttribute("refX","7"); mkr.setAttribute("refY","4");
-mkr.setAttribute("markerWidth","5"); mkr.setAttribute("markerHeight","5");
-mkr.setAttribute("orient","auto");
-var ap = document.createElementNS("http://www.w3.org/2000/svg","path");
-ap.setAttribute("d","M0,0 L8,4 L0,8 z");
-ap.setAttribute("fill","rgba(255,255,255,0.45)");
-mkr.appendChild(ap); defs.appendChild(mkr); sv.appendChild(defs);
-
-EDGES.forEach(function(e) {
-  var a = e.from, b = e.to;
-  var ax, ay, bx, by, cx1, cy1, cx2, cy2;
-  var same = (a.laneIdx === b.laneIdx);
-
-  if (a.id === b.id) {
-    var lx = a.x + a.w/2;
-    var p = document.createElementNS("http://www.w3.org/2000/svg","path");
-    p.setAttribute("d","M"+(lx-18)+","+a.y+" C"+(lx-28)+","+(a.y-42)+" "+(lx+28)+","+(a.y-42)+" "+(lx+18)+","+a.y);
-    p.setAttribute("class","e-path");
-    p.setAttribute("stroke","rgba("+h2r(a.color)+",0.5)");
-    p.setAttribute("marker-end","url(#ah)");
-    sv.appendChild(p);
-    return;
+function svgEl(tag, attrs) {
+  var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  if (attrs) {
+    Object.keys(attrs).forEach(function(k){ el.setAttribute(k, attrs[k]); });
   }
+  return el;
+}
 
-  if (same) {
-    if (b.x > a.x) {
-      ax = a.x+a.w; ay = a.y+a.h/2;
-      bx = b.x; by = b.y+b.h/2;
-      var gap = bx-ax;
-      cx1 = ax+gap*0.45; cy1 = ay;
-      cx2 = bx-gap*0.45; cy2 = by;
-    } else {
-      ax = a.x+a.w/2; ay = a.y;
-      bx = b.x+b.w/2; by = b.y;
-      cx1 = ax; cy1 = ay-55;
-      cx2 = bx; cy2 = by-55;
-    }
-  } else {
-    if (b.y > a.y) {
-      ax = a.x+a.w*0.5; ay = a.y+a.h;
-      bx = b.x+b.w*0.5; by = b.y;
-    } else {
-      ax = a.x+a.w*0.5; ay = a.y;
-      bx = b.x+b.w*0.5; by = b.y+b.h;
-    }
-    var my = (ay+by)/2;
-    cx1 = ax; cy1 = my;
-    cx2 = bx; cy2 = my;
-  }
+function wrapText(label) {
+  var words = label.split(" ");
+  if (words.length <= 2) return [label, ""];
+  var mid = Math.ceil(words.length / 2);
+  return [words.slice(0, mid).join(" "), words.slice(mid).join(" ")];
+}
 
-  var p = document.createElementNS("http://www.w3.org/2000/svg","path");
-  p.setAttribute("d","M"+ax+","+ay+" C"+cx1+","+cy1+" "+cx2+","+cy2+" "+bx+","+by);
-  p.setAttribute("class","e-path");
-  p.setAttribute("stroke","rgba("+h2r(a.color)+",0.55)");
-  p.setAttribute("marker-end","url(#ah)");
-  sv.appendChild(p);
+function buildSVG() {
+  var svg = document.getElementById("canvas");
+  svg.setAttribute("width", CW);
+  svg.setAttribute("height", CH);
+  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
-  if (e.label) {
-    var mx = ax/8+cx1*3/8+cx2*3/8+bx/8;
-    var myt = ay/8+cy1*3/8+cy2*3/8+by/8;
-    var t = document.createElementNS("http://www.w3.org/2000/svg","text");
-    t.setAttribute("x", mx); t.setAttribute("y", myt-4);
-    t.setAttribute("class","e-label"); t.setAttribute("text-anchor","middle");
-    t.textContent = e.label;
-    sv.appendChild(t);
-  }
-});
+  // Defs: arrowhead
+  var defs = svgEl("defs");
+  var mk = svgEl("marker", {id:"ah", markerWidth:"7", markerHeight:"6", refX:"6", refY:"3", orient:"auto"});
+  var poly = svgEl("polygon", {points:"0 0, 7 3, 0 6", fill:"rgba(180,180,200,0.65)"});
+  mk.appendChild(poly);
+  defs.appendChild(mk);
+  svg.appendChild(defs);
 
-NODES.forEach(function(n) {
-  var div = document.createElement("div");
-  div.className = "node";
-  div.style.left = n.x+"px"; div.style.top = n.y+"px";
-  div.style.width = n.w+"px"; div.style.height = n.h+"px";
-  div.style.background = "rgba("+h2r(n.color)+",0.09)";
-  div.style.borderColor = "rgba("+h2r(n.color)+",0.32)";
-  div.innerHTML = '<div class="node-label" style="color:'+n.color+'">'+n.label+'</div><div class="node-sub">'+n.sub+'</div>';
-  div.addEventListener("click", function() { openPanel(n); });
-  pl.appendChild(div);
-});
+  var g = svgEl("g", {id:"main-g"});
+  svg.appendChild(g);
 
-function openPanel(n) {
-  document.getElementById("dp-lane").textContent = n.laneName;
-  document.getElementById("dp-lane").style.color = n.color;
-  document.getElementById("dp-title").innerHTML = "<strong>"+n.label+"</strong>";
-  document.getElementById("dp-sub").textContent = n.sub;
-  var outDiv = document.getElementById("dp-out");
-  var inDiv = document.getElementById("dp-in");
-  outDiv.innerHTML = ""; inDiv.innerHTML = "";
+  // Lane backgrounds
+  LANES.forEach(function(lane) {
+    var rgb = hexToRgb(lane[4]);
+    var bg = svgEl("rect", {x:18, y:lane[2], width:CW-36, height:lane[3],
+      fill:"rgba("+rgb+",0.06)", stroke:"rgba("+rgb+",0.22)", "stroke-width":"1", rx:"10"});
+    g.appendChild(bg);
+    var lt = svgEl("text", {x:32, y:lane[2]+18, fill:"rgba("+rgb+",0.65)",
+      "font-size":"10", "font-weight":"700", "font-family":"SF Pro Display,Segoe UI,sans-serif",
+      "letter-spacing":"1"});
+    lt.textContent = lane[1].toUpperCase();
+    g.appendChild(lt);
+  });
+
+  // Edges
   EDGES.forEach(function(e) {
-    if (e.from.id === n.id) {
-      outDiv.innerHTML += '<div class="dp-row"><span class="arr" style="color:'+n.color+'">&#8594;</span><span>'+e.to.label+'<span class="lbl"> &middot; '+e.label+'</span></span></div>';
+    var a = nodeMap[e[0]], b = nodeMap[e[1]];
+    if (!a || !b) return;
+    var ax, ay, bx, by, cx1, cy1, cx2, cy2;
+    var sameLane = (a.laneKey === b.laneKey);
+    var sameRow = (Math.abs(a.y - b.y) < 25);
+
+    if (sameLane && sameRow && b.x > a.x) {
+      // Forward same row
+      ax = a.x + a.w; ay = a.y + a.h/2;
+      bx = b.x; by = b.y + b.h/2;
+      var gap = b.x - (a.x + a.w);
+      cx1 = ax + gap*0.4; cy1 = ay;
+      cx2 = bx - gap*0.4; cy2 = by;
+    } else if (sameLane && sameRow && b.x <= a.x) {
+      // Backward same row: arc above
+      ax = a.x + a.w/2; ay = a.y;
+      bx = b.x + b.w/2; by = b.y;
+      cx1 = ax; cy1 = ay - 48;
+      cx2 = bx; cy2 = by - 48;
+    } else if (sameLane && !sameRow) {
+      // Cross-row same lane (main <-> branch)
+      if (b.y > a.y) {
+        ax = a.x + a.w*0.5; ay = a.y + a.h;
+        bx = b.x + b.w*0.5; by = b.y;
+      } else {
+        ax = a.x + a.w*0.5; ay = a.y;
+        bx = b.x + b.w*0.5; by = b.y + b.h;
+      }
+      var midY = (ay + by) / 2;
+      cx1 = ax; cy1 = midY;
+      cx2 = bx; cy2 = midY;
+    } else {
+      // Cross-lane S-curve
+      if (b.y > a.y) {
+        ax = a.x + a.w*0.5; ay = a.y + a.h;
+        bx = b.x + b.w*0.5; by = b.y;
+      } else {
+        ax = a.x + a.w*0.5; ay = a.y;
+        bx = b.x + b.w*0.5; by = b.y + b.h;
+      }
+      var mid = (ay + by) / 2;
+      cx1 = ax; cy1 = mid;
+      cx2 = bx; cy2 = mid;
     }
-    if (e.to.id === n.id) {
-      inDiv.innerHTML += '<div class="dp-row"><span class="arr" style="color:'+e.from.color+'">&#8592;</span><span>'+e.from.label+'<span class="lbl"> &middot; '+e.label+'</span></span></div>';
+
+    var rgb = hexToRgb(a.color);
+    var path = svgEl("path", {
+      class: "edge-path",
+      d: "M "+ax+","+ay+" C "+cx1+","+cy1+" "+cx2+","+cy2+" "+bx+","+by,
+      stroke: "rgba("+rgb+",0.48)",
+      "marker-end": "url(#ah)"
+    });
+    g.appendChild(path);
+
+    if (e[2] && showLabels) {
+      var lx = (ax+bx)/2, ly = (ay+by)/2 - 5;
+      var lt2 = svgEl("text", {x:lx, y:ly, class:"edge-label",
+        "font-family":"SF Pro Display,Segoe UI,sans-serif", "data-elabel":"1"});
+      lt2.textContent = e[2];
+      g.appendChild(lt2);
     }
   });
-  document.getElementById("dp").classList.add("open");
-}
-function closePanel() { document.getElementById("dp").classList.remove("open"); }
 
-var scale = 1, panX = 0, panY = 0;
-var dragging = false, lx = 0, ly = 0;
-var vp = document.getElementById("vp");
+  // Nodes
+  NODES.forEach(function(n) {
+    var rgb = hexToRgb(n.color);
+    var grp = svgEl("g", {cursor:"pointer"});
+    grp.setAttribute("data-nid", n.id);
 
-function applyT(anim) {
-  pl.style.transition = anim ? "transform .3s cubic-bezier(.4,0,.2,1)" : "none";
-  pl.style.transform = "translate("+panX+"px,"+panY+"px) scale("+scale+")";
-}
-function fitToScreen(anim) {
-  var vw = vp.clientWidth || window.innerWidth;
-  var vh = vp.clientHeight || (window.innerHeight - 52);
-  var pad = 40;
-  var sx = (vw - pad*2) / CW;
-  var sy = (vh - pad*2) / CH;
-  scale = Math.min(sx, sy, 1.0);
-  if (scale <= 0) scale = 0.2;
-  panX = (vw - CW*scale) / 2;
-  panY = (vh - CH*scale) / 2;
-  applyT(anim == null ? true : anim);
-}
-function changeScale(d) {
-  scale = Math.max(0.1, Math.min(3, scale + d));
-  applyT(true);
+    var rect = svgEl("rect", {
+      x: n.x, y: n.y, width: n.w, height: n.h,
+      fill: n.isMain ? "rgba("+rgb+",0.4)" : "rgba("+rgb+",0.15)",
+      stroke: n.isMain ? "rgba("+rgb+",0.85)" : "rgba("+rgb+",0.42)",
+      "stroke-width": n.isMain ? "1.5" : "1",
+      rx: "8",
+      class: "node-rect"
+    });
+    grp.appendChild(rect);
+
+    var cx = n.x + n.w/2;
+    var cy = n.y + n.h/2;
+    var lines = wrapText(n.label);
+
+    if (lines[1]) {
+      var t1 = svgEl("text", {x:cx, y:cy-9, class:"node-label", "font-family":"SF Pro Display,Segoe UI,sans-serif"});
+      t1.textContent = lines[0];
+      grp.appendChild(t1);
+      var t2 = svgEl("text", {x:cx, y:cy+6, class:"node-label", "font-family":"SF Pro Display,Segoe UI,sans-serif"});
+      t2.textContent = lines[1];
+      grp.appendChild(t2);
+    } else {
+      var t1s = svgEl("text", {x:cx, y:cy-2, class:"node-label", "font-family":"SF Pro Display,Segoe UI,sans-serif"});
+      t1s.textContent = lines[0];
+      grp.appendChild(t1s);
+    }
+
+    if (n.isMain && n.sub) {
+      var subWords = n.sub.split(" ");
+      var subLine = subWords.slice(0, 5).join(" ") + (subWords.length > 5 ? "..." : "");
+      var st = svgEl("text", {x:cx, y:cy+22, class:"node-sub", "font-family":"SF Pro Display,Segoe UI,sans-serif"});
+      st.textContent = subLine;
+      grp.appendChild(st);
+    }
+
+    grp.addEventListener("click", function(){ showDetail(n.id); });
+    g.appendChild(grp);
+  });
+
+  document.getElementById("nodecount").textContent = NODES.length + " nodes  |  " + EDGES.length + " connections";
 }
 
-vp.addEventListener("wheel", function(e) {
-  e.preventDefault();
-  var d = e.deltaY > 0 ? -0.07 : 0.07;
-  var rect = vp.getBoundingClientRect();
-  var mx = e.clientX - rect.left;
-  var my = e.clientY - rect.top;
-  var ns = Math.max(0.1, Math.min(3, scale + d));
-  panX = mx - (mx - panX) * (ns / scale);
-  panY = my - (my - panY) * (ns / scale);
-  scale = ns;
-  applyT(false);
-}, { passive: false });
+function showDetail(id) {
+  var n = nodeMap[id];
+  if (!n) return;
+  var rgb = hexToRgb(n.color);
+  document.getElementById("d-title").textContent = n.label;
+  var tag = document.getElementById("d-tag");
+  tag.textContent = n.laneName;
+  tag.style.background = "rgba("+rgb+",0.22)";
+  tag.style.color = n.color;
+  document.getElementById("d-sub").textContent = n.sub;
+  var outEl = document.getElementById("d-out");
+  var inEl = document.getElementById("d-in");
+  outEl.innerHTML = "";
+  inEl.innerHTML = "";
+  EDGES.forEach(function(e) {
+    if (e[0] === id) {
+      var tgt = nodeMap[e[1]];
+      if (!tgt) return;
+      var d = document.createElement("div");
+      d.className = "dlink";
+      d.innerHTML = "<span class='arr'>&#x2192;</span><span class='lbl'>"+tgt.label+"</span><span style='margin-left:auto;font-size:10px;color:#555'>"+e[2]+"</span>";
+      d.onclick = function(){ showDetail(e[1]); };
+      outEl.appendChild(d);
+    }
+    if (e[1] === id) {
+      var src = nodeMap[e[0]];
+      if (!src) return;
+      var d2 = document.createElement("div");
+      d2.className = "dlink";
+      d2.innerHTML = "<span class='arr'>&#x2190;</span><span class='lbl'>"+src.label+"</span><span style='margin-left:auto;font-size:10px;color:#555'>"+e[2]+"</span>";
+      d2.onclick = function(){ showDetail(e[0]); };
+      inEl.appendChild(d2);
+    }
+  });
+  if (!outEl.children.length) outEl.innerHTML = "<div style='font-size:11px;color:#444;padding:4px 8px'>None</div>";
+  if (!inEl.children.length) inEl.innerHTML = "<div style='font-size:11px;color:#444;padding:4px 8px'>None</div>";
+  document.getElementById("detail").classList.add("open");
+}
 
-vp.addEventListener("mousedown", function(e) {
-  if (e.button !== 0) return;
-  dragging = true; lx = e.clientX; ly = e.clientY;
-  vp.classList.add("dragging");
+function closeDetail() {
+  document.getElementById("detail").classList.remove("open");
+}
+
+function buildLegend() {
+  var el = document.getElementById("leg-rows");
+  LANES.forEach(function(l) {
+    var row = document.createElement("div");
+    row.className = "leg-row";
+    row.innerHTML = "<div class='leg-swatch' style='background:"+l[4]+"'></div><span class='leg-label'>"+l[1]+"</span>";
+    el.appendChild(row);
+  });
+}
+
+// Zoom / Pan
+var scale=1, tx=0, ty=0, dragging=false, dragStartX, dragStartY, txStart, tyStart;
+
+function applyTransform() {
+  var g = document.getElementById("main-g");
+  if (g) g.setAttribute("transform","translate("+tx+","+ty+") scale("+scale+")");
+  document.getElementById("zoomlbl").textContent = Math.round(scale*100)+"%";
+}
+
+function fitToScreen() {
+  var w = document.getElementById("canvas-wrap");
+  var vw = w.offsetWidth, vh = w.offsetHeight;
+  scale = Math.min((vw-40)/CW, (vh-40)/CH);
+  tx = (vw - CW*scale) / 2;
+  ty = 20;
+  applyTransform();
+}
+
+function resetZoom() {
+  scale=1; tx=40; ty=20; applyTransform();
+}
+
+function toggleEdgeLabels() {
+  showLabels = !showLabels;
+  document.querySelectorAll("[data-elabel]").forEach(function(el){
+    el.style.display = showLabels ? "" : "none";
+  });
+  document.getElementById("toggleLabels").textContent = showLabels ? "Hide Labels" : "Show Labels";
+}
+
+window.addEventListener("load", function() {
+  buildSVG();
+  buildLegend();
+  var wrap = document.getElementById("canvas-wrap");
+
+  wrap.addEventListener("wheel", function(e) {
+    e.preventDefault();
+    var r = wrap.getBoundingClientRect();
+    var mx = e.clientX - r.left, my = e.clientY - r.top;
+    var delta = e.deltaY > 0 ? 0.875 : 1.143;
+    var ns = Math.max(0.1, Math.min(4, scale*delta));
+    tx = mx - (mx - tx)*(ns/scale);
+    ty = my - (my - ty)*(ns/scale);
+    scale = ns;
+    applyTransform();
+  }, {passive:false});
+
+  wrap.addEventListener("mousedown", function(e) {
+    if (e.target.closest("[data-nid]")) return;
+    dragging=true;
+    dragStartX=e.clientX; dragStartY=e.clientY;
+    txStart=tx; tyStart=ty;
+    wrap.classList.add("dragging");
+  });
+  document.addEventListener("mousemove", function(e) {
+    if (!dragging) return;
+    tx = txStart + (e.clientX - dragStartX);
+    ty = tyStart + (e.clientY - dragStartY);
+    applyTransform();
+  });
+  document.addEventListener("mouseup", function() {
+    dragging=false;
+    document.getElementById("canvas-wrap").classList.remove("dragging");
+  });
+
+  var ltd=null, ltm=null;
+  wrap.addEventListener("touchstart", function(e) {
+    if (e.touches.length===1) {
+      dragging=true;
+      dragStartX=e.touches[0].clientX; dragStartY=e.touches[0].clientY;
+      txStart=tx; tyStart=ty;
+    } else if (e.touches.length===2) {
+      dragging=false;
+      var dx=e.touches[0].clientX-e.touches[1].clientX;
+      var dy=e.touches[0].clientY-e.touches[1].clientY;
+      ltd=Math.sqrt(dx*dx+dy*dy);
+      ltm={(x:(e.touches[0].clientX+e.touches[1].clientX)/2, y:(e.touches[0].clientY+e.touches[1].clientY)/2)};
+    }
+  },{passive:true});
+  wrap.addEventListener("touchmove", function(e) {
+    e.preventDefault();
+    if (e.touches.length===1 && dragging) {
+      tx=txStart+(e.touches[0].clientX-dragStartX);
+      ty=tyStart+(e.touches[0].clientY-dragStartY);
+      applyTransform();
+    } else if (e.touches.length===2 && ltd) {
+      var dx=e.touches[0].clientX-e.touches[1].clientX;
+      var dy=e.touches[0].clientY-e.touches[1].clientY;
+      var dist=Math.sqrt(dx*dx+dy*dy);
+      var d2=dist/ltd;
+      var mid={x:(e.touches[0].clientX+e.touches[1].clientX)/2, y:(e.touches[0].clientY+e.touches[1].clientY)/2};
+      var ns=Math.max(0.1,Math.min(4,scale*d2));
+      tx=mid.x-(ltm.x-tx)*(ns/scale);
+      ty=mid.y-(ltm.y-ty)*(ns/scale);
+      scale=ns; ltd=dist; ltm=mid;
+      applyTransform();
+    }
+  },{passive:false});
+  wrap.addEventListener("touchend", function(){ dragging=false; ltd=null; });
+
+  document.addEventListener("keydown", function(e) {
+    var s=40;
+    if(e.key==="ArrowLeft"){tx+=s;applyTransform();}
+    if(e.key==="ArrowRight"){tx-=s;applyTransform();}
+    if(e.key==="ArrowUp"){ty+=s;applyTransform();}
+    if(e.key==="ArrowDown"){ty-=s;applyTransform();}
+    if(e.key==="+"||e.key==="="){scale=Math.min(4,scale*1.15);applyTransform();}
+    if(e.key==="-"){scale=Math.max(0.1,scale*0.87);applyTransform();}
+    if(e.key==="0"){fitToScreen();}
+    if(e.key==="Escape"){closeDetail();}
+  });
+
+  setTimeout(fitToScreen, 100);
 });
-window.addEventListener("mousemove", function(e) {
-  if (!dragging) return;
-  panX += e.clientX - lx; panY += e.clientY - ly;
-  lx = e.clientX; ly = e.clientY;
-  applyT(false);
-});
-window.addEventListener("mouseup", function() { dragging = false; vp.classList.remove("dragging"); });
-
-vp.addEventListener("touchstart", function(e) {
-  if (e.touches.length === 1) { lx = e.touches[0].clientX; ly = e.touches[0].clientY; }
-}, { passive: true });
-vp.addEventListener("touchmove", function(e) {
-  e.preventDefault();
-  if (e.touches.length === 1) {
-    panX += e.touches[0].clientX - lx;
-    panY += e.touches[0].clientY - ly;
-    lx = e.touches[0].clientX; ly = e.touches[0].clientY;
-    applyT(false);
-  }
-}, { passive: false });
-
-document.addEventListener("keydown", function(e) {
-  if (e.key === "0" || e.key === "Escape") fitToScreen(true);
-  if (e.key === "+" || e.key === "=") changeScale(0.12);
-  if (e.key === "-") changeScale(-0.12);
-  if (e.key === "ArrowLeft")  { panX += 60; applyT(false); }
-  if (e.key === "ArrowRight") { panX -= 60; applyT(false); }
-  if (e.key === "ArrowUp")    { panY += 60; applyT(false); }
-  if (e.key === "ArrowDown")  { panY -= 60; applyT(false); }
-});
-
-window.addEventListener("load", function() { fitToScreen(false); });
-if (document.readyState === "complete") { fitToScreen(false); }
 </script>
 </body>
 </html>
