@@ -3,893 +3,496 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BARSYS ARK — User Flow</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet">
+<title>BARSYS ARK — Complete User Flow Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#050505;--s1:#0B0B0B;
-  --gold:#C8A97E;--gold-l:#E8D5B5;
-  --t1:#fff;--t2:rgba(255,255,255,.62);--t3:rgba(255,255,255,.32);--t4:rgba(255,255,255,.14);
-  --glass:rgba(255,255,255,.028);--glass2:rgba(255,255,255,.055);
-  --brd:rgba(255,255,255,.08);
-  --cm:#C8A97E;--ca:#6DB8A8;--cb:#8898A8;--cn:#9A8AAA;--cl:#A8986E;
-}
-html,body{background:var(--bg);color:var(--t1);font-family:"Plus Jakarta Sans",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;height:100%;width:100%}
-
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(5,5,5,.95);border-bottom:.5px solid var(--brd);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:200;gap:12px}
-.nav-l{display:flex;align-items:center;gap:12px;flex-shrink:0}
-.back{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;background:var(--glass2);border:.5px solid var(--brd);border-radius:8px;color:var(--t3);font-size:12px;font-weight:500;text-decoration:none;transition:all .2s;white-space:nowrap}
-.back:hover{color:var(--gold);border-color:rgba(200,169,126,.3)}
-.back svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.nav-title{font-size:13px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
-.nav-sub{font-size:11px;color:var(--t3);font-weight:300;white-space:nowrap}
-.nav-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
-
-/* LEGEND */
-.legend{display:flex;align-items:center;gap:10px;padding:5px 12px;background:var(--glass2);border:.5px solid var(--brd);border-radius:8px}
-.li{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--t4);white-space:nowrap}
-.ll{width:16px;height:1.5px;border-radius:1px;flex-shrink:0}
-.li.m .ll{background:var(--cm)}
-.li.a .ll{background:var(--ca)}
-.li.b .ll{background:var(--cb);opacity:.7}
-.li.n .ll{background:var(--cn)}
-.li.l .ll{background:var(--cl);opacity:.65}
-
-/* ZOOM */
-.zbox{display:flex;align-items:center;gap:4px;background:var(--glass2);border:.5px solid var(--brd);border-radius:8px;padding:4px 7px}
-.zb{width:26px;height:26px;background:0;border:none;color:var(--t3);cursor:pointer;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:200;line-height:1;transition:all .15s}
-.zb:hover{background:rgba(200,169,126,.1);color:var(--gold)}
-.zpct{font-size:11px;color:var(--t3);font-weight:500;min-width:34px;text-align:center;font-variant-numeric:tabular-nums}
-.fitbtn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;background:rgba(200,169,126,.1);border:.5px solid rgba(200,169,126,.28);border-radius:8px;color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
-.fitbtn:hover{background:rgba(200,169,126,.18)}
-
-/* VIEWPORT */
-.vp{position:fixed;top:56px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab}
-.vp.gr{cursor:grabbing}
-.pl{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
-
-/* NODE CARDS */
-.node{position:absolute;background:rgba(255,255,255,.03);border:.5px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s;user-select:none}
-.node:hover{border-color:rgba(200,169,126,.3);box-shadow:0 0 0 1px rgba(200,169,126,.07),0 8px 32px rgba(0,0,0,.65);transform:translateY(-1px)}
-.node.act{border-color:rgba(200,169,126,.44);box-shadow:0 0 0 1px rgba(200,169,126,.14),0 12px 40px rgba(0,0,0,.8)}
-.node.hub{background:rgba(200,169,126,.045);border-color:rgba(200,169,126,.2)!important}
-.ni{padding:12px 14px 10px}
-.nh{display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.nd{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.nn{font-size:11.5px;font-weight:700;letter-spacing:-.1px;flex:1}
-.nb{font-size:7.5px;color:var(--t4);font-weight:500;background:rgba(255,255,255,.04);padding:1px 5px;border-radius:3px;flex-shrink:0}
-.ns{font-size:9px;color:var(--t3);font-weight:300;font-style:italic;line-height:1.55;margin-bottom:5px}
-.ntags{display:flex;flex-wrap:wrap;gap:2px}
-.ntag{font-size:7.5px;color:var(--t4);background:rgba(255,255,255,.035);border:.5px solid rgba(255,255,255,.055);border-radius:3px;padding:1px 5px}
-.nerr{display:inline-flex;align-items:center;gap:3px;margin-top:5px;padding:2px 6px;background:rgba(160,114,114,.09);border:.5px solid rgba(160,114,114,.2);border-radius:12px;font-size:7.5px;color:#A07272;font-weight:500}
-.nerr::before{content:"";width:3px;height:3px;border-radius:50%;background:#A07272;flex-shrink:0}
-
-/* STAGE LABELS */
-.stl{position:absolute;display:flex;flex-direction:column;align-items:center;pointer-events:none;transform:translateX(-50%)}
-.stpill{padding:3px 9px;background:rgba(200,169,126,.07);border:.5px solid rgba(200,169,126,.15);border-radius:16px}
-.stn{font-size:7px;letter-spacing:2px;color:var(--gold);font-weight:600;text-transform:uppercase;white-space:nowrap}
-.stnum{font-size:6.5px;color:var(--t4);text-align:center;margin-top:2px;white-space:nowrap}
-
-/* SECTION LABEL (for tab group, auth group) */
-.grplbl{position:absolute;font-size:7px;letter-spacing:1.5px;color:rgba(200,169,126,.3);font-weight:600;text-transform:uppercase;white-space:nowrap;pointer-events:none}
-
-/* ARROWS */
-.asv{position:absolute;top:0;left:0;pointer-events:none;overflow:visible}
-.ep{fill:none;stroke-linecap:round}
-
-/* DETAIL PANEL */
-.ov{position:fixed;inset:0;background:rgba(5,5,5,.45);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(5px)}
-.ov.show{opacity:1;pointer-events:auto}
-.dp{position:fixed;right:0;top:0;width:340px;height:100vh;background:#0A0A0A;border-left:.5px solid var(--brd);overflow:hidden;transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:400;display:flex;flex-direction:column}
-.dp.open{transform:translateX(0)}
-.dptop{padding:24px 22px 16px;border-bottom:.5px solid var(--brd);position:relative;flex-shrink:0}
-.dpcls{position:absolute;top:14px;right:14px;width:26px;height:26px;background:rgba(255,255,255,.06);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:var(--t3);transition:all .2s}
-.dpcls:hover{background:rgba(255,255,255,.12);color:var(--t1)}
-.dpcls svg{width:11px;height:11px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round}
-.dpey{font-size:8px;letter-spacing:3.5px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:5px}
-.dph{font-size:22px;font-weight:700;letter-spacing:-.4px;line-height:1.15;margin-bottom:3px}
-.dps{font-size:11px;color:var(--t3);font-style:italic;font-weight:300;line-height:1.6}
-.dpbd{flex:1;overflow-y:auto;padding:18px 22px;scrollbar-width:none}
-.dpbd::-webkit-scrollbar{display:none}
-.dpsec{margin-bottom:16px}
-.dpsl{font-size:7.5px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:7px}
-.dplist{list-style:none;display:flex;flex-direction:column;gap:4px}
-.dplist li{font-size:10.5px;color:var(--t2);font-weight:300;line-height:1.6;padding-left:12px;position:relative}
-.dplist li::before{content:"--";position:absolute;left:0;color:var(--gold);opacity:.35;font-size:8px;top:2px}
-.dptrs{display:flex;flex-direction:column;gap:4px}
-.dptr{display:flex;gap:6px;font-size:10px;color:var(--t2);line-height:1.6}
-.dptra{color:var(--gold);flex-shrink:0;font-size:12px;line-height:1.5}
-.dperrs{display:flex;flex-direction:column;gap:4px}
-.dperr{font-size:10px;color:#A07272;padding:5px 10px;background:rgba(160,114,114,.07);border:.5px solid rgba(160,114,114,.15);border-radius:6px;line-height:1.55;font-weight:300}
-.dpnoerr{font-size:10px;color:var(--t4);font-style:italic;font-weight:300}
-.dpehs{display:flex;flex-wrap:wrap;gap:3px}
-.dpeh{padding:2px 7px;background:rgba(255,255,255,.04);border:.5px solid var(--brd);border-radius:4px;font-size:9px;color:var(--t4)}
+:root{--bg:#050505;--s1:#0D0D0D;--gold:#C8A97E;--t1:#fff;--t2:rgba(255,255,255,.55);--t3:rgba(255,255,255,.25);--border:rgba(255,255,255,.06)}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1)}
+#topbar{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(5,5,5,.96);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:14px;z-index:200;backdrop-filter:blur(16px)}
+#topbar a{color:var(--gold);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.2px}
+#topbar h1{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+#topbar .meta{font-size:10px;color:var(--t3);letter-spacing:.3px}
+.tb-sep{width:1px;height:18px;background:var(--border)}
+.tb-right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.tb-btn{padding:5px 12px;border-radius:7px;font-size:10px;font-weight:600;font-family:inherit;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--t2);transition:background .2s}
+.tb-btn:hover{background:rgba(255,255,255,.05);color:var(--t1)}
+#vp{position:fixed;top:52px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab;user-select:none}
+#vp.dragging{cursor:grabbing}
+#pl{position:absolute;transform-origin:0 0}
+.lane-band{position:absolute;left:0;right:0;height:200px;pointer-events:none}
+.lane-label{position:absolute;left:10px;display:flex;align-items:center;gap:7px;pointer-events:none;z-index:2}
+.ll-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.ll-text{font-size:8px;letter-spacing:3px;text-transform:uppercase;font-weight:700;opacity:.7}
+.node{position:absolute;border-radius:11px;padding:9px 12px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .2s;border:1px solid rgba(255,255,255,.07)}
+.node:hover{transform:scale(1.06) translateY(-1px);box-shadow:0 10px 40px rgba(0,0,0,.7);border-color:rgba(255,255,255,.18);z-index:10}
+.node-label{font-size:11px;font-weight:700;letter-spacing:-.1px;line-height:1.25}
+.node-sub{font-size:8.5px;color:rgba(255,255,255,.42);margin-top:3px;line-height:1.45;font-weight:400}
+#sv{position:absolute;top:0;left:0;pointer-events:none;overflow:visible}
+.e-path{fill:none;stroke-width:1.4;stroke-linecap:round;opacity:.5}
+.e-label{font-size:8px;fill:rgba(255,255,255,.38);font-family:'Plus Jakarta Sans',sans-serif;font-weight:500}
+#dp{position:fixed;right:-340px;top:52px;bottom:0;width:320px;background:rgba(10,10,10,.98);border-left:1px solid var(--border);transition:right .3s cubic-bezier(.4,0,.2,1);z-index:190;overflow-y:auto;padding:24px 20px;backdrop-filter:blur(24px)}
+#dp.open{right:0}
+#dp-close{position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--t1);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+#dp-close:hover{background:rgba(255,255,255,.1)}
+#dp-lane{font-size:8px;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+#dp-title{font-size:20px;font-weight:200;letter-spacing:-.4px;line-height:1.2}
+#dp-title strong{font-weight:700}
+#dp-sub{font-size:11px;color:var(--t2);line-height:1.7;margin-top:8px}
+.dp-sect{font-size:8px;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase;margin-top:18px;margin-bottom:7px;font-weight:600}
+.dp-row{padding:7px 10px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:7px;margin-bottom:4px;font-size:10px;color:var(--t2);display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.dp-row .arr{flex-shrink:0;margin-top:1px}
+.dp-row .lbl{opacity:.5;font-size:9px;margin-left:4px}
+#hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(10,10,10,.92);border:1px solid var(--border);border-radius:100px;padding:7px 18px;font-size:10px;color:var(--t3);pointer-events:none;z-index:100;white-space:nowrap}
+#legend{position:fixed;bottom:18px;right:18px;background:rgba(10,10,10,.92);border:1px solid var(--border);border-radius:11px;padding:12px 14px;z-index:100;min-width:180px}
+#legend h4{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:9px;font-weight:600}
+.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:9px;color:var(--t2)}
+.leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-l">
-    <a class="back" href="index.html">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      Flow Map
-    </a>
-    <span class="nav-title">User Flow Diagram</span>
-    <span class="nav-sub">&nbsp;&#xb7; First-time user &rarr; fully connected</span>
-  </div>
-  <div class="nav-r">
-    <div class="legend">
-      <span class="li m"><span class="ll"></span>Main path</span>
-      <span class="li a"><span class="ll"></span>Auto</span>
-      <span class="li b"><span class="ll"></span>Alt path</span>
-      <span class="li n"><span class="ll"></span>Tab nav</span>
-      <span class="li l"><span class="ll"></span>Loop back</span>
-    </div>
-    <div class="zbox">
-      <button class="zb" id="zOut">&#8722;</button>
-      <span class="zpct" id="zpct">100%</span>
-      <button class="zb" id="zIn">+</button>
-    </div>
-    <button class="fitbtn" id="fitBtn">&#x229E; Fit to screen</button>
+<nav id="topbar">
+  <a href="index.html">&#8592; ARK</a>
+  <div class="tb-sep"></div>
+  <h1>Complete User Flow Map</h1>
+  <span class="meta">89 screens &middot; 8 flow lanes &middot; all paths</span>
+  <div class="tb-right">
+    <button class="tb-btn" onclick="fitToScreen(true)">[0] Fit</button>
+    <button class="tb-btn" onclick="changeScale(0.12)">+ Zoom</button>
+    <button class="tb-btn" onclick="changeScale(-0.12)">&#8722; Zoom</button>
   </div>
 </nav>
 
-<div class="vp" id="vp">
-  <div class="pl" id="pl">
-    <svg class="asv" id="svg"></svg>
+<div id="vp">
+  <div id="pl">
+    <svg id="sv"></svg>
   </div>
 </div>
 
-<div class="ov" id="ov" onclick="closePanel()"></div>
-<div class="dp" id="dp">
-  <div class="dptop">
-    <button class="dpcls" onclick="closePanel()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div id="dpTop"></div>
-  </div>
-  <div class="dpbd" id="dpBd"></div>
+<div id="dp">
+  <button id="dp-close" onclick="closePanel()">&#10005;</button>
+  <div id="dp-lane"></div>
+  <div id="dp-title"></div>
+  <p id="dp-sub"></p>
+  <div class="dp-sect">Leads to</div>
+  <div id="dp-out"></div>
+  <div class="dp-sect">Reached from</div>
+  <div id="dp-in"></div>
 </div>
+
+<div id="hint">Scroll to zoom &nbsp;&middot;&nbsp; Drag to pan &nbsp;&middot;&nbsp; Click node for detail &nbsp;&middot;&nbsp; [0] to fit</div>
+<div id="legend"><h4>Flow Lanes</h4></div>
 
 <script>
-"use strict";
+var NW = 160, NH = 76;
 
-/* =====================================================
-   CANVAS DIMENSIONS
-   ===================================================== */
-var CW = 2430;
-var CH = 1000;
-
-/* =====================================================
-   NODE DATA  (all strings use double quotes — no apostrophe issues)
-   ===================================================== */
-var NODES = [
-  {
-    id:"splash", label:"Splash", stage:1, stl:"Launch",
-    x:20, y:380, w:170, h:102, color:"#C8A97E", hub:false,
-    sub:"App launch · BARSYS wordmark",
-    tags:["Auto 2.2s","Keyframe anim"],
-    details:[
-      "BARSYS wordmark: 36px weight 200, letter-spacing 20px",
-      "fadeScale animation: 1.4s cubic-bezier(0.16,1,0.3,1) delay 0.4s",
-      "Gold dot (5x5px) fades in at 1.2s delay",
-      "Radial gold glow: rgba(200,169,126,.06)",
-      "Full-screen #050505 background — no UI chrome"
-    ],
-    transitions:["Auto-advances to Onboarding after 2.2 seconds (setTimeout)"],
-    errors:[], ehCodes:[]
-  },
-  {
-    id:"onboarding", label:"Onboarding", stage:2, stl:"First-Run",
-    x:220, y:380, w:170, h:102, color:"#8A9490", hub:false,
-    sub:"Welcome screen · first-run experience",
-    tags:["Orb anim","Progress dots"],
-    details:[
-      "Animated orb: 180px, radial gold gradient, 8s float loop",
-      "Breathing gold glow backdrop (breathe 6s ease-in-out loop)",
-      "Headline: Your next drink should make you feel something.",
-      "Gold CTA button: What is the occasion?",
-      "Skip intro ghost link + 3 progress dots"
-    ],
-    transitions:[
-      "Tap CTA button → Mood Selection",
-      "Tap Skip intro → Mood Selection"
-    ],
-    errors:[], ehCodes:[]
-  },
-  {
-    id:"mood", label:"Mood Selection", stage:3, stl:"Intent",
-    x:420, y:380, w:170, h:102, color:"#B8A67A", hub:false,
-    sub:"Set the occasion · 4 mood cards",
-    tags:["2x2 grid","AI prompt bar"],
-    details:[
-      "Gold greeting: Good evening — dynamic time-based salutation",
-      "Question headline: What is the occasion? 28px weight 200",
-      "2x2 mood grid: UNWIND / CELEBRATE / IMPRESS / EXPLORE",
-      "Each card: glass panel + colored accent line + mood tagline",
-      "Trending pill shortcut (most-crafted drink of the day)",
-      "AI prompt bar: What are you in the mood for? with send icon"
-    ],
-    transitions:[
-      "Select any mood card → Drink Stream (350ms delay)",
-      "Tap trending pill → Drink Detail (direct shortcut)",
-      "Submit AI prompt → BarBot AI chat"
-    ],
-    errors:["No network: cached trending data shown"],
-    ehCodes:["EH1-S9"]
-  },
-  {
-    id:"stream", label:"Drink Stream", stage:4, stl:"Recipe Feed",
-    x:620, y:380, w:170, h:102, color:"#7E8B96", hub:false,
-    sub:"Mood-filtered recipe feed · BarBot curated",
-    tags:["Scrollable","Mood badge"],
-    details:[
-      "Mood tag badge (colored dot + mood name) at top of screen",
-      "Dynamic headline reflects selected mood context",
-      "Scrollable recipe card list with name, description, craft time",
-      "Card hero: dark gradient panel + stylized cocktail icon at 15% opacity",
-      "BarBot-generated subtext for each mood context variant"
-    ],
-    transitions:["Tap any recipe card → Drink Detail"],
-    errors:[
-      "Network drops during fetch: auto-retry (EH1-S9), cached version shown",
-      "Rating API fails after craft: auto-retry, queued for sync"
-    ],
-    ehCodes:["EH1-S9"]
-  },
-  {
-    id:"detail", label:"Drink Detail", stage:5, stl:"Detail",
-    x:820, y:380, w:170, h:102, color:"#C8A97E", hub:false,
-    sub:"Recipe deep-dive · ingredients · story",
-    tags:["Ingredients","Craft CTA"],
-    details:[
-      "Full-width hero: dark gradient + large cocktail SVG icon at 12% opacity",
-      "Transparent nav overlay: back chevron (left) + Save gold button (right)",
-      "Tag pills: spirit category, style, strength",
-      "Ingredients section: glass panels with gold dot per ingredient + quantity",
-      "The Story section: cocktail history in 13px weight 300 italic prose",
-      "Craft This Cocktail: full-width gold button at bottom"
-    ],
-    transitions:[
-      "Tap Craft This Cocktail (not signed in) → Authentication",
-      "Tap Craft This Cocktail (already signed in) → Crafting",
-      "Tap back chevron → Previous screen",
-      "Tap Save → Adds to favorites (toast confirmation, stays on screen)"
-    ],
-    errors:[
-      "Recipe details fail to load: auto-retry (EH1-S9), cached version shown",
-      "Save to favorites fails: queued for sync"
-    ],
-    ehCodes:["EH1-S9"]
-  },
-  {
-    id:"auth", label:"Authentication", stage:6, stl:"Auth Gate",
-    x:1040, y:640, w:170, h:102, color:"#9A7B7F", hub:false,
-    sub:"Sign-in gate · before hardware access",
-    tags:["Apple","Google","Phone"],
-    details:[
-      "BARSYS logo: 20px weight 200, letter-spacing 10px + gold dot",
-      "Headline: Join the ritual. 30px weight 200 + bold",
-      "Sub: One tap. Then we will craft your drink in 45 seconds.",
-      "Apple Sign In: white button with Apple icon",
-      "Continue with Google: outline button with Google SVG logo",
-      "Sign in with Phone: outline button with phone icon",
-      "Maybe later ghost link → guest mode (no crafting)"
-    ],
-    transitions:[
-      "Successful Apple / Google / Phone sign-in → Welcome",
-      "Tap Maybe later (guest) → Home (limited access)"
-    ],
-    errors:[
-      "Auth API failure: display error toast, show retry button",
-      "Network unavailable: offline error state, retry when connected",
-      "Social auth cancelled: return to authentication screen"
-    ],
-    ehCodes:["EH1-S9","EH2"]
-  },
-  {
-    id:"welcome", label:"Welcome", stage:7, stl:"Personalization",
-    x:1230, y:640, w:170, h:102, color:"#8A9490", hub:false,
-    sub:"Personalized greeting · account confirmed",
-    tags:["Auto 2.5s","fadeUp anim"],
-    details:[
-      "Full-screen breathing gold glow backdrop (breathe 5s loop)",
-      "Welcome back, in gold · 15px weight 600 · fadeUp 0.3s delay",
-      "User name: 44px weight 200, letter-spacing -3px · fadeUp 0.6s",
-      "Gold horizontal rule (32px): fadeIn 1s delay",
-      "Lets make tonight matter. 14px weight 300 · fadeUp 1.2s",
-      "Auto-advances to Home after 2.5 seconds"
-    ],
-    transitions:["Auto-advances to Home after 2.5 seconds"],
-    errors:[], ehCodes:[]
-  },
-  {
-    id:"home", label:"Home", stage:8, stl:"Main Hub",
-    x:1380, y:358, w:210, h:120, color:"#C8A97E", hub:true,
-    sub:"Main navigation hub · personalized dashboard",
-    tags:["BarBot card","Mood card","Quick craft"],
-    details:[
-      "Gold greeting + What are we making tonight? headline",
-      "Avatar circle (user initials) top-right corner",
-      "BarBot AI card: proactive suggestion based on loaded stations",
-      "Tonight mood card: gold accent, links to Mood Selection",
-      "Popular tonight list: 3 quick-craft recipe items with Craft buttons",
-      "Bottom context bar: Home · Discover · BarBot · Control tabs",
-      "Action buttons: Set mood · Ask BarBot"
-    ],
-    transitions:[
-      "Set the occasion card / Set mood action → Mood Selection",
-      "Ask BarBot card / action / tab → BarBot AI",
-      "Tap any featured recipe → Drink Detail",
-      "Tap Craft quick button (signed in) → Crafting",
-      "Tab bar: Discover, BarBot, Control"
-    ],
-    errors:[
-      "Personalized feed fails: generic / trending content shown",
-      "BarBot suggestion fails: default suggestion card shown",
-      "Push notification registration fails: silent, retry next launch"
-    ],
-    ehCodes:["EH1-S9"]
-  },
-  {
-    id:"discover", label:"Discover", stage:9, stl:"Navigation",
-    x:1650, y:248, w:170, h:90, color:"#7E8B96", hub:false,
-    sub:"10,247+ recipes · search and browse",
-    tags:["Search bar","Filter pills"],
-    details:[
-      "Header: Discover (weight 200+700) + total recipe count",
-      "Full-width glass search bar with search icon",
-      "Filter pills (horizontal scroll): All, Classics, Modern, Low ABV, Quick, Seasonal",
-      "Trending Now horizontal carousel (160px cards)",
-      "All Recipes grid: difficulty + time metadata per item",
-      "Full tab bar navigation"
-    ],
-    transitions:[
-      "Tap any recipe card → Drink Detail",
-      "Tab bar → Home / BarBot / Control"
-    ],
-    errors:[
-      "Search API fails: cached results shown + retry indicator",
-      "Filter apply fails: all recipes shown, toast notification"
-    ],
-    ehCodes:["EH1-S9"]
-  },
-  {
-    id:"barbot", label:"BarBot AI", stage:9, stl:"Navigation",
-    x:1650, y:378, w:170, h:102, color:"#C8A97E", hub:false,
-    sub:"AI cocktail companion · chat interface",
-    tags:["Chat UI","Voice","Camera"],
-    details:[
-      "Header: BarBot + Your AI cocktail companion italic subtitle",
-      "New chat gold button (top right)",
-      "Chat thread: user bubbles right (gold tint) · AI bubbles left (glass)",
-      "AI typing indicator: 3 animated dots (typingDot keyframe)",
-      "Recipe cards in chat: 160px cards with Craft CTA inside",
-      "Input bar: text field + voice mic + camera button + send arrow",
-      "Voice: full-screen overlay with animated ring, Listening... label",
-      "Camera: scans bar inventory for ingredient recognition"
-    ],
-    transitions:[
-      "Tap recipe card in chat → Drink Detail",
-      "Tap Craft inside recipe card (signed in) → Crafting",
-      "Tab bar → Home / Discover / Control"
-    ],
-    errors:[
-      "LLM API timeout: retry with shimmer loading state",
-      "Voice recognition fails: fallback to text input, toast",
-      "Camera scan fails: Could not identify ingredients toast",
-      "Recipe generation fails: fallback suggestions shown"
-    ],
-    ehCodes:["EH1-S9","EH-AI1"]
-  },
-  {
-    id:"control", label:"Control Panel", stage:9, stl:"Navigation",
-    x:1650, y:518, w:170, h:90, color:"#B8A67A", hub:false,
-    sub:"Hardware management · BarBot Elite device",
-    tags:["BLE","Stations A-F","Clean"],
-    details:[
-      "Device badge: green dot + BarBot Elite · Connected",
-      "Stats row: Temperature · Crafted this month · Days since last clean",
-      "Stations A-F: ingredient name, type, last refill date, fill-level bar",
-      "Context bar actions: Clean (starts cleaning cycle) · Calibrate",
-      "Real-time BLE connection status reflected in device badge"
-    ],
-    transitions:[
-      "Tab bar → Home / Discover / BarBot",
-      "Tap Clean → Starts cleaning cycle (stays on screen)",
-      "Tap Calibrate → Starts calibration flow (stays on screen)"
-    ],
-    errors:[
-      "BLE disconnect: modal prompt to reconnect, retry button",
-      "Station sensor failure: manual fill-level entry option",
-      "Cleaning cycle fails: error alert + retry option",
-      "Calibration failure: diagnostic message shown"
-    ],
-    ehCodes:["EH-BLE1","EH-BLE2","EH1-S9"]
-  },
-  {
-    id:"crafting", label:"Crafting", stage:10, stl:"Craft",
-    x:1910, y:378, w:170, h:102, color:"#C8A97E", hub:false,
-    sub:"Machine is working · approx 45 second cycle",
-    tags:["Progress ring","BLE","Step indicators"],
-    details:[
-      "Subtle radial gold glow backdrop",
-      "CRAFTING eyebrow label: 10px, letter-spacing 4px, all-caps",
-      "Drink name: 22px weight 700",
-      "Progress ring: 180px SVG circle, stroke-dashoffset animates 678 to 0",
-      "Percentage counter: 44px weight 200 gold-l color",
-      "Step indicators row: Pour · Mix · Stir · Finish (active = opacity 1)",
-      "Glass detected badge: green pulse dot"
-    ],
-    transitions:["Craft completes at 100% → Cheers"],
-    errors:[
-      "BLE drops mid-craft: pause ring + reconnect prompt (EH-BLE1)",
-      "Partial dispense detected: option to retry or abort",
-      "Station runs empty mid-craft: error message, abort (EH2)",
-      "Glass removed during craft: warning, option to continue",
-      "Motor/valve failure: error state with support contact"
-    ],
-    ehCodes:["EH-BLE1","EH-BLE2","EH2","EH1-S9"]
-  },
-  {
-    id:"cheers", label:"Cheers", stage:11, stl:"Completion",
-    x:2200, y:378, w:170, h:102, color:"#C8A97E", hub:false,
-    sub:"Craft complete · garnish · tasting notes",
-    tags:["Sparkle anim","Tasting notes"],
-    details:[
-      "Gold sparkle particle animation (sparkleFloat keyframe, 5 particles)",
-      "Radial gold glow: rgba(200,169,126,.10)",
-      "Heart icon (gold stroke, 50% opacity) + CHEERS label",
-      "Drink name: 28px weight 200 + Crafted just for you. italic",
-      "Gold divider line",
-      "Garnish instructions: how to express peel, placement details",
-      "Tasting Notes: flavor profile in polished prose",
-      "Make Another pill button → loops back to Home"
-    ],
-    transitions:["Tap Make Another → Home"],
-    errors:["Rating submit fails after craft: queued for later sync (EH1-S9)"],
-    ehCodes:["EH1-S9"]
-  }
+var LANES = [
+  ["ob","ONBOARDING",  30, "#C8A97E", .045],
+  ["ble","BLE / CONNECT", 260, "#6FB3C8", .035],
+  ["nav","CORE NAV",   490, "#7AAF85", .035],
+  ["rec","RECIPE FLOW",720, "#C49A5A", .04],
+  ["bb", "BARBOT AI",  950, "#9A7BAA", .04],
+  ["sm", "STATION MGMT",1180,"#B07878", .04],
+  ["ae", "AUTH ERRORS",1410,"#7878B0", .04],
+  ["re", "RUNTIME ERRORS",1640,"#A09070",.04]
 ];
 
-/* =====================================================
-   STAGE LABELS
-   ===================================================== */
-var STAGES = [
-  {label:"Launch",          num:"01", x:105},
-  {label:"First-Run",       num:"02", x:305},
-  {label:"Intent",          num:"03", x:505},
-  {label:"Recipe Feed",     num:"04", x:705},
-  {label:"Detail",          num:"05", x:905},
-  {label:"Auth Gate",       num:"06", x:1125},
-  {label:"Personalization", num:"07", x:1315},
-  {label:"Main Hub",        num:"08", x:1485},
-  {label:"Navigation",      num:"09", x:1745},
-  {label:"Craft",           num:"10", x:1995},
-  {label:"Completion",      num:"11", x:2285}
+var RAW = [
+  ["ob1", 0,0,"Splash","App launch, BARSYS wordmark, loading animation"],
+  ["ob2", 1,0,"Welcome","Welcome to Barsys 360 greeting screen, Begin Setup CTA"],
+  ["ob3", 2,0,"Prep Station","Physical hardware checklist, unbox and power on steps"],
+  ["ob4", 3,0,"Create Account","Sign up via Email, Apple ID, or Google SSO"],
+  ["ob5", 4,0,"Your Name","First name entry, profile display name setup"],
+  ["ob6", 5,0,"Verify Age","Date of birth input, 21+ age gate enforcement"],
+  ["ob7", 6,0,"Taste Profile","Choose from Classic, Tropical, Citrus, Herbal, Sweet, Strong"],
+  ["ob8", 7,0,"Dietary Prefs","Vegan, Low-cal, Gluten-free, Nut-free toggles, skip option"],
+  ["ob9", 8,0,"Terms & Privacy","Review ToS and Privacy Policy, Accept & Continue"],
+  ["ob10",9,0,"Power On Device","Instructions to power on Barsys 360 hardware"],
+  ["ob11",10,0,"BLE Scanning","Bluetooth scanning animation, searching for station"],
+  ["ob12",11,0,"Device Found","Barsys 2.0 detected nearby, signal strength shown"],
+  ["ob13",12,0,"Connecting","Handshake step 1, Encrypting step 2, Sync state step 3"],
+  ["ob14",13,0,"Station Ready","Setup complete, firmware current, ready to build bar"],
+  ["ob15",14,0,"Build Your Bar","Bottle slot intro card, Set Up Now or Skip for Later"],
+  ["ob16",15,0,"Choose Slot","6 slots A-F displayed, tap any to assign a spirit"],
+  ["ob17",16,0,"Select Spirit","Search or browse spirits list, assign to chosen slot"],
+  ["ob18",17,0,"Slot Assigned","Confirmation screen, option to add more or finish"],
+  ["ob19",18,0,"All Set","Bar fully configured, summary of loaded slots shown"],
+  ["ob20",19,0,"Bar Awaits","Celebration screen, enter the Barsys experience"],
+  ["ble1",0,1,"Scan Devices","BLE scanning pulse animation, station must be powered on"],
+  ["ble2",1,1,"Device Found","Station detected nearby, name and signal bars shown"],
+  ["ble3",2,1,"Pairing","Steps: 01 Handshake, 02 Encrypt Channel, 03 Sync State"],
+  ["ble4",3,1,"Connected","Station linked, signal excellent, firmware current, ready"],
+  ["ble5",4,1,"Connection Lost","BLE link interrupted during active session"],
+  ["ble6",5,1,"Reconnecting","Auto-retry in progress, attempt counter, recovery ring"],
+  ["ble7",6,1,"Link Restored","Connection recovered, session intact, station back online"],
+  ["ble8",7,1,"Troubleshoot","Restart scan, Power cycle, Check Bluetooth, Move closer"],
+  ["nav1",0,2,"Home","Mood greeting, featured recipes, station widget, quick crafts"],
+  ["nav2",1,2,"Discover","Search bar, trending carousel, category pills, AI suggest"],
+  ["nav3",2,2,"Search Results","Text and voice query results, relevance ranked, filters"],
+  ["nav4",3,2,"Trending Grid","Popular now grid, filter by category, time period chips"],
+  ["nav5",4,2,"Category Results","Recipes filtered by spirit, style, or occasion tag"],
+  ["nav6",5,2,"My Bar","Saved recipes list, my stations panel, recent activity"],
+  ["nav7",6,2,"Station Detail","Device name, slot fill overview, signal, last synced"],
+  ["nav8",7,2,"Full History","All past pours, rating shown, date, recipe, Repeat CTA"],
+  ["nav9",8,2,"Profile","Account info, taste prefs, notifications, dark mode, logout"],
+  ["rec1",0,3,"Recipe Hub","Flow entry: Browse, Detail view, Customize, Craft direct"],
+  ["rec2",1,3,"Browse Trending","Trending cards carousel, featured cocktail grid sections"],
+  ["rec3",2,3,"Search","Type or voice query, filter by spirit type or occasion"],
+  ["rec4",3,3,"Recipe Detail","Ingredients, taste story, nutrition, reviews, Save button"],
+  ["rec5",4,3,"Check Ingredients","Station slot compatibility check, missing ingredient flag"],
+  ["rec6",5,3,"Customize","Adjust strength, sweetness, size, and ice level pre-pour"],
+  ["rec7",6,3,"Craft Confirm","Final review: recipe name, station, custom settings"],
+  ["rec8",7,3,"Active Pour","Animated pour progress bar, step labels, 40-60 second timer"],
+  ["rec9",8,3,"Pour Complete","Drink ready sparkle animation, cheers celebration moment"],
+  ["rec10",9,3,"Rate & Review","1-5 star rating tap, optional text comment, photo"],
+  ["rec11",10,3,"Done","Share to social, save to favorites, browse more or go home"],
+  ["bb1",0,4,"BarBot Welcome","AI bartender intro screen, capability overview, Begin CTA"],
+  ["bb2",1,4,"Chat Interface","Text input field, voice mic button, camera scan icon"],
+  ["bb3",2,4,"AI Streaming","BarBot generating response, streaming text output, Stop"],
+  ["bb4",3,4,"Recipe Suggestion","AI-recommended recipe card, Craft It or Show More CTAs"],
+  ["bb5",4,4,"Voice Input","Microphone active, live voice-to-text transcript, Cancel"],
+  ["bb6",5,4,"Camera Scan","Point at bar, AI identifies bottles, Add to Stations CTA"],
+  ["bb7",6,4,"Hardware Control","BarBot-triggered station clean, confirm dialog, run cycle"],
+  ["bb8",7,4,"Craft Celebrate","Pour complete via AI flow, Make Another or Return Home"],
+  ["sm1",0,5,"Station Hub","Overview, Level Monitor, Quick Flush, Bottles, Maintenance"],
+  ["sm2",1,5,"Station Overview","Device info, 6 bottle slots with fill %, signal strength"],
+  ["sm3",2,5,"Level Monitor","Animated volume bars per slot, health status, alerts"],
+  ["sm4",3,5,"Running Low","Slot at under 20%, Reorder Now prompt, alt recipe link"],
+  ["sm5",4,5,"Bottle Empty","Critical empty slot, Replace Bottle or Show Alternatives"],
+  ["sm6",5,5,"Quick Flush","Hold-and-release to drain all pumps, safety lock mechanic"],
+  ["sm7",6,5,"Bottle Mgmt","Action list: Insert New, Swap Contents, Remove Bottle"],
+  ["sm8",7,5,"Assign Bottle","Search spirit, pick fill level Full/3q/Half/Quarter, confirm"],
+  ["sm9",8,5,"Station Health","Firmware version, motor diagnostics, Start Clean CTA"],
+  ["sm10",9,5,"Cleaning Cycle","60-second pump clean, animated progress ring, schedule"],
+  ["sm11",10,5,"Flushing Pumps","Step progress display, Done state, return to overview"],
+  ["ae1",0,6,"Error Hub","Entry: Wrong password, Offline mode, Hardware error paths"],
+  ["ae2",1,6,"Wrong Password","Retry inline, Forgot Password link, Use Email option"],
+  ["ae3",2,6,"Forgot Password","Email reset link sent confirmation, back to sign in"],
+  ["ae4",3,6,"Provider Down","SSO provider unavailable toast, fallback to email login"],
+  ["ae5",4,6,"Offline","No network detected, retry CTA, limited offline mode banner"],
+  ["ae6",5,6,"Auto Recovery","Retrying connection, animated progress ring, attempt count"],
+  ["ae7",6,6,"Request Failed","API error detail card, error code shown, manual retry"],
+  ["ae8",7,6,"Auth Restored","Session recovered successfully, seamless return to app"],
+  ["ae9",8,6,"Emergency Stop","Hardware safety halt triggered, full system stop state"],
+  ["ae10",9,6,"Reconnect Station","BLE reconnection retry ring, attempt 1 of 3 counter"],
+  ["ae11",10,6,"Station Online","BLE reconnected successfully, session resumed, all live"],
+  ["re1",0,7,"Runtime Errors","Hub: Missing ingredient, Disconnection, Pour interruptions"],
+  ["re2",1,7,"Missing Ingredient","Required spirit not loaded, Swap Recipe or Reorder prompt"],
+  ["re3",2,7,"Station Disconn","Station lost mid-session, Reconnect or Troubleshoot CTA"],
+  ["re4",3,7,"Clean Required","Station needs flush before crafting, Start Cleaning prompt"],
+  ["re5",4,7,"Pour Interrupted","Hardware error mid-pour, pause state with Resume option"],
+  ["re6",5,7,"AI Timeout","BarBot no response after 8 seconds, auto-suggest alts"],
+  ["re7",6,7,"Recipe Alts","AI generates compatible alternatives matching your bar"],
+  ["re8",7,7,"Alt Recipe List","Swappable options shown, choose from compatible recipes"],
+  ["re9",8,7,"Pour Paused","In-progress pour paused state, Resume or Cancel options"],
+  ["re10",9,7,"Skip Ingredient","Option to omit one ingredient, continue adjusted pour"],
+  ["re11",10,7,"Skip Confirmed","Pour sequence adjusted for skip, continue confirmed"]
 ];
 
-/* =====================================================
-   ARROW COLOR / STYLE
-   ===================================================== */
-var AC = {m:"#C8A97E", a:"#6DB8A8", b:"#8898A8", n:"#9A8AAA", l:"#A8986E"};
-var AO = {m:.85, a:.85, b:.55, n:.65, l:.55};
-var AD = {b:"5 3", l:"3 4"};
-
-/* =====================================================
-   NODE GEOMETRY HELPERS
-   ===================================================== */
-function gn(id){ return NODES.find(function(n){ return n.id===id; }); }
-function cx(n){ return n.x + n.w/2; }
-function cy(n){ return n.y + n.h/2; }
-function rr(n){ return n.x + n.w; }
-function rb(n){ return n.y + n.h; }
-
-/* =====================================================
-   BUILD DOM
-   ===================================================== */
-var pl = document.getElementById("pl");
-pl.style.width  = CW + "px";
-pl.style.height = CH + "px";
-
-var svg = document.getElementById("svg");
-svg.setAttribute("width",  CW);
-svg.setAttribute("height", CH);
-
-/* Render nodes */
-NODES.forEach(function(n){
-  var el = document.createElement("div");
-  el.className = "node" + (n.hub ? " hub" : "");
-  el.id = "nd-" + n.id;
-  el.style.cssText = "left:" + n.x + "px;top:" + n.y + "px;width:" + n.w + "px";
-  el.onclick = function(){ openPanel(n.id); };
-  var errB = n.errors.length
-    ? "<div class=\"nerr\">" + n.errors.length + " error state" + (n.errors.length>1?"s":"") + "</div>"
-    : "";
-  var tags = n.tags.map(function(t){ return "<span class=\"ntag\">" + t + "</span>"; }).join("");
-  el.innerHTML =
-    "<div class=\"ni\">" +
-    "<div class=\"nh\"><div class=\"nd\" style=\"background:" + n.color + "\"></div>" +
-    "<span class=\"nn\">" + n.label + "</span><span class=\"nb\">S" + n.stage + "</span></div>" +
-    "<div class=\"ns\">" + n.sub + "</div>" +
-    "<div class=\"ntags\">" + tags + "</div>" +
-    errB + "</div>";
-  pl.appendChild(el);
-});
-
-/* Render stage labels */
-STAGES.forEach(function(s){
-  var el = document.createElement("div");
-  el.className = "stl";
-  el.style.cssText = "left:" + s.x + "px;top:105px";
-  el.innerHTML =
-    "<div class=\"stpill\"><div class=\"stn\">" + s.label + "</div></div>" +
-    "<div class=\"stnum\">Stage " + s.num + "</div>";
-  pl.appendChild(el);
-});
-
-/* Group label for Navigation tabs */
-var gpNav = document.createElement("div");
-gpNav.className = "grplbl";
-gpNav.style.cssText = "left:1660px;top:210px;font-size:7px;letter-spacing:1.5px;color:rgba(200,169,126,.25);transform:translateX(-50%)";
-gpNav.textContent = "TAB NAVIGATION";
-pl.appendChild(gpNav);
-
-/* Group label for Auth branch */
-var gpAuth = document.createElement("div");
-gpAuth.className = "grplbl";
-gpAuth.style.cssText = "left:1040px;top:602px;font-size:7px";
-gpAuth.textContent = "SIGN-IN BRANCH";
-pl.appendChild(gpAuth);
-
-/* =====================================================
-   DRAW SVG ARROWS
-   ===================================================== */
-/* Arrowhead markers */
-var defs = "<defs>";
-["m","a","b","n","l"].forEach(function(t){
-  var c = AC[t];
-  var op = (t==="b"||t==="l") ? .65 : .9;
-  defs += "<marker id=\"ah-" + t + "\" markerWidth=\"7\" markerHeight=\"7\" refX=\"5.5\" refY=\"3\" orient=\"auto\">" +
-          "<path d=\"M0,0 L0,6 L7,3 z\" fill=\"" + c + "\" opacity=\"" + op + "\"/></marker>";
-});
-defs += "</defs>";
-svg.innerHTML = defs;
-
-function bezMid(x1,y1,cx1,cy1,cx2,cy2,x2,y2){
-  return {
-    x: x1/8 + cx1*3/8 + cx2*3/8 + x2/8,
-    y: y1/8 + cy1*3/8 + cy2*3/8 + y2/8
+var nodeMap = {};
+var NODES = [];
+RAW.forEach(function(r) {
+  var li = r[2];
+  var lane = LANES[li];
+  var obj = {
+    id:r[0], x:100+r[1]*210, y:lane[2]+63,
+    w:NW, h:NH, label:r[3], sub:r[4],
+    color:lane[3], laneName:lane[1], laneIdx:li
   };
-}
-
-function arrow(x1,y1,x2,y2,pcx1,pcy1,pcx2,pcy2,type,lbl){
-  var c  = AC[type];
-  var op = AO[type];
-  var da = AD[type] || "";
-
-  /* path */
-  var p = document.createElementNS("http://www.w3.org/2000/svg","path");
-  p.setAttribute("d","M"+x1+","+y1+" C"+pcx1+","+pcy1+" "+pcx2+","+pcy2+" "+x2+","+y2);
-  p.setAttribute("class","ep");
-  p.setAttribute("stroke",c);
-  p.setAttribute("opacity",String(op));
-  p.setAttribute("stroke-width","1.5");
-  if(da) p.setAttribute("stroke-dasharray",da);
-  p.setAttribute("marker-end","url(#ah-"+type+")");
-  svg.appendChild(p);
-
-  /* label */
-  var mid = bezMid(x1,y1,pcx1,pcy1,pcx2,pcy2,x2,y2);
-  var tw = lbl.length * 4.9 + 10;
-  var th = 13;
-  var bg = document.createElementNS("http://www.w3.org/2000/svg","rect");
-  bg.setAttribute("x",  mid.x - tw/2);
-  bg.setAttribute("y",  mid.y - th/2);
-  bg.setAttribute("width",  tw);
-  bg.setAttribute("height", th);
-  bg.setAttribute("rx","3");
-  bg.setAttribute("fill","#070707");
-  bg.setAttribute("opacity",".9");
-  svg.appendChild(bg);
-
-  var txt = document.createElementNS("http://www.w3.org/2000/svg","text");
-  txt.setAttribute("x", mid.x);
-  txt.setAttribute("y", mid.y + 4);
-  txt.setAttribute("text-anchor","middle");
-  txt.setAttribute("font-family","\"Plus Jakarta Sans\",sans-serif");
-  txt.setAttribute("font-size","8.5");
-  txt.setAttribute("fill",c);
-  txt.setAttribute("opacity",String(op * .85));
-  txt.textContent = lbl;
-  svg.appendChild(txt);
-}
-
-/* Pre-fetch nodes */
-var S   = gn("splash");
-var ONB = gn("onboarding");
-var MOD = gn("mood");
-var STR = gn("stream");
-var DET = gn("detail");
-var AUT = gn("auth");
-var WEL = gn("welcome");
-var HOM = gn("home");
-var DIS = gn("discover");
-var BOT = gn("barbot");
-var CON = gn("control");
-var CRA = gn("crafting");
-var CHE = gn("cheers");
-
-/* ─── All 18 arrows ─────────────────────────────────── */
-
-/* 1  Splash → Onboarding  (auto, short horizontal) */
-arrow(rr(S),cy(S),  ONB.x,cy(ONB),
-  rr(S)+8, cy(S),  ONB.x-8, cy(ONB),
-  "a","Auto 2.2s");
-
-/* 2  Onboarding → Mood  (main) */
-arrow(rr(ONB),cy(ONB),  MOD.x,cy(MOD),
-  rr(ONB)+8, cy(ONB),  MOD.x-8, cy(MOD),
-  "m","Tap CTA");
-
-/* 3  Mood → Stream  (main) */
-arrow(rr(MOD),cy(MOD),  STR.x,cy(STR),
-  rr(MOD)+8, cy(MOD),  STR.x-8, cy(STR),
-  "m","Select mood");
-
-/* 4  Stream → Detail  (main) */
-arrow(rr(STR),cy(STR),  DET.x,cy(DET),
-  rr(STR)+8, cy(STR),  DET.x-8, cy(DET),
-  "m","Tap recipe");
-
-/* 5  Detail → Auth  (main, down-right branch to auth row) */
-arrow(cx(DET), rb(DET),  cx(AUT), AUT.y,
-  cx(DET), rb(DET)+55,   cx(AUT), AUT.y-55,
-  "m","Craft (guest)");
-
-/* 6  Detail → Crafting  (alt, already signed in — big arc below) */
-arrow(rr(DET)-20, rb(DET),  cx(CRA), rb(CRA),
-  rr(DET)-20, rb(DET)+160,  cx(CRA), rb(CRA)+160,
-  "b","Already signed in");
-
-/* 7  Auth → Welcome  (main, short right) */
-arrow(rr(AUT), cy(AUT),  WEL.x, cy(WEL),
-  rr(AUT)+8, cy(AUT),   WEL.x-8, cy(WEL),
-  "m","Sign in");
-
-/* 8  Auth → Home  (alt guest, up and right) */
-arrow(cx(AUT), AUT.y,  cx(HOM), rb(HOM),
-  cx(AUT), AUT.y-80,   cx(HOM), rb(HOM)+80,
-  "b","Guest mode");
-
-/* 9  Welcome → Home  (auto, curves up-right) */
-arrow(rr(WEL), cy(WEL),  cx(HOM), rb(HOM),
-  rr(WEL)+50, cy(WEL),   cx(HOM)+30, rb(HOM)+55,
-  "a","Auto 2.5s");
-
-/* 10  Home → Discover  (nav tab, up-right) */
-arrow(rr(HOM), cy(HOM),  DIS.x, cy(DIS),
-  rr(HOM)+45, cy(HOM),   DIS.x-15, cy(DIS),
-  "n","Discover tab");
-
-/* 11  Home → BarBot  (nav tab, straight right) */
-arrow(rr(HOM), cy(HOM),  BOT.x, cy(BOT),
-  rr(HOM)+44, cy(HOM),   BOT.x-14, cy(BOT),
-  "n","BarBot tab");
-
-/* 12  Home → Control  (nav tab, down-right) */
-arrow(rr(HOM), cy(HOM),  CON.x, cy(CON),
-  rr(HOM)+45, cy(HOM),   CON.x-15, cy(CON),
-  "n","Control tab");
-
-/* 13  Home → Mood  (loop over top — big arc) */
-arrow(cx(HOM), HOM.y,  cx(MOD), MOD.y,
-  cx(HOM), 45,          cx(MOD), 45,
-  "l","Set occasion");
-
-/* 14  Discover → Crafting  (main, right and down) */
-arrow(rr(DIS), cy(DIS),  CRA.x, cy(CRA),
-  rr(DIS)+40, cy(DIS),   CRA.x-40, cy(CRA),
-  "m","Craft recipe");
-
-/* 15  BarBot → Crafting  (main, straight right) */
-arrow(rr(BOT), cy(BOT),  CRA.x, cy(CRA),
-  rr(BOT)+12, cy(BOT),   CRA.x-12, cy(CRA),
-  "m","Craft recipe");
-
-/* 16  Control → Crafting  (nav, right and up) */
-arrow(rr(CON), cy(CON),  CRA.x, rb(CRA)-20,
-  rr(CON)+40, cy(CON),   CRA.x-40, rb(CRA)-20,
-  "n","Quick craft");
-
-/* 17  Crafting → Cheers  (main, straight right) */
-arrow(rr(CRA), cy(CRA),  CHE.x, cy(CHE),
-  rr(CRA)+15, cy(CRA),   CHE.x-15, cy(CHE),
-  "m","Complete ~45s");
-
-/* 18  Cheers → Home  (loop over top — big arc back) */
-arrow(cx(CHE), CHE.y,  cx(HOM), HOM.y,
-  cx(CHE), 45,          cx(HOM), 45,
-  "l","Make Another");
-
-/* =====================================================
-   ZOOM / PAN
-   ===================================================== */
-var vp   = document.getElementById("vp");
-var scale = 1;
-var panX  = 0;
-var panY  = 0;
-var isDragging  = false;
-var dragStartX  = 0;
-var dragStartY  = 0;
-var dragStartPX = 0;
-var dragStartPY = 0;
-
-function applyT(animate){
-  pl.style.transition = animate ? "transform .35s cubic-bezier(.16,1,.3,1)" : "none";
-  pl.style.transform  = "translate(" + panX + "px," + panY + "px) scale(" + scale + ")";
-  document.getElementById("zpct").textContent = Math.round(scale * 100) + "%";
-}
-
-function fitToScreen(animate){
-  var vw = vp.clientWidth  || window.innerWidth;
-  var vh = vp.clientHeight || (window.innerHeight - 56);
-  var pad = 60;
-  var sx  = (vw - pad*2) / CW;
-  var sy  = (vh - pad*2) / CH;
-  scale   = Math.min(sx, sy, 1.0);
-  if(scale <= 0) scale = 0.5;
-  var dw  = CW * scale;
-  var dh  = CH * scale;
-  panX    = (vw - dw) / 2;
-  panY    = (vh - dh) / 2;
-  applyT(animate == null ? true : animate);
-}
-
-/* Initial fit after layout is ready */
-window.addEventListener("load", function(){
-  fitToScreen(false);
+  NODES.push(obj);
+  nodeMap[r[0]] = obj;
 });
-/* Fallback if load already fired */
-if(document.readyState === "complete"){
-  fitToScreen(false);
+
+var RAW_EDGES = [
+  ["ob1","ob2","Tap to start"],["ob2","ob3","Begin Setup"],["ob3","ob4","Ready"],
+  ["ob4","ob5","Continue"],["ob5","ob6","Continue"],["ob6","ob7","Confirm age"],
+  ["ob7","ob8","Continue"],["ob7","ob9","Skip prefs"],["ob8","ob9","Continue"],
+  ["ob9","ob10","Accept & Continue"],["ob10","ob11","auto scan"],
+  ["ob11","ob12","Station found"],["ob12","ob13","Tap to pair"],
+  ["ob13","ob14","Connected"],["ob14","ob15","Continue"],
+  ["ob15","ob16","Set Up Now"],["ob15","ob19","Skip for Later"],
+  ["ob16","ob17","Select slot"],["ob17","ob18","Confirm assign"],
+  ["ob18","ob16","Add more slot"],["ob18","ob19","Done"],
+  ["ob19","ob20","Continue"],["ob20","nav1","Enter app"],
+  ["ble1","ble2","Device found"],["ble2","ble3","Tap to pair"],
+  ["ble3","ble4","Paired ok"],["ble4","ble5","Link drops"],
+  ["ble5","ble6","Reconnect"],["ble5","ble8","Troubleshoot"],
+  ["ble5","ble1","Scan again"],["ble6","ble7","Recovered"],
+  ["ble6","ble5","Failed"],["ble7","nav1","Continue to app"],
+  ["ble8","ble1","Restart scan"],
+  ["nav1","nav2","Discover tab"],["nav1","nav6","My Bar tab"],
+  ["nav1","bb2","BarBot tab"],["nav1","rec4","Tap recipe card"],
+  ["nav1","sm2","Tap station widget"],["nav1","nav9","Tap avatar"],
+  ["nav2","nav3","Tap search bar"],["nav2","nav4","See all trending"],
+  ["nav2","nav5","Tap category"],["nav2","rec4","Tap recipe"],
+  ["nav3","rec4","Select result"],["nav4","rec4","Tap recipe"],
+  ["nav5","rec4","Tap recipe"],["nav6","nav7","Tap station"],
+  ["nav6","nav8","View history"],["nav6","rec4","Tap saved recipe"],
+  ["nav7","sm1","Station settings"],["nav8","rec4","Tap past drink"],
+  ["rec1","rec2","Browse & Search"],["rec1","rec4","Recipe Detail"],
+  ["rec1","rec6","Customize direct"],["rec1","rec7","Craft direct"],
+  ["rec2","rec4","Tap recipe"],["rec3","rec4","Select result"],
+  ["rec4","rec5","Check Ingredients"],["rec4","rec6","Craft Now"],
+  ["rec5","rec6","All ingredients OK"],["rec5","re2","Missing ingredient"],
+  ["rec6","rec7","Craft This Drink"],["rec7","rec8","Confirm pour"],
+  ["rec7","re1","Station error"],["rec8","rec9","Pour complete"],
+  ["rec8","re5","Interrupted"],["rec9","rec10","Continue"],
+  ["rec10","rec11","Continue"],["rec11","nav1","Return home"],
+  ["rec11","rec2","Browse more"],
+  ["bb1","bb2","Begin"],["bb2","bb3","Send message"],
+  ["bb2","bb5","Voice input"],["bb2","bb6","Camera scan"],
+  ["bb3","bb4","Response done"],["bb4","rec7","Craft it"],
+  ["bb4","bb3","Show me more"],["bb5","bb2","Cancel"],
+  ["bb6","bb2","Add to stations"],["bb7","bb2","Clean confirmed"],
+  ["bb8","bb2","Make Another"],["bb8","nav1","Return home"],
+  ["sm1","sm2","Station Overview"],["sm1","sm3","Level Monitor"],
+  ["sm1","sm6","Quick Flush"],["sm1","sm7","Bottle Mgmt"],
+  ["sm1","sm9","Maintenance"],["sm2","sm7","Tap slot"],
+  ["sm2","sm3","Level view"],["sm3","sm4","Tap low slot"],
+  ["sm3","sm5","Tap critical slot"],["sm3","sm7","Tap healthy slot"],
+  ["sm4","sm3","Reorder Now"],["sm5","sm8","Replace Bottle"],
+  ["sm5","sm7","Show alts"],["sm7","sm8","Insert or Swap"],
+  ["sm8","sm2","Confirm assign"],["sm9","sm10","Start Clean"],
+  ["sm10","sm11","Start Cleaning"],["sm11","sm1","Done"],
+  ["ae1","ae2","Wrong password"],["ae1","ae5","Offline"],
+  ["ae1","ae9","Emergency stop"],["ae2","ae3","Forgot password"],
+  ["ae2","ae4","Provider down"],["ae2","ae1","Try again"],
+  ["ae3","ae1","Back to sign in"],["ae4","ae2","Email fallback"],
+  ["ae5","ae6","Auto retry"],["ae6","ae8","Recovered"],
+  ["ae6","ae7","Failed"],["ae7","ae6","Retry manually"],
+  ["ae8","nav1","Return home"],["ae9","ae10","Reconnect"],
+  ["ae10","ae11","Connected"],["ae11","nav1","Resume app"],
+  ["re1","re2","Missing ingredient"],["re1","re3","Disconnected"],
+  ["re1","re4","Clean required"],["re1","re5","Pour interrupted"],
+  ["re2","re7","Swap recipe"],["re2","rec7","Reorder and retry"],
+  ["re3","ble1","BLE reconnect flow"],["re3","ae1","Auth issue"],
+  ["re4","sm10","Start cleaning"],["re5","re9","Pause pour"],
+  ["re5","rec9","Force resume"],["re6","re7","Timeout alts"],
+  ["re7","re8","Choose alt"],["re8","rec7","Craft alternative"],
+  ["re9","rec8","Resume pour"],["re9","rec1","Cancel"],
+  ["re10","re11","Skip"],["re11","rec8","Continue adjusted"]
+];
+
+var EDGES = [];
+RAW_EDGES.forEach(function(r) {
+  var a = nodeMap[r[0]], b = nodeMap[r[1]];
+  if (a && b) EDGES.push({ from:a, to:b, label:r[2] });
+});
+
+var maxX = 0, maxY = 0;
+NODES.forEach(function(n) {
+  maxX = Math.max(maxX, n.x + n.w);
+  maxY = Math.max(maxY, n.y + n.h);
+});
+var CW = maxX + 120, CH = maxY + 120;
+
+var pl = document.getElementById("pl");
+var sv = document.getElementById("sv");
+pl.style.width = CW + "px";
+pl.style.height = CH + "px";
+sv.setAttribute("width", CW);
+sv.setAttribute("height", CH);
+sv.setAttribute("viewBox", "0 0 " + CW + " " + CH);
+
+function h2r(hex) {
+  return parseInt(hex.slice(1,3),16)+","+parseInt(hex.slice(3,5),16)+","+parseInt(hex.slice(5,7),16);
 }
 
-document.getElementById("fitBtn").onclick = function(){ fitToScreen(true); };
+LANES.forEach(function(lane) {
+  var band = document.createElement("div");
+  band.className = "lane-band";
+  band.style.top = lane[2] + "px";
+  band.style.background = "rgba("+h2r(lane[3])+","+lane[4]+")";
+  band.style.borderTop = "1px solid rgba("+h2r(lane[3])+",0.13)";
+  pl.appendChild(band);
+  var lbl = document.createElement("div");
+  lbl.className = "lane-label";
+  lbl.style.top = (lane[2]+10) + "px";
+  lbl.innerHTML = '<div class="ll-dot" style="background:'+lane[3]+'"></div><div class="ll-text" style="color:'+lane[3]+'">'+lane[1]+'</div>';
+  pl.appendChild(lbl);
+  document.getElementById("legend").innerHTML += '<div class="leg-row"><div class="leg-dot" style="background:'+lane[3]+'"></div>'+lane[1]+'</div>';
+});
 
-document.getElementById("zIn").onclick = function(){
-  var vw = vp.clientWidth, vh = vp.clientHeight;
-  var ns = Math.min(scale * 1.2, 2.5);
-  panX = vw/2 - (vw/2 - panX) * ns/scale;
-  panY = vh/2 - (vh/2 - panY) * ns/scale;
-  scale = ns;
+var defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
+var mkr = document.createElementNS("http://www.w3.org/2000/svg","marker");
+mkr.setAttribute("id","ah"); mkr.setAttribute("viewBox","0 0 8 8");
+mkr.setAttribute("refX","7"); mkr.setAttribute("refY","4");
+mkr.setAttribute("markerWidth","5"); mkr.setAttribute("markerHeight","5");
+mkr.setAttribute("orient","auto");
+var ap = document.createElementNS("http://www.w3.org/2000/svg","path");
+ap.setAttribute("d","M0,0 L8,4 L0,8 z");
+ap.setAttribute("fill","rgba(255,255,255,0.45)");
+mkr.appendChild(ap); defs.appendChild(mkr); sv.appendChild(defs);
+
+EDGES.forEach(function(e) {
+  var a = e.from, b = e.to;
+  var ax, ay, bx, by, cx1, cy1, cx2, cy2;
+  var same = (a.laneIdx === b.laneIdx);
+
+  if (a.id === b.id) {
+    var lx = a.x + a.w/2;
+    var p = document.createElementNS("http://www.w3.org/2000/svg","path");
+    p.setAttribute("d","M"+(lx-18)+","+a.y+" C"+(lx-28)+","+(a.y-42)+" "+(lx+28)+","+(a.y-42)+" "+(lx+18)+","+a.y);
+    p.setAttribute("class","e-path");
+    p.setAttribute("stroke","rgba("+h2r(a.color)+",0.5)");
+    p.setAttribute("marker-end","url(#ah)");
+    sv.appendChild(p);
+    return;
+  }
+
+  if (same) {
+    if (b.x > a.x) {
+      ax = a.x+a.w; ay = a.y+a.h/2;
+      bx = b.x; by = b.y+b.h/2;
+      var gap = bx-ax;
+      cx1 = ax+gap*0.45; cy1 = ay;
+      cx2 = bx-gap*0.45; cy2 = by;
+    } else {
+      ax = a.x+a.w/2; ay = a.y;
+      bx = b.x+b.w/2; by = b.y;
+      cx1 = ax; cy1 = ay-55;
+      cx2 = bx; cy2 = by-55;
+    }
+  } else {
+    if (b.y > a.y) {
+      ax = a.x+a.w*0.5; ay = a.y+a.h;
+      bx = b.x+b.w*0.5; by = b.y;
+    } else {
+      ax = a.x+a.w*0.5; ay = a.y;
+      bx = b.x+b.w*0.5; by = b.y+b.h;
+    }
+    var my = (ay+by)/2;
+    cx1 = ax; cy1 = my;
+    cx2 = bx; cy2 = my;
+  }
+
+  var p = document.createElementNS("http://www.w3.org/2000/svg","path");
+  p.setAttribute("d","M"+ax+","+ay+" C"+cx1+","+cy1+" "+cx2+","+cy2+" "+bx+","+by);
+  p.setAttribute("class","e-path");
+  p.setAttribute("stroke","rgba("+h2r(a.color)+",0.55)");
+  p.setAttribute("marker-end","url(#ah)");
+  sv.appendChild(p);
+
+  if (e.label) {
+    var mx = ax/8+cx1*3/8+cx2*3/8+bx/8;
+    var myt = ay/8+cy1*3/8+cy2*3/8+by/8;
+    var t = document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("x", mx); t.setAttribute("y", myt-4);
+    t.setAttribute("class","e-label"); t.setAttribute("text-anchor","middle");
+    t.textContent = e.label;
+    sv.appendChild(t);
+  }
+});
+
+NODES.forEach(function(n) {
+  var div = document.createElement("div");
+  div.className = "node";
+  div.style.left = n.x+"px"; div.style.top = n.y+"px";
+  div.style.width = n.w+"px"; div.style.height = n.h+"px";
+  div.style.background = "rgba("+h2r(n.color)+",0.09)";
+  div.style.borderColor = "rgba("+h2r(n.color)+",0.32)";
+  div.innerHTML = '<div class="node-label" style="color:'+n.color+'">'+n.label+'</div><div class="node-sub">'+n.sub+'</div>';
+  div.addEventListener("click", function() { openPanel(n); });
+  pl.appendChild(div);
+});
+
+function openPanel(n) {
+  document.getElementById("dp-lane").textContent = n.laneName;
+  document.getElementById("dp-lane").style.color = n.color;
+  document.getElementById("dp-title").innerHTML = "<strong>"+n.label+"</strong>";
+  document.getElementById("dp-sub").textContent = n.sub;
+  var outDiv = document.getElementById("dp-out");
+  var inDiv = document.getElementById("dp-in");
+  outDiv.innerHTML = ""; inDiv.innerHTML = "";
+  EDGES.forEach(function(e) {
+    if (e.from.id === n.id) {
+      outDiv.innerHTML += '<div class="dp-row"><span class="arr" style="color:'+n.color+'">&#8594;</span><span>'+e.to.label+'<span class="lbl"> &middot; '+e.label+'</span></span></div>';
+    }
+    if (e.to.id === n.id) {
+      inDiv.innerHTML += '<div class="dp-row"><span class="arr" style="color:'+e.from.color+'">&#8592;</span><span>'+e.from.label+'<span class="lbl"> &middot; '+e.label+'</span></span></div>';
+    }
+  });
+  document.getElementById("dp").classList.add("open");
+}
+function closePanel() { document.getElementById("dp").classList.remove("open"); }
+
+var scale = 1, panX = 0, panY = 0;
+var dragging = false, lx = 0, ly = 0;
+var vp = document.getElementById("vp");
+
+function applyT(anim) {
+  pl.style.transition = anim ? "transform .3s cubic-bezier(.4,0,.2,1)" : "none";
+  pl.style.transform = "translate("+panX+"px,"+panY+"px) scale("+scale+")";
+}
+function fitToScreen(anim) {
+  var vw = vp.clientWidth || window.innerWidth;
+  var vh = vp.clientHeight || (window.innerHeight - 52);
+  var pad = 40;
+  var sx = (vw - pad*2) / CW;
+  var sy = (vh - pad*2) / CH;
+  scale = Math.min(sx, sy, 1.0);
+  if (scale <= 0) scale = 0.2;
+  panX = (vw - CW*scale) / 2;
+  panY = (vh - CH*scale) / 2;
+  applyT(anim == null ? true : anim);
+}
+function changeScale(d) {
+  scale = Math.max(0.1, Math.min(3, scale + d));
   applyT(true);
-};
+}
 
-document.getElementById("zOut").onclick = function(){
-  var vw = vp.clientWidth, vh = vp.clientHeight;
-  var ns = Math.max(scale / 1.2, 0.12);
-  panX = vw/2 - (vw/2 - panX) * ns/scale;
-  panY = vh/2 - (vh/2 - panY) * ns/scale;
-  scale = ns;
-  applyT(true);
-};
-
-/* Scroll wheel zoom */
-vp.addEventListener("wheel", function(e){
+vp.addEventListener("wheel", function(e) {
   e.preventDefault();
-  var factor = e.deltaY < 0 ? 1.1 : 0.9;
-  var ns = Math.min(Math.max(scale * factor, 0.12), 2.5);
+  var d = e.deltaY > 0 ? -0.07 : 0.07;
   var rect = vp.getBoundingClientRect();
   var mx = e.clientX - rect.left;
   var my = e.clientY - rect.top;
-  panX = mx - (mx - panX) * ns/scale;
-  panY = my - (my - panY) * ns/scale;
+  var ns = Math.max(0.1, Math.min(3, scale + d));
+  panX = mx - (mx - panX) * (ns / scale);
+  panY = my - (my - panY) * (ns / scale);
   scale = ns;
   applyT(false);
-}, {passive:false});
+}, { passive: false });
 
-/* Mouse drag */
-vp.addEventListener("mousedown", function(e){
-  if(e.target.closest(".node")) return;
-  isDragging  = true;
-  dragStartX  = e.clientX;
-  dragStartY  = e.clientY;
-  dragStartPX = panX;
-  dragStartPY = panY;
-  vp.classList.add("gr");
+vp.addEventListener("mousedown", function(e) {
+  if (e.button !== 0) return;
+  dragging = true; lx = e.clientX; ly = e.clientY;
+  vp.classList.add("dragging");
 });
-window.addEventListener("mousemove", function(e){
-  if(!isDragging) return;
-  panX = dragStartPX + (e.clientX - dragStartX);
-  panY = dragStartPY + (e.clientY - dragStartY);
+window.addEventListener("mousemove", function(e) {
+  if (!dragging) return;
+  panX += e.clientX - lx; panY += e.clientY - ly;
+  lx = e.clientX; ly = e.clientY;
   applyT(false);
 });
-window.addEventListener("mouseup", function(){
-  isDragging = false;
-  vp.classList.remove("gr");
-});
+window.addEventListener("mouseup", function() { dragging = false; vp.classList.remove("dragging"); });
 
-/* Touch */
-var touchLastX=0, touchLastY=0, touchDist0=0, touchScale0=0;
-vp.addEventListener("touchstart", function(e){
-  if(e.touches.length===1){
-    touchLastX = e.touches[0].clientX;
-    touchLastY = e.touches[0].clientY;
-  } else if(e.touches.length===2){
-    touchDist0   = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-    touchScale0  = scale;
-  }
-},{passive:true});
-vp.addEventListener("touchmove", function(e){
+vp.addEventListener("touchstart", function(e) {
+  if (e.touches.length === 1) { lx = e.touches[0].clientX; ly = e.touches[0].clientY; }
+}, { passive: true });
+vp.addEventListener("touchmove", function(e) {
   e.preventDefault();
-  if(e.touches.length===1){
-    panX += e.touches[0].clientX - touchLastX;
-    panY += e.touches[0].clientY - touchLastY;
-    touchLastX = e.touches[0].clientX;
-    touchLastY = e.touches[0].clientY;
-    applyT(false);
-  } else if(e.touches.length===2){
-    var d  = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-    scale  = Math.min(Math.max(touchScale0 * d/touchDist0, 0.12), 2.5);
+  if (e.touches.length === 1) {
+    panX += e.touches[0].clientX - lx;
+    panY += e.touches[0].clientY - ly;
+    lx = e.touches[0].clientX; ly = e.touches[0].clientY;
     applyT(false);
   }
-},{passive:false});
+}, { passive: false });
 
-/* Keyboard */
-document.addEventListener("keydown", function(e){
-  if(e.target.tagName==="INPUT") return;
-  if(e.key==="+" || e.key==="=") document.getElementById("zIn").click();
-  if(e.key==="-" || e.key==="_") document.getElementById("zOut").click();
-  if(e.key==="0") fitToScreen(true);
-  if(e.key==="Escape") closePanel();
+document.addEventListener("keydown", function(e) {
+  if (e.key === "0" || e.key === "Escape") fitToScreen(true);
+  if (e.key === "+" || e.key === "=") changeScale(0.12);
+  if (e.key === "-") changeScale(-0.12);
+  if (e.key === "ArrowLeft")  { panX += 60; applyT(false); }
+  if (e.key === "ArrowRight") { panX -= 60; applyT(false); }
+  if (e.key === "ArrowUp")    { panY += 60; applyT(false); }
+  if (e.key === "ArrowDown")  { panY -= 60; applyT(false); }
 });
 
-/* =====================================================
-   DETAIL PANEL
-   ===================================================== */
-function openPanel(id){
-  var n = gn(id);
-  if(!n) return;
-  document.querySelectorAll(".node").forEach(function(el){ el.classList.remove("act"); });
-  var nd = document.getElementById("nd-"+id);
-  if(nd) nd.classList.add("act");
-
-  document.getElementById("dpTop").innerHTML =
-    "<div class=\"dpey\">Stage " + n.stage + " &middot; " + n.stl + "</div>" +
-    "<div class=\"dph\">" + n.label + "</div>" +
-    "<div class=\"dps\">" + n.sub + "</div>";
-
-  var trs = n.transitions.map(function(t){
-    return "<div class=\"dptr\"><span class=\"dptra\">&rsaquo;</span><span>" + t + "</span></div>";
-  }).join("");
-
-  var errs = n.errors.length
-    ? n.errors.map(function(e){ return "<div class=\"dperr\">" + e + "</div>"; }).join("")
-    : "<div class=\"dpnoerr\">No error states for this screen.</div>";
-
-  var ehs = n.ehCodes.length
-    ? "<div class=\"dpsec\"><div class=\"dpsl\">Error Handling Codes</div><div class=\"dpehs\">" +
-      n.ehCodes.map(function(c){ return "<span class=\"dpeh\">" + c + "</span>"; }).join("") +
-      "</div></div>"
-    : "";
-
-  document.getElementById("dpBd").innerHTML =
-    "<div class=\"dpsec\"><div class=\"dpsl\">Screen Details</div>" +
-    "<ul class=\"dplist\">" + n.details.map(function(d){ return "<li>" + d + "</li>"; }).join("") + "</ul></div>" +
-    "<div class=\"dpsec\"><div class=\"dpsl\">Transitions Out</div><div class=\"dptrs\">" + trs + "</div></div>" +
-    "<div class=\"dpsec\"><div class=\"dpsl\">Error States</div><div class=\"dperrs\">" + errs + "</div></div>" +
-    ehs;
-
-  document.getElementById("dp").classList.add("open");
-  document.getElementById("ov").classList.add("show");
-}
-
-function closePanel(){
-  document.getElementById("dp").classList.remove("open");
-  document.getElementById("ov").classList.remove("show");
-  document.querySelectorAll(".node").forEach(function(el){ el.classList.remove("act"); });
-}
+window.addEventListener("load", function() { fitToScreen(false); });
+if (document.readyState === "complete") { fitToScreen(false); }
 </script>
 </body>
 </html>
