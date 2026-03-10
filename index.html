@@ -773,16 +773,9 @@ function buildFlowHTML(flow, dev) {
   }
   html += `</div>`;
   
-  const labels = flow.getLabels(dev);
-  const count = flow.getCount(dev);
-  
-  if(flow.iphone && flow.ipad){
-    html += `<div class="strip-wrap"><div class="strip-label">Screens</div><div class="strip">`;
-    for(let i=0;i<count;i++){
-      html += `<div class="ss-item"><img src="${flow.getPath(i,dev)}" class="${buildImgClass(dev)}" alt="${labels[i]}"><div class="${buildLblClass(dev)}">${i+1}. ${labels[i]}</div><div class="ss-num">${i+1}</div></div>`;
-    }
-    html += `</div></div>`;
-  } else {
+  if(flow.getLabels && flow.getCount){
+    const labels = flow.getLabels(dev);
+    const count = flow.getCount(dev);
     html += `<div class="strip-wrap"><div class="strip-label">Screens</div><div class="strip">`;
     for(let i=0;i<count;i++){
       html += `<div class="ss-item"><img src="${flow.getPath(i,dev)}" class="${buildImgClass(dev)}" alt="${labels[i]}"><div class="${buildLblClass(dev)}">${i+1}. ${labels[i]}</div><div class="ss-num">${i+1}</div></div>`;
