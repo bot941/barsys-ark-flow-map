@@ -3,666 +3,901 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BARSYS ARK — Full User Flow Diagram</title>
+<title>BARSYS ARK — User Flow Diagram</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#050505;--s1:#0A0A0A;--s2:#111;--s3:#191919;
+  --bg:#050505;
   --gold:#C8A97E;--gold-l:#E8D5B5;
-  --t1:#fff;--t2:rgba(255,255,255,.55);--t3:rgba(255,255,255,.28);--t4:rgba(255,255,255,.10);
-  --glass:rgba(255,255,255,.03);--glass-b:rgba(255,255,255,.07);
-  --border:rgba(255,255,255,.07);
-  --c-auto:#8A9490;--c-main:#C8A97E;--c-alt:#7E8B96;--c-nav:#9A7B7F;--c-loop:#B8A67A;--c-err:#A07272;
+  --t1:#fff;--t2:rgba(255,255,255,.6);--t3:rgba(255,255,255,.3);--t4:rgba(255,255,255,.12);
+  --glass:rgba(255,255,255,.028);--glass-b:rgba(255,255,255,.055);
+  --border:rgba(255,255,255,.075);
+  --c-main:#C8A97E;--c-auto:#6DB8A8;--c-alt:#8898A8;--c-nav:#9A8AAA;--c-loop:#A8986E;--c-err:#A07272;
 }
-html,body{background:var(--bg);color:var(--t1);font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html,body{background:var(--bg);color:var(--t1);font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;height:100%;width:100%}
 
-/* ── PAGE HEADER ─────────────────────── */
-.page-header{padding:48px 60px 0;display:flex;align-items:flex-start;justify-content:space-between;max-width:1100px;margin:0 auto}
-.page-header-left .eyebrow{font-size:10px;letter-spacing:6px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:10px}
-.page-header-left h1{font-size:36px;font-weight:200;letter-spacing:-1.5px;line-height:1.05}
-.page-header-left h1 strong{font-weight:700}
-.page-header-left p{font-size:14px;color:var(--t3);font-weight:300;margin-top:10px;max-width:460px;line-height:1.7}
-.back-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:0.5px solid var(--border);border-radius:10px;color:var(--t3);font-size:13px;font-weight:500;text-decoration:none;transition:color .2s,border-color .2s;white-space:nowrap;flex-shrink:0;margin-top:4px}
-.back-btn:hover{color:var(--gold);border-color:rgba(200,169,126,.3)}
-.back-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+/* ══ TOP NAV ════════════════════════════════ */
+.topnav{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(5,5,5,.92);border-bottom:0.5px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:200;flex-shrink:0}
+.nav-left{display:flex;align-items:center;gap:16px}
+.back-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--glass-b);border:0.5px solid var(--border);border-radius:8px;color:var(--t3);font-size:12px;font-weight:500;text-decoration:none;transition:color .2s,border-color .2s,background .2s;white-space:nowrap}
+.back-btn:hover{color:var(--gold);border-color:rgba(200,169,126,.3);background:rgba(200,169,126,.06)}
+.back-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nav-title{font-size:13px;font-weight:600;letter-spacing:.5px;color:var(--t1)}
+.nav-sub{font-size:11px;color:var(--t3);font-weight:300;margin-left:4px}
+.nav-right{display:flex;align-items:center;gap:8px}
 
-/* ── LEGEND ──────────────────────────── */
-.legend{max-width:1100px;margin:28px auto 0;padding:0 60px}
-.legend-inner{display:flex;flex-wrap:wrap;gap:16px 28px;padding:16px 24px;background:var(--glass);border:0.5px solid var(--border);border-radius:12px}
-.legend-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--t3);font-weight:400}
-.legend-line{width:28px;height:2px;border-radius:1px;flex-shrink:0}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.legend-item.l-main .legend-line{background:var(--c-main)}
-.legend-item.l-auto .legend-line{background:var(--c-auto)}
-.legend-item.l-alt .legend-line{background:var(--c-alt);opacity:0.7}
-.legend-item.l-nav .legend-line{background:var(--c-nav)}
-.legend-item.l-loop .legend-line{background:var(--c-loop);opacity:0.7}
-.legend-item.l-err .legend-dot{background:var(--c-err)}
+/* ══ ZOOM CONTROLS ══════════════════════════ */
+.zoom-controls{display:flex;align-items:center;gap:6px;background:var(--glass-b);border:0.5px solid var(--border);border-radius:10px;padding:5px 8px}
+.zoom-btn{width:28px;height:28px;background:transparent;border:none;color:var(--t3);cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:300;transition:background .15s,color .15s;line-height:1;flex-shrink:0}
+.zoom-btn:hover{background:rgba(200,169,126,.1);color:var(--gold)}
+.zoom-pct{font-size:11px;color:var(--t3);font-weight:500;min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
+.fit-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;background:rgba(200,169,126,.1);border:0.5px solid rgba(200,169,126,.25);border-radius:8px;color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap}
+.fit-btn:hover{background:rgba(200,169,126,.18);border-color:rgba(200,169,126,.4)}
+.fit-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── DIAGRAM WRAPPER ─────────────────── */
-.diagram-wrapper{max-width:1100px;margin:32px auto 80px;padding:0 60px;position:relative}
-.diagram-canvas{position:relative;width:980px;margin:0 auto}
+/* ══ LEGEND ══════════════════════════════════ */
+.legend{display:flex;align-items:center;gap:14px;padding:7px 14px;background:rgba(5,5,5,.8);border:0.5px solid var(--border);border-radius:9px}
+.l-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t4);font-weight:400;white-space:nowrap}
+.l-line{width:20px;height:1.5px;border-radius:1px;flex-shrink:0}
+.l-item.main .l-line{background:var(--c-main)}
+.l-item.auto .l-line{background:var(--c-auto)}
+.l-item.alt .l-line{background:var(--c-alt);opacity:.7}
+.l-item.nav .l-line{background:var(--c-nav)}
+.l-item.loop .l-line{background:var(--c-loop);opacity:.65}
 
-/* ── STAGE BANDS ─────────────────────── */
-.stage-band{position:absolute;left:-60px;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
-.stage-label{font-size:9px;letter-spacing:3.5px;color:var(--gold);font-weight:600;text-transform:uppercase;white-space:nowrap}
-.stage-num{font-size:10px;color:var(--t4);font-weight:400;margin-top:3px}
-.stage-line{width:1px;background:linear-gradient(to bottom,rgba(200,169,126,.2),transparent);flex:1;min-height:20px;margin-top:8px}
+/* ══ CANVAS VIEWPORT ════════════════════════ */
+.viewport{position:fixed;top:56px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab}
+.viewport.grabbing{cursor:grabbing}
+.pan-layer{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
 
-/* ── NODE CARDS ──────────────────────── */
-.node{position:absolute;width:230px;background:var(--glass);border:0.5px solid var(--border);border-radius:16px;padding:16px 18px 14px;cursor:pointer;transition:border-color .3s,box-shadow .3s,transform .2s;user-select:none}
-.node:hover{border-color:rgba(200,169,126,.25);box-shadow:0 0 0 1px rgba(200,169,126,.08),0 12px 40px rgba(0,0,0,.6);transform:translateY(-1px)}
-.node.active{border-color:rgba(200,169,126,.4);box-shadow:0 0 0 1px rgba(200,169,126,.12),0 16px 50px rgba(0,0,0,.7)}
-.node-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.node-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.node-label{font-size:13px;font-weight:700;letter-spacing:-.2px}
-.node-stage-badge{margin-left:auto;font-size:9px;color:var(--t4);font-weight:500;letter-spacing:.5px;flex-shrink:0}
-.node-sub{font-size:11px;color:var(--t3);font-weight:300;font-style:italic;margin-bottom:9px;line-height:1.5}
-.node-details{list-style:none;display:flex;flex-direction:column;gap:3px}
-.node-details li{font-size:10px;color:var(--t4);font-weight:400;padding-left:10px;position:relative;line-height:1.45}
-.node-details li::before{content:'·';position:absolute;left:2px;color:var(--gold);opacity:.6}
-.node-err-badge{display:inline-flex;align-items:center;gap:4px;margin-top:9px;padding:3px 9px;background:rgba(160,114,114,.1);border:0.5px solid rgba(160,114,114,.2);border-radius:100px;font-size:9px;color:var(--c-err);font-weight:500}
-.node-err-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--c-err);display:inline-block}
+/* ══ STAGE HEADERS ═══════════════════════════ */
+.stage-header{position:absolute;display:flex;flex-direction:column;align-items:center;pointer-events:none;top:0}
+.stage-pill{padding:4px 10px;background:rgba(200,169,126,.07);border:0.5px solid rgba(200,169,126,.14);border-radius:20px}
+.stage-name{font-size:8.5px;letter-spacing:2.5px;color:var(--gold);font-weight:600;text-transform:uppercase;white-space:nowrap}
+.stage-num{font-size:8px;color:var(--t4);font-weight:400;text-align:center;margin-top:3px;white-space:nowrap}
+.stage-line-v{position:absolute;top:52px;width:0.5px;background:linear-gradient(to bottom,rgba(200,169,126,.15),transparent 80%)}
 
-/* Home node (hub — wider) */
-.node.hub{width:280px;background:rgba(200,169,126,.025);border-color:rgba(200,169,126,.15)}
-.node.hub .node-dot{background:var(--gold)}
+/* ══ NODE CARDS ══════════════════════════════ */
+.node{position:absolute;background:rgba(255,255,255,.028);border:0.5px solid rgba(255,255,255,.075);border-radius:12px;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s;user-select:none}
+.node:hover{border-color:rgba(200,169,126,.3);box-shadow:0 0 0 1px rgba(200,169,126,.08),0 8px 32px rgba(0,0,0,.7);transform:translateY(-1px)}
+.node.active{border-color:rgba(200,169,126,.45);box-shadow:0 0 0 1px rgba(200,169,126,.15),0 12px 40px rgba(0,0,0,.8)}
+.node.hub{background:rgba(200,169,126,.032);border-color:rgba(200,169,126,.18)}
+.node-inner{padding:13px 15px 11px}
+.node-head{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.node-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.node-name{font-size:12px;font-weight:700;letter-spacing:-.15px;color:var(--t1);flex:1}
+.node-badge{font-size:8px;color:var(--t4);font-weight:500;letter-spacing:.3px;flex-shrink:0;background:rgba(255,255,255,.05);padding:2px 6px;border-radius:4px}
+.node-sub{font-size:10px;color:var(--t3);font-weight:300;font-style:italic;line-height:1.5;margin-bottom:6px}
+.node-tags{display:flex;flex-wrap:wrap;gap:3px}
+.node-tag{font-size:8.5px;color:var(--t4);background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.06);border-radius:4px;padding:2px 6px;font-weight:400}
+.node-err{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:2px 7px;background:rgba(160,114,114,.09);border:0.5px solid rgba(160,114,114,.2);border-radius:20px;font-size:8px;color:var(--c-err);font-weight:500}
+.node-err::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--c-err);flex-shrink:0}
 
-/* ── SVG ARROWS ──────────────────────── */
-svg.arrows{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
-svg.arrows defs marker#ah-main{fill:var(--c-main)}
-svg.arrows defs marker#ah-auto{fill:var(--c-auto)}
-svg.arrows defs marker#ah-alt{fill:var(--c-alt)}
-svg.arrows defs marker#ah-nav{fill:var(--c-nav)}
-svg.arrows defs marker#ah-loop{fill:var(--c-loop)}
-.edge-path{stroke-width:1.5;fill:none;stroke-linecap:round}
-.edge-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:9.5px;fill:var(--t4);font-weight:400}
+/* ══ ARROWS SVG ══════════════════════════════ */
+.arrows-svg{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
+.e-path{fill:none;stroke-linecap:round}
+.e-label-bg{rx:3}
+.e-label-txt{font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:400}
 
-/* ── DETAIL PANEL ────────────────────── */
-.detail-panel{position:fixed;right:0;top:0;width:320px;height:100vh;background:var(--s1);border-left:0.5px solid var(--border);padding:32px 28px;overflow-y:auto;transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:500;scrollbar-width:none}
-.detail-panel::-webkit-scrollbar{display:none}
-.detail-panel.open{transform:translateX(0)}
-.dp-close{position:absolute;top:20px;right:20px;width:28px;height:28px;background:var(--s2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:var(--t3)}
-.dp-close svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
-.dp-stage{font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:10px}
-.dp-title{font-size:26px;font-weight:200;letter-spacing:-.8px;line-height:1.1;margin-bottom:6px}
-.dp-title strong{font-weight:700}
-.dp-sub{font-size:13px;color:var(--t3);font-style:italic;font-weight:300;line-height:1.6;margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--border)}
-.dp-section{margin-bottom:18px}
-.dp-section-label{font-size:9px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:8px}
-.dp-section ul{list-style:none;display:flex;flex-direction:column;gap:6px}
-.dp-section ul li{font-size:12px;color:var(--t2);font-weight:300;line-height:1.6;padding-left:14px;position:relative}
-.dp-section ul li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.5;font-size:10px}
-.dp-errs{display:flex;flex-direction:column;gap:5px;margin-top:4px}
-.dp-err{font-size:11px;color:var(--c-err);padding:7px 12px;background:rgba(160,114,114,.08);border:0.5px solid rgba(160,114,114,.18);border-radius:8px;line-height:1.5;font-weight:300}
-.dp-transitions{display:flex;flex-direction:column;gap:6px;margin-top:4px}
-.dp-tr{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--t2);line-height:1.5}
-.dp-tr-arrow{color:var(--gold);flex-shrink:0;margin-top:1px}
-.dp-eh-codes{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.dp-eh{padding:3px 9px;background:rgba(255,255,255,.04);border:0.5px solid var(--border);border-radius:6px;font-size:10px;color:var(--t4);font-weight:500}
-
-/* ── OVERLAY ─────────────────────────── */
-.overlay{position:fixed;inset:0;background:rgba(5,5,5,.5);z-index:499;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+/* ══ DETAIL PANEL ════════════════════════════ */
+.overlay{position:fixed;inset:0;background:rgba(5,5,5,.4);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .overlay.show{opacity:1;pointer-events:auto}
+.detail-panel{position:fixed;right:0;top:0;width:340px;height:100vh;background:#0B0B0B;border-left:0.5px solid var(--border);padding:0;overflow:hidden;transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:400;display:flex;flex-direction:column}
+.detail-panel.open{transform:translateX(0)}
+.dp-top{padding:28px 26px 20px;border-bottom:0.5px solid var(--border);position:relative;flex-shrink:0}
+.dp-close{position:absolute;top:18px;right:18px;width:28px;height:28px;background:rgba(255,255,255,.06);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:var(--t3);transition:background .2s,color .2s}
+.dp-close:hover{background:rgba(255,255,255,.1);color:var(--t1)}
+.dp-close svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round}
+.dp-eyebrow{font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.dp-title{font-size:24px;font-weight:200;letter-spacing:-.6px;line-height:1.1;margin-bottom:4px}
+.dp-title b{font-weight:700}
+.dp-sub{font-size:12px;color:var(--t3);font-style:italic;font-weight:300;line-height:1.6}
+.dp-body{flex:1;overflow-y:auto;padding:20px 26px;scrollbar-width:none}
+.dp-body::-webkit-scrollbar{display:none}
+.dp-section{margin-bottom:18px}
+.dp-s-label{font-size:8.5px;letter-spacing:3px;color:var(--gold);font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.dp-s-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.dp-s-list li{font-size:11.5px;color:var(--t2);font-weight:300;line-height:1.6;padding-left:14px;position:relative}
+.dp-s-list li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.45;font-size:9px;top:1px}
+.dp-tr{display:flex;align-items:flex-start;gap:7px;font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:5px}
+.dp-tr-a{color:var(--gold);flex-shrink:0;font-size:13px;line-height:1.5}
+.dp-errs{display:flex;flex-direction:column;gap:5px}
+.dp-err-item{font-size:10.5px;color:var(--c-err);padding:6px 11px;background:rgba(160,114,114,.07);border:0.5px solid rgba(160,114,114,.16);border-radius:7px;line-height:1.55;font-weight:300}
+.dp-no-err{font-size:11px;color:var(--t4);font-weight:300;font-style:italic}
+.dp-ehs{display:flex;flex-wrap:wrap;gap:4px}
+.dp-eh{padding:3px 8px;background:rgba(255,255,255,.04);border:0.5px solid var(--border);border-radius:5px;font-size:9.5px;color:var(--t4);font-weight:500}
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="page-header">
-  <div class="page-header-left">
-    <div class="eyebrow">Barsys ARK</div>
-    <h1>Full User<br><strong>Flow Diagram</strong></h1>
-    <p>Every screen, every transition, every error state — mapped from launch to last call. Click any node to expand full stage detail.</p>
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-left">
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Flow Map
+    </a>
+    <span class="nav-title">User Flow Diagram</span>
+    <span class="nav-sub">— 13 screens · start to finish</span>
   </div>
-  <a class="back-btn" href="index.html">
-    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-    Flow Map
-  </a>
+  <div class="nav-right">
+    <div class="legend">
+      <span class="l-item main"><span class="l-line"></span>Main path</span>
+      <span class="l-item auto"><span class="l-line"></span>Auto</span>
+      <span class="l-item alt"><span class="l-line"></span>Alt</span>
+      <span class="l-item nav"><span class="l-line"></span>Nav tab</span>
+      <span class="l-item loop"><span class="l-line"></span>Loop</span>
+    </div>
+    <div class="zoom-controls">
+      <button class="zoom-btn" id="zoomOut" title="Zoom out">−</button>
+      <span class="zoom-pct" id="zoomPct">100%</span>
+      <button class="zoom-btn" id="zoomIn" title="Zoom in">+</button>
+    </div>
+    <button class="fit-btn" id="fitBtn">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Fit to screen
+    </button>
+  </div>
+</nav>
+
+<!-- CANVAS VIEWPORT -->
+<div class="viewport" id="viewport">
+  <div class="pan-layer" id="panLayer">
+    <!-- SVG arrows rendered first so nodes sit on top -->
+    <svg class="arrows-svg" id="arrowSvg" width="2500" height="900"></svg>
+    <!-- Nodes & stage headers injected by JS -->
+  </div>
 </div>
 
-<!-- Legend -->
-<div class="legend">
-  <div class="legend-inner">
-    <span class="legend-item l-main"><span class="legend-line"></span>Main happy path</span>
-    <span class="legend-item l-auto"><span class="legend-line"></span>Auto / timed transition</span>
-    <span class="legend-item l-alt"><span class="legend-line"></span>Alternative path</span>
-    <span class="legend-item l-nav"><span class="legend-line"></span>Tab bar navigation</span>
-    <span class="legend-item l-loop"><span class="legend-line"></span>Loop / return path</span>
-    <span class="legend-item l-err"><span class="legend-dot"></span>Has error states (click to view)</span>
-  </div>
-</div>
-
-<!-- Diagram -->
-<div class="diagram-wrapper">
-  <div class="diagram-canvas" id="canvas">
-    <!-- SVG arrows rendered by JS -->
-    <svg class="arrows" id="arrowSvg"></svg>
-    <!-- Nodes rendered by JS -->
-  </div>
-</div>
-
-<!-- Detail Panel -->
+<!-- DETAIL PANEL -->
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <div class="detail-panel" id="detailPanel">
-  <button class="dp-close" onclick="closePanel()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  <div id="detailContent"></div>
+  <div class="dp-top">
+    <button class="dp-close" onclick="closePanel()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div id="dpTop"></div>
+  </div>
+  <div class="dp-body" id="dpBody"></div>
 </div>
 
 <script>
-/* ── DATA ───────────────────────────────────────────── */
-const STAGES = [
-  { id:1,  label:'Launch',              top:40  },
-  { id:2,  label:'First-Run Discovery', top:210 },
-  { id:3,  label:'Intent Setting',      top:390 },
-  { id:4,  label:'Recipe Generation',   top:570 },
-  { id:5,  label:'Recipe Detail',       top:750 },
-  { id:6,  label:'Auth Gate',           top:950 },
-  { id:7,  label:'Personalization',     top:1130},
-  { id:8,  label:'Main Hub',            top:1310},
-  { id:9,  label:'Core Navigation',     top:1530},
-  { id:10, label:'Craft Execution',     top:1750},
-  { id:11, label:'Completion',          top:1940},
-];
-
+/* ══════════════════════════════════════════════
+   NODES DATA
+   x,y = top-left corner; w,h = dimensions
+   ══════════════════════════════════════════════ */
 const NODES = [
   {
-    id:'splash', label:'Splash', stage:1, x:375, y:60, hub:false,
-    color:'#C8A97E',
+    id:'splash', label:'Splash', stage:1, stageLabel:'Launch',
+    x:20, y:340, w:170, h:102,
+    color:'#C8A97E', hub:false,
     sub:'App launch · BARSYS wordmark',
+    tags:['Full-screen', 'Auto 2.2s'],
     details:[
-      'Full-screen near-black (#050505) background',
-      '"BARSYS" wordmark: 36px · weight 200 · letter-spacing 20px',
+      '"BARSYS" wordmark: 36px weight 200, letter-spacing 20px',
       'fadeScale animation: 1.4s cubic-bezier(0.16,1,0.3,1) · delay 0.4s',
       'Gold dot (5×5px): fades in at 1.2s delay',
-      'Radial gold glow behind logo: rgba(200,169,126,0.06)',
-      'Auto-advances to Onboarding after 2200ms'
+      'Radial gold glow: rgba(200,169,126,0.06)',
+      'Full-screen near-black (#050505) background',
     ],
-    transitions:['→ Onboarding: Auto after 2.2 seconds (setTimeout)'],
-    errors:[],
-    ehCodes:[]
+    transitions:['→ Onboarding: Automatic after 2.2 seconds (setTimeout)'],
+    errors:[], ehCodes:[]
   },
   {
-    id:'onboarding', label:'Onboarding', stage:2, x:375, y:240, hub:false,
-    color:'#8A9490',
+    id:'onboarding', label:'Onboarding', stage:2, stageLabel:'First-Run',
+    x:220, y:340, w:170, h:102,
+    color:'#8A9490', hub:false,
     sub:'First-run welcome · occasion CTA',
+    tags:['Animated orb', 'Progress dots'],
     details:[
-      'Animated orb (180px sphere, radial gold gradient, orbFloat 8s loop)',
+      'Animated orb: 180px sphere, radial gold gradient, orbFloat 8s loop',
       'Breathing gold glow backdrop (breathe 6s ease-in-out loop)',
-      'Eyebrow: "WELCOME TO" · 10px · letter-spacing 8px',
       'Headline: "Your next drink should make you feel something."',
-      'Subtext: "Not a recipe app. A moment machine."',
-      'Gold CTA button: "What's the occasion?" · 18px padding · border-radius 14px',
-      '"Skip intro" ghost text link',
-      'Progress dots: 3 total, first dot gold-filled'
+      'Gold CTA: "What's the occasion?" · 18px padding · border-radius 14px',
+      '"Skip intro" ghost text link · 3 progress dots',
     ],
     transitions:[
       '→ Mood Selection: Tap CTA button',
-      '→ Mood Selection: Tap "Skip intro"'
+      '→ Mood Selection: Tap "Skip intro"',
     ],
-    errors:[],
-    ehCodes:[]
+    errors:[], ehCodes:[]
   },
   {
-    id:'mood', label:'Mood Selection', stage:3, x:375, y:420, hub:false,
-    color:'#B8A67A',
+    id:'mood', label:'Mood Selection', stage:3, stageLabel:'Intent',
+    x:420, y:340, w:170, h:102,
+    color:'#B8A67A', hub:false,
     sub:'What's the occasion? · 4 mood cards',
+    tags:['2×2 grid', 'AI prompt bar'],
     details:[
-      'Greeting: "Good evening," in gold · Dynamic time-based greeting',
-      'Question: "What's the occasion?" · 28px weight 200',
-      '2×2 mood grid — each card is a glass panel with colored accent line:',
-      '  UNWIND (#8A9490) · "Smooth & slow"',
-      '  CELEBRATE (#B8A67A) · "Bold & bright"',
-      '  IMPRESS (#9A7B7F) · "Date night"',
-      '  EXPLORE (#7E8B96) · "Surprise me"',
-      'Trending pill: most-crafted drink shortcut (e.g. Espresso Martini)',
-      'AI prompt bar: "What are you in the mood for?" with send button'
+      'Gold greeting: "Good evening," — dynamic time-based',
+      '2×2 mood grid: UNWIND / CELEBRATE / IMPRESS / EXPLORE',
+      'Each card: glass panel with colored accent line + tagline',
+      'Trending pill: most-crafted drink shortcut',
+      'AI prompt bar: "What are you in the mood for?" with send button',
     ],
     transitions:[
       '→ Drink Stream: Select any mood card (350ms delay)',
       '→ Drink Detail: Tap trending pill shortcut',
-      '→ BarBot AI: Submit prompt via prompt bar'
+      '→ BarBot AI: Submit prompt via prompt bar',
     ],
-    errors:['No network: show cached trending data'],
+    errors:['No network: cached trending data shown'],
     ehCodes:['EH1-S9']
   },
   {
-    id:'stream', label:'Drink Stream', stage:4, x:375, y:600, hub:false,
-    color:'#7E8B96',
-    sub:'Mood-filtered recipe feed · BarBot-curated',
+    id:'stream', label:'Drink Stream', stage:4, stageLabel:'Recipe Feed',
+    x:620, y:340, w:170, h:102,
+    color:'#7E8B96', hub:false,
+    sub:'Mood-filtered recipe feed · curated',
+    tags:['Scrollable feed', 'Mood badge'],
     details:[
       'Mood tag badge (colored dot + mood name) at top',
-      'Dynamic headline reflects mood: e.g. "Time to unwind."',
-      'BarBot-generated subtext for each mood context',
-      'Scrollable recipe card list — each card shows:',
-      '  Name · Italic description/lore · Tags · Ingredient count · Craft time',
-      'Card hero: dark gradient panel with stylized cocktail icon (opacity 0.15)',
-      'Mood-specific copy: unwind / celebrate / impress / explore variants'
+      'Dynamic headline reflects mood context',
+      'Scrollable recipe card list with name, description, tags, time',
+      'Card hero: dark gradient panel, stylized cocktail icon 15% opacity',
+      'BarBot-generated mood-specific copy for each context',
     ],
     transitions:['→ Drink Detail: Tap any recipe card'],
     errors:[
-      'Network drops during recipe fetch: Auto-retry (EH1-S9); cached version if available',
-      'Rating API call fails after craft: Auto-retry; rating queued for sync'
+      'Network drops during fetch: Auto-retry (EH1-S9), cached shown',
+      'Rating API call fails after craft: Auto-retry, queued for sync',
     ],
     ehCodes:['EH1-S9']
   },
   {
-    id:'detail', label:'Drink Detail', stage:5, x:375, y:780, hub:false,
-    color:'#C8A97E',
+    id:'detail', label:'Drink Detail', stage:5, stageLabel:'Detail',
+    x:820, y:340, w:170, h:102,
+    color:'#C8A97E', hub:false,
     sub:'Recipe deep-dive · ingredients · story',
+    tags:['Ingredients', 'Craft CTA'],
     details:[
-      'Full-width hero: dark gradient panel with large cocktail SVG icon (opacity 0.12)',
-      'Transparent nav overlay: back chevron (left) + "Save" (right, gold)',
-      'Cocktail name: 26px · weight 700',
-      'Italic lore/description: 14px · weight 300',
+      'Full-width hero: dark gradient + large cocktail SVG icon at 12% opacity',
+      'Transparent overlay nav: back chevron + "Save" gold button',
       'Tag pills: spirit category, style, strength',
-      'Ingredients section: glass panels with gold dot per ingredient + quantity',
-      '"The Story" section: cocktail history · 13px weight 300',
-      '"Craft This Cocktail" CTA: full-width gold button'
+      'Ingredients: glass panels with gold dot + quantity per item',
+      '"The Story": cocktail history · 13px weight 300',
+      '"Craft This Cocktail": full-width gold CTA button',
     ],
     transitions:[
-      '→ Auth: Tap "Craft This Cocktail" · not signed in',
-      '→ Crafting: Tap "Craft This Cocktail" · already signed in',
+      '→ Authentication: Tap "Craft This Cocktail" (not signed in)',
+      '→ Crafting: Tap "Craft This Cocktail" (already signed in)',
       '→ Previous screen: Tap back chevron',
-      'Save: Adds to favorites (stays on screen, toast confirmation)'
+      'Save: Adds to favorites (toast confirmation, stays on screen)',
     ],
     errors:[
-      'Recipe details fail to load: Auto-retry (EH1-S9); cached version shown',
-      'Save to favorites fails: Queued for sync'
+      'Recipe details fail to load: Auto-retry (EH1-S9); cached shown',
+      'Save to favorites fails: Queued for sync',
     ],
     ehCodes:['EH1-S9']
   },
   {
-    id:'auth', label:'Authentication', stage:6, x:195, y:980, hub:false,
-    color:'#9A7B7F',
-    sub:'Sign-in gate before hardware access',
+    id:'auth', label:'Authentication', stage:6, stageLabel:'Auth Gate',
+    x:1000, y:575, w:170, h:102,
+    color:'#9A7B7F', hub:false,
+    sub:'Sign-in gate · before hardware access',
+    tags:['Apple', 'Google', 'Phone'],
     details:[
-      'BARSYS logo (20px · weight 200 · letter-spacing 10px) + gold dot',
+      'BARSYS logo: 20px weight 200, letter-spacing 10px + gold dot',
       'Headline: "Join the ritual." · 30px weight 200 + bold',
       'Sub: "One tap. Then we'll craft your [drink] in 45 seconds."',
-      'Three auth options:',
-      '  Apple Sign In — white button · Apple icon',
-      '  Continue with Google — outline button · Google logo SVG',
-      '  Sign in with Phone — outline button · phone icon',
-      '"Maybe later" ghost text link (guest mode)'
+      'Apple Sign In: white button with Apple icon',
+      'Continue with Google: outline + Google SVG logo',
+      'Sign in with Phone: outline + phone icon',
+      '"Maybe later" ghost link → guest mode',
     ],
     transitions:[
       '→ Welcome: Successful Apple / Google / Phone sign-in',
-      '→ Home: Tap "Maybe later" (guest, no crafting access)'
+      '→ Home: "Maybe later" (guest, no crafting)',
     ],
     errors:[
-      'Auth API failure: Display error, retry button shown',
-      'Network unavailable: Offline error state, retry when connected',
-      'Social auth cancelled: Return to auth screen'
+      'Auth API failure: Display error, retry button',
+      'Network unavailable: Offline error, retry on connect',
+      'Social auth cancelled: Return to auth screen',
     ],
     ehCodes:['EH1-S9','EH2']
   },
   {
-    id:'welcome', label:'Welcome', stage:7, x:195, y:1160, hub:false,
-    color:'#8A9490',
+    id:'welcome', label:'Welcome', stage:7, stageLabel:'Personalization',
+    x:1200, y:575, w:170, h:102,
+    color:'#8A9490', hub:false,
     sub:'Personalized greeting · account confirmed',
+    tags:['Auto 2.5s', 'User name'],
     details:[
-      'Full-screen breathing gold glow backdrop (breathe 5s ease-in-out loop)',
-      '"Welcome back," in gold · 15px · letter-spacing 2px · fadeUp 0.3s delay',
-      'User name: 44px · weight 200 · letter-spacing -3px · fadeUp 0.6s delay',
+      'Full-screen breathing gold glow backdrop (breathe 5s loop)',
+      '"Welcome back," in gold · 15px · letter-spacing 2px · fadeUp 0.3s',
+      'User name: 44px · weight 200 · letter-spacing -3px · fadeUp 0.6s',
       'Gold horizontal rule (32px): fadeIn 1s delay',
-      '"Let's make tonight matter." · 14px · weight 300 · fadeUp 1.2s delay',
-      'Auto-advances to Home after 2.5s'
+      '"Let's make tonight matter." · 14px weight 300 · fadeUp 1.2s',
+      'Auto-advances to Home after 2.5 seconds',
     ],
-    transitions:['→ Home: Auto after 2.5 seconds'],
-    errors:[],
-    ehCodes:[]
+    transitions:['→ Home: Automatic after 2.5 seconds'],
+    errors:[], ehCodes:[]
   },
   {
-    id:'home', label:'Home', stage:8, x:350, y:1360, hub:true,
-    color:'#C8A97E',
+    id:'home', label:'Home', stage:8, stageLabel:'Main Hub',
+    x:1430, y:330, w:205, h:118,
+    color:'#C8A97E', hub:true,
     sub:'Main navigation hub · personalized dashboard',
+    tags:['BarBot card', 'Mood card', 'Quick craft'],
     details:[
-      'Header: gold greeting + "What are we making tonight?" title',
+      'Gold greeting + "What are we making tonight?" headline',
       'Avatar circle (initials) top-right',
-      'BarBot AI card: proactive suggestion based on loaded stations (e.g. "You left bourbon out last night")',
-      '"Tonight's mood" card: gold accent, links to Mood Selection',
+      'BarBot AI card: proactive suggestion based on loaded stations',
+      '"Tonight's mood" card: links to Mood Selection',
       '"Popular tonight" list: 3 quick-craft recipe items with Craft buttons',
-      'Bottom context bar:',
-      '  Tabs: Home · Discover · BarBot · Control',
-      '  Action buttons: "Set mood" · "Ask BarBot"'
+      'Bottom context bar: Home · Discover · BarBot · Control tabs',
+      'Action buttons: "Set mood" · "Ask BarBot"',
     ],
     transitions:[
       '→ Mood Selection: "Set the occasion" card / "Set mood" action',
       '→ BarBot AI: "Ask BarBot →" card / action / tab',
       '→ Drink Detail: Tap any featured recipe',
-      '→ Crafting: "Craft" quick button (logged in)',
-      '→ Discover: Tab bar',
-      '→ Control Panel: Tab bar'
+      '→ Crafting: "Craft" quick button (signed in)',
+      '→ Discover: Tab bar navigation',
+      '→ Control Panel: Tab bar navigation',
     ],
     errors:[
       'Personalized feed fails: Generic/trending content shown',
       'BarBot suggestion fails: Default suggestion card shown',
-      'Push notification registration fails: Silent; retry at next launch'
+      'Push notification registration fails: Silent, retry next launch',
     ],
     ehCodes:['EH1-S9']
   },
   {
-    id:'discover', label:'Discover', stage:9, x:90, y:1570, hub:false,
-    color:'#7E8B96',
+    id:'discover', label:'Discover', stage:9, stageLabel:'Navigation',
+    x:1690, y:200, w:170, h:102,
+    color:'#7E8B96', hub:false,
     sub:'10,247+ recipes · search & browse',
+    tags:['Search bar', 'Filter pills', 'Grid'],
     details:[
-      'Header: "Discover" (weight 200/700) + recipe count',
-      'Search bar: full-width glass panel with search SVG icon',
-      'Filter pills (horizontal scroll): All · Classics · Modern · Low ABV · Quick · Seasonal',
-      '"Trending Now" horizontal carousel with drink cards (160px each)',
+      '"Discover" header (weight 200/700) + recipe count',
+      'Full-width glass search bar with search icon',
+      'Filter pills: All · Classics · Modern · Low ABV · Quick · Seasonal',
+      '"Trending Now" horizontal carousel (160px cards)',
       'All Recipes grid: difficulty + time metadata per item',
-      'Tab bar: full navigation access'
+      'Tab bar: full navigation access',
     ],
     transitions:[
       '→ Drink Detail: Tap any recipe card or list item',
-      '→ Home / BarBot / Control: Tab bar'
+      '→ Home / BarBot / Control: Tab bar',
     ],
     errors:[
-      'Search API fails: Cached results shown, retry indicator',
+      'Search API fails: Cached results + retry indicator',
       'Filter apply fails: All recipes shown, toast notification',
-      'Party analytics data fails to load: Pull-to-refresh shown'
     ],
     ehCodes:['EH1-S9']
   },
   {
-    id:'barbot', label:'BarBot AI', stage:9, x:375, y:1570, hub:false,
-    color:'#C8A97E',
+    id:'barbot', label:'BarBot AI', stage:9, stageLabel:'Navigation',
+    x:1690, y:345, w:170, h:102,
+    color:'#C8A97E', hub:false,
     sub:'AI cocktail companion · chat interface',
+    tags:['Chat UI', 'Voice', 'Camera'],
     details:[
-      'Header: "BarBot" + "Your AI cocktail companion" italic subtitle',
+      '"BarBot" header + "Your AI cocktail companion" italic subtitle',
       '"New chat" gold button (top right)',
-      'Chat message thread: user bubbles (right, gold tint) · AI bubbles (left, glass)',
-      'AI message typing indicator: 3 animated dots (typingDot keyframe)',
-      'Recipe cards in chat: 160px cards with Craft CTA inside',
-      'Input bar: text field + voice mic button + camera button + send arrow',
-      'Voice recording overlay: full-screen with animated ring, "Listening..." label',
-      'Camera: scans bar inventory for ingredient recognition'
+      'Chat thread: user bubbles (right, gold tint) · AI bubbles (left, glass)',
+      'AI typing indicator: 3 animated dots (typingDot keyframe)',
+      'Recipe cards in chat: 160px with Craft CTA inside',
+      'Input bar: text + voice mic + camera + send arrow',
+      'Voice: full-screen overlay with animated ring, "Listening..."',
     ],
     transitions:[
       '→ Drink Detail: Tap recipe card in chat',
-      '→ Crafting: Tap "Craft" inside recipe card (logged in)',
-      '→ Home / Discover / Control: Tab bar'
+      '→ Crafting: Tap "Craft" inside recipe card (signed in)',
+      '→ Home / Discover / Control: Tab bar',
     ],
     errors:[
       'LLM API timeout: Retry with shimmer loading state',
       'Voice recognition fails: Fallback to text input, toast',
       'Camera scan fails: Toast "Could not identify ingredients"',
-      'Recipe generation fails: Fallback suggestions shown'
     ],
     ehCodes:['EH1-S9','EH-AI1']
   },
   {
-    id:'control', label:'Control Panel', stage:9, x:660, y:1570, hub:false,
-    color:'#B8A67A',
+    id:'control', label:'Control Panel', stage:9, stageLabel:'Navigation',
+    x:1690, y:490, w:170, h:102,
+    color:'#B8A67A', hub:false,
     sub:'Hardware management · BarBot Elite device',
+    tags:['BLE', 'Stations A–F', 'Clean'],
     details:[
       'Device badge: green dot + "BarBot Elite · Connected"',
-      'Stats row (3-up): Temperature · Crafted this month · Days since last clean',
-      '"Stations" section: A–F with ingredient name, type, last refill date, fill-level bar',
-      'Context bar actions: "Clean" (starts cleaning cycle) · "Calibrate"',
-      'Real-time BLE connection status reflected in badge'
+      'Stats row: Temperature · Crafted this month · Days since last clean',
+      'Stations section: A–F with ingredient, type, refill date, fill bar',
+      'Context bar: "Clean" (starts cycle) · "Calibrate"',
+      'Real-time BLE connection status in badge',
     ],
     transitions:[
       '→ Home / Discover / BarBot: Tab bar',
       'Clean: Starts cleaning cycle (stays on screen)',
-      'Calibrate: Starts calibration flow (stays on screen)'
+      'Calibrate: Starts calibration (stays on screen)',
     ],
     errors:[
-      'BLE disconnect: Modal prompt to reconnect, retry',
+      'BLE disconnect: Modal to reconnect, retry',
       'Station sensor failure: Manual fill-level entry',
-      'Cleaning cycle fails: Error alert, retry option',
-      'Calibration failure: Diagnostic message shown',
-      'Settings preferences fail to sync: Local cache used; auto-sync on reconnect'
+      'Cleaning cycle fails: Error alert, retry',
+      'Calibration failure: Diagnostic message',
     ],
     ehCodes:['EH-BLE1','EH-BLE2','EH1-S9']
   },
   {
-    id:'crafting', label:'Crafting', stage:10, x:375, y:1790, hub:false,
-    color:'#C8A97E',
+    id:'crafting', label:'Crafting', stage:10, stageLabel:'Craft',
+    x:1945, y:340, w:170, h:102,
+    color:'#C8A97E', hub:false,
     sub:'Machine is working · ~45 second cycle',
+    tags:['Progress ring', 'Step indicators'],
     details:[
       'Subtle radial gold glow backdrop',
-      '"CRAFTING" eyebrow label · 10px · letter-spacing 4px · all-caps',
+      '"CRAFTING" eyebrow: 10px · letter-spacing 4px · all-caps',
       'Drink name: 22px · weight 700',
       'Progress ring: 180px SVG circle, stroke-dashoffset animates 678→0',
       'Percentage counter: 44px · weight 200 · gold-l color',
-      'Step indicators row: Pour · Mix · Stir · Finish (active = opacity 1)',
-      '"Glass detected" badge: green pulse dot + text',
-      'Step text updates as machine progresses'
+      'Step indicators: Pour · Mix · Stir · Finish (active = opacity 1)',
+      '"Glass detected" badge: green pulse dot',
     ],
     transitions:['→ Cheers: Craft completes (100%)'],
     errors:[
       'BLE drops mid-craft: Pause ring + reconnect prompt (EH-BLE1)',
       'Partial dispense detected: Option to retry or abort',
-      'Station runs empty mid-craft: Error message, abort (EH2)',
-      'Glass removed during craft: Warning, option to continue',
-      'Motor/valve failure: Error state with support contact'
+      'Station runs empty mid-craft: Error, abort (EH2)',
+      'Glass removed: Warning, option to continue',
     ],
     ehCodes:['EH-BLE1','EH-BLE2','EH2','EH1-S9']
   },
   {
-    id:'cheers', label:'Cheers', stage:11, x:375, y:1980, hub:false,
-    color:'#C8A97E',
+    id:'cheers', label:'Cheers', stage:11, stageLabel:'Completion',
+    x:2210, y:340, w:170, h:102,
+    color:'#C8A97E', hub:false,
     sub:'Craft complete · garnish · tasting notes',
+    tags:['Sparkle anim', 'Tasting notes'],
     details:[
-      'Gold sparkle particle animation (sparkleFloat keyframe, 5 particles)',
+      'Gold sparkle particles (sparkleFloat keyframe, 5 particles)',
       'Radial gold glow: rgba(200,169,126,0.10)',
-      'Heart icon (gold stroke, opacity 0.5) + "CHEERS" label',
+      'Heart icon (gold stroke, 50% opacity) + "CHEERS" label',
       'Drink name: 28px · weight 200',
-      '"Crafted just for you." italic subtitle',
-      'Gold divider line',
-      'Garnish instructions: how to express peel, garnish placement',
+      '"Crafted just for you." italic subtitle + gold divider',
+      'Garnish instructions: how to express peel / placement',
       'Tasting Notes: flavor profile in prose',
-      '"Make Another" pill button → Home'
+      '"Make Another" pill button → Home',
     ],
     transitions:['→ Home: Tap "Make Another"'],
-    errors:['Rating submit fails after craft: Queued for later sync (EH1-S9)'],
+    errors:['Rating submit fails: Queued for later sync (EH1-S9)'],
     ehCodes:['EH1-S9']
   },
 ];
 
-// Edges: from, to, label, type, cx1offset, cy1offset, cx2offset, cy2offset
+/* ══════════════════════════════════════════════
+   EDGES
+   ══════════════════════════════════════════════ */
 const EDGES = [
-  // First-run linear flow
-  { f:'splash',    t:'onboarding', label:'Auto · 2.2s',                    type:'auto', ex:0,  ey:0 },
-  { f:'onboarding',t:'mood',       label:'Tap CTA or "Skip intro"',         type:'main', ex:0,  ey:0 },
-  { f:'mood',      t:'stream',     label:'Select mood card',                type:'main', ex:0,  ey:0 },
-  { f:'stream',    t:'detail',     label:'Tap recipe card',                 type:'main', ex:0,  ey:0 },
+  // Linear main path
+  { f:'splash',    t:'onboarding', type:'auto', label:'Auto · 2.2s' },
+  { f:'onboarding',t:'mood',       type:'main', label:'Tap CTA' },
+  { f:'mood',      t:'stream',     type:'main', label:'Select mood' },
+  { f:'stream',    t:'detail',     type:'main', label:'Tap recipe' },
   // Detail branches
-  { f:'detail',    t:'auth',       label:'Craft · not signed in',           type:'main', ex:-60,ey:0 },
-  { f:'detail',    t:'crafting',   label:'Craft · already signed in',       type:'alt',  ex:120,ey:0 },
-  // Auth branches
-  { f:'auth',      t:'welcome',    label:'Apple / Google / Phone',          type:'main', ex:0,  ey:0 },
-  { f:'auth',      t:'home',       label:'"Maybe later" · guest',           type:'alt',  ex:-80,ey:0 },
-  { f:'welcome',   t:'home',       label:'Auto · 2.5s',                     type:'auto', ex:-60,ey:0 },
-  // Home → core screens (tab bar)
-  { f:'home',      t:'discover',   label:'Tab: Discover',                   type:'nav',  ex:-80,ey:40 },
-  { f:'home',      t:'barbot',     label:'Tab: BarBot',                     type:'nav',  ex:0,  ey:40 },
-  { f:'home',      t:'control',    label:'Tab: Control',                    type:'nav',  ex:80, ey:40 },
-  // Home → Mood (loop up)
-  { f:'home',      t:'mood',       label:'"Set the occasion"',              type:'loop', ex:-200,ey:0},
-  // Core screens → crafting
-  { f:'discover',  t:'crafting',   label:'Tap recipe → Craft',             type:'main', ex:-60,ey:0 },
-  { f:'barbot',    t:'crafting',   label:'Recipe card → Craft',            type:'main', ex:0,  ey:0 },
-  // Crafting → Cheers → Home
-  { f:'crafting',  t:'cheers',     label:'Craft complete · ~45s',           type:'main', ex:0,  ey:0 },
-  { f:'cheers',    t:'home',       label:'"Make Another"',                  type:'loop', ex:200, ey:0},
+  { f:'detail',    t:'auth',       type:'main', label:'Craft · guest' },
+  { f:'detail',    t:'crafting',   type:'alt',  label:'Already signed in' },
+  // Auth path
+  { f:'auth',      t:'welcome',    type:'main', label:'Sign in ✓' },
+  { f:'auth',      t:'home',       type:'alt',  label:'Guest mode' },
+  { f:'welcome',   t:'home',       type:'auto', label:'Auto · 2.5s' },
+  // Home → tab navigation
+  { f:'home',      t:'discover',   type:'nav',  label:'Discover tab' },
+  { f:'home',      t:'barbot',     type:'nav',  label:'BarBot tab' },
+  { f:'home',      t:'control',    type:'nav',  label:'Control tab' },
+  // Home loops
+  { f:'home',      t:'mood',       type:'loop', label:'Set occasion' },
+  // Tabs → crafting
+  { f:'discover',  t:'crafting',   type:'main', label:'Craft recipe' },
+  { f:'barbot',    t:'crafting',   type:'main', label:'Craft recipe' },
+  { f:'control',   t:'crafting',   type:'nav',  label:'Quick craft' },
+  // Final
+  { f:'crafting',  t:'cheers',     type:'main', label:'Complete ~45s' },
+  { f:'cheers',    t:'home',       type:'loop', label:'Make Another' },
 ];
 
-/* ── RENDER ─────────────────────────────────────────── */
-const canvas = document.getElementById('canvas');
+/* ══════════════════════════════════════════════
+   STAGE LABELS (positioned manually)
+   ══════════════════════════════════════════════ */
+const STAGES = [
+  { label:'Launch',         num:'Stage 01', cx:105  },
+  { label:'First-Run',      num:'Stage 02', cx:305  },
+  { label:'Intent',         num:'Stage 03', cx:505  },
+  { label:'Recipe Feed',    num:'Stage 04', cx:705  },
+  { label:'Recipe Detail',  num:'Stage 05', cx:905  },
+  { label:'Auth Gate',      num:'Stage 06', cx:1085 },
+  { label:'Personalization',num:'Stage 07', cx:1285 },
+  { label:'Main Hub',       num:'Stage 08', cx:1532 },
+  { label:'Navigation',     num:'Stage 09', cx:1775 },
+  { label:'Craft',          num:'Stage 10', cx:2030 },
+  { label:'Completion',     num:'Stage 11', cx:2295 },
+];
+
+/* ══════════════════════════════════════════════
+   CANVAS DIMENSIONS
+   ══════════════════════════════════════════════ */
+const CANVAS_W = 2460;
+const CANVAS_H = 860;
+
+/* helper: get node rect */
+function nr(id){ return NODES.find(n=>n.id===id); }
+function cx(n){ return n.x + n.w/2; }
+function cy(n){ return n.y + n.h/2; }
+function right(n){ return n.x + n.w; }
+function left(n){ return n.x; }
+function top(n){ return n.y; }
+function bot(n){ return n.y + n.h; }
+
+/* ══════════════════════════════════════════════
+   RENDER NODES
+   ══════════════════════════════════════════════ */
+const panLayer = document.getElementById('panLayer');
 const svg = document.getElementById('arrowSvg');
+svg.setAttribute('width', CANVAS_W);
+svg.setAttribute('height', CANVAS_H);
 
-// Compute canvas height
-const maxY = Math.max(...NODES.map(n => n.y)) + 200;
-canvas.style.height = maxY + 'px';
-svg.setAttribute('height', maxY);
-
-// Node width/height
-const NW = 230, NH_BASE = 0; // height computed from content
-
-// Render nodes
 NODES.forEach(n => {
   const div = document.createElement('div');
   div.className = 'node' + (n.hub ? ' hub' : '');
-  div.id = 'node-' + n.id;
-  const w = n.hub ? 280 : 230;
-  div.style.cssText = `left:${n.x - w/2}px;top:${n.y}px;width:${w}px`;
+  div.id = 'nd-' + n.id;
+  div.style.cssText = `left:${n.x}px;top:${n.y}px;width:${n.w}px`;
   div.onclick = () => openPanel(n.id);
-
-  const errBadge = n.errors.length ? `<div class="node-err-badge">${n.errors.length} error state${n.errors.length>1?'s':''}</div>` : '';
+  const errBadge = n.errors.length ? `<div class="node-err">${n.errors.length} error state${n.errors.length>1?'s':''}</div>` : '';
+  const tags = n.tags.map(t=>`<span class="node-tag">${t}</span>`).join('');
   div.innerHTML = `
-    <div class="node-head">
-      <div class="node-dot" style="background:${n.color}"></div>
-      <span class="node-label">${n.label}</span>
-      <span class="node-stage-badge">S${n.stage}</span>
-    </div>
-    <div class="node-sub">${n.sub}</div>
-    <ul class="node-details">${n.details.slice(0,3).map(d=>`<li>${d}</li>`).join('')}</ul>
-    ${errBadge}
-  `;
-  canvas.appendChild(div);
+    <div class="node-inner">
+      <div class="node-head">
+        <div class="node-dot" style="background:${n.color}"></div>
+        <span class="node-name">${n.label}</span>
+        <span class="node-badge">S${n.stage}</span>
+      </div>
+      <div class="node-sub">${n.sub}</div>
+      <div class="node-tags">${tags}</div>
+      ${errBadge}
+    </div>`;
+  panLayer.appendChild(div);
 });
 
-// Get node center
-function nc(id) {
-  const n = NODES.find(x=>x.id===id);
-  if (!n) return {x:0,y:0,h:0};
-  const el = document.getElementById('node-'+id);
-  const h = el ? el.offsetHeight : 120;
-  const w = n.hub ? 280 : 230;
-  return { x: n.x, y: n.y, h, w };
+/* ══════════════════════════════════════════════
+   RENDER STAGE HEADERS
+   ══════════════════════════════════════════════ */
+STAGES.forEach(s => {
+  const el = document.createElement('div');
+  el.className = 'stage-header';
+  el.style.cssText = `left:${s.cx}px;transform:translateX(-50%);top:60px`;
+  el.innerHTML = `<div class="stage-pill"><div class="stage-name">${s.label}</div></div><div class="stage-num">${s.num}</div>`;
+  panLayer.appendChild(el);
+});
+
+/* ══════════════════════════════════════════════
+   RENDER ARROWS
+   ══════════════════════════════════════════════ */
+const COLOR = {
+  main:  '#C8A97E',
+  auto:  '#6DB8A8',
+  alt:   '#8898A8',
+  nav:   '#9A8AAA',
+  loop:  '#A8986E',
+};
+const OPACITY = { main:'0.85', auto:'0.85', alt:'0.55', nav:'0.65', loop:'0.55' };
+const DASH    = { alt:'5 3', loop:'3 4' };
+
+// Build arrowhead defs
+let defs = '<defs>';
+Object.entries(COLOR).forEach(([t,c]) => {
+  const op = t==='alt'||t==='loop' ? '0.7' : '0.9';
+  defs += `<marker id="ah-${t}" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L7,3 z" fill="${c}" opacity="${op}"/>
+  </marker>`;
+});
+defs += '</defs>';
+svg.innerHTML = defs;
+
+function addEdge(d1x,d1y,d2x,d2y,type,label){
+  const c = COLOR[type]||'#C8A97E';
+  const op = OPACITY[type]||'0.8';
+  const da = DASH[type]||'';
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('class','e-path');
+  path.setAttribute('d',`${d1x},${d1y},${d2x},${d2y}`); // placeholder — overwritten
+  path.setAttribute('stroke',c);
+  path.setAttribute('opacity',op);
+  if(da) path.setAttribute('stroke-dasharray',da);
+  path.setAttribute('stroke-width','1.4');
+  path.setAttribute('marker-end',`url(#ah-${type})`);
+  return path;
 }
 
-// Render arrows after layout
-setTimeout(() => {
-  const colorMap = { main:getComputedStyle(document.documentElement).getPropertyValue('--c-main').trim(), auto:getComputedStyle(document.documentElement).getPropertyValue('--c-auto').trim(), alt:getComputedStyle(document.documentElement).getPropertyValue('--c-alt').trim(), nav:getComputedStyle(document.documentElement).getPropertyValue('--c-nav').trim(), loop:getComputedStyle(document.documentElement).getPropertyValue('--c-loop').trim() };
+function makePath(x1,y1,x2,y2,cx1,cy1,cx2,cy2){ return `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`; }
 
-  // Add defs for arrowheads
-  const types = ['main','auto','alt','nav','loop'];
-  let defs = '<defs>';
-  types.forEach(t => {
-    const c = colorMap[t] || '#C8A97E';
-    defs += `<marker id="ah-${t}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${c}" opacity="${t==='alt'||t==='loop'?'0.7':'0.9'}"/></marker>`;
-  });
-  defs += '</defs>';
-  svg.innerHTML = defs;
+function addArrow(x1,y1,x2,y2,cx1,cy1,cx2,cy2,type,label){
+  const c = COLOR[type]||'#C8A97E';
+  const op = parseFloat(OPACITY[type]||'0.8');
+  const da = DASH[type]||'';
 
-  EDGES.forEach(e => {
-    const fn = NODES.find(x=>x.id===e.f);
-    const tn = NODES.find(x=>x.id===e.t);
-    if (!fn||!tn) return;
-    const fc = nc(e.f), tc = nc(e.t);
-    const fw = fn.hub?280:230, tw = tn.hub?280:230;
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('class','e-path');
+  path.setAttribute('d', makePath(x1,y1,x2,y2,cx1,cy1,cx2,cy2));
+  path.setAttribute('stroke',c);
+  path.setAttribute('opacity',String(op));
+  path.setAttribute('stroke-width','1.4');
+  if(da) path.setAttribute('stroke-dasharray',da);
+  path.setAttribute('marker-end',`url(#ah-${type})`);
+  svg.appendChild(path);
 
-    let x1,y1,x2,y2,cx1,cy1,cx2,cy2;
-    const isLoopUp = tc.y < fc.y - 50;
+  // Label
+  const mx = (x1+cx1+cx2+x2)/4;
+  const my = (y1+cy1+cy2+y2)/4;
+  const tw = label.length * 5.0 + 10;
+  const th = 14;
 
-    if (isLoopUp) {
-      // Going upward — route outside
-      const side = e.ex < 0 ? -1 : 1;
-      x1 = fn.x + side*(fw/2); y1 = fc.y + fc.h/2;
-      x2 = tn.x + side*(tw/2); y2 = tc.y + tc.h/2;
-      const offX = side * 80;
-      cx1 = x1 + offX; cy1 = y1 + 60;
-      cx2 = x2 + offX; cy2 = y2 - 60;
-    } else {
-      // Default: top/bottom connections
-      // From bottom of source, offset by ex
-      x1 = fn.x + (e.ex || 0)*0.4; y1 = fc.y + fc.h;
-      // To top of target, offset by ex
-      x2 = tn.x + (e.ex || 0)*0.4; y2 = tc.y;
-      const dy = Math.abs(y2-y1);
-      cx1 = x1 + (e.ex||0)*0.5; cy1 = y1 + dy*0.4;
-      cx2 = x2 + (e.ex||0)*0.5; cy2 = y2 - dy*0.4;
-    }
+  const bg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  bg.setAttribute('x', mx-tw/2); bg.setAttribute('y', my-th/2);
+  bg.setAttribute('width',tw); bg.setAttribute('height',th);
+  bg.setAttribute('rx','3'); bg.setAttribute('fill','#070707');
+  bg.setAttribute('opacity','0.88');
+  svg.appendChild(bg);
 
-    const c = colorMap[e.type] || '#C8A97E';
-    const opacity = (e.type==='alt'||e.type==='loop') ? '0.55' : '0.85';
-    const dash = e.type==='alt' ? 'stroke-dasharray="5,4"' : e.type==='loop' ? 'stroke-dasharray="3,4"' : '';
+  const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+  txt.setAttribute('x', mx); txt.setAttribute('y', my+4);
+  txt.setAttribute('class','e-label-txt');
+  txt.setAttribute('text-anchor','middle');
+  txt.setAttribute('fill', c);
+  txt.setAttribute('opacity', String(op*0.9));
+  txt.setAttribute('font-size','9');
+  txt.textContent = label;
+  svg.appendChild(txt);
+}
 
-    // Path
-    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('class','edge-path');
-    path.setAttribute('d',`M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
-    path.setAttribute('stroke',c);
-    path.setAttribute('opacity',opacity);
-    if(dash){ const da=dash.match(/stroke-dasharray="([^"]+)"/); if(da) path.setAttribute('stroke-dasharray',da[1]); }
-    path.setAttribute('marker-end',`url(#ah-${e.type})`);
-    svg.appendChild(path);
+// ── Draw all edges ─────────────────────────────────────
+const S = nr('splash'), ONB = nr('onboarding'), MOOD = nr('mood'),
+      STR = nr('stream'), DET = nr('detail'), AUTH = nr('auth'),
+      WEL = nr('welcome'), HOM = nr('home'), DIS = nr('discover'),
+      BOT = nr('barbot'), CON = nr('control'), CRA = nr('crafting'),
+      CHE = nr('cheers');
 
-    // Label at midpoint
-    const mx = (x1+cx1+cx2+x2)/4, my = (y1+cy1+cy2+y2)/4;
-    const bg = document.createElementNS('http://www.w3.org/2000/svg','rect');
-    const lw = e.label.length * 5.5 + 12, lh = 15;
-    bg.setAttribute('x',mx-lw/2); bg.setAttribute('y',my-lh/2);
-    bg.setAttribute('width',lw); bg.setAttribute('height',lh);
-    bg.setAttribute('rx','4'); bg.setAttribute('fill','#0A0A0A');
-    bg.setAttribute('opacity','0.85');
-    svg.appendChild(bg);
+// 1. Splash → Onboarding  (auto, short horizontal)
+addArrow(right(S),cy(S), left(ONB),cy(ONB),
+  right(S)+10,cy(S), left(ONB)-10,cy(ONB), 'auto','Auto · 2.2s');
 
-    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
-    txt.setAttribute('x',mx); txt.setAttribute('y',my+4);
-    txt.setAttribute('class','edge-label'); txt.setAttribute('text-anchor','middle');
-    txt.textContent = e.label;
-    svg.appendChild(txt);
-  });
+// 2. Onboarding → Mood
+addArrow(right(ONB),cy(ONB), left(MOOD),cy(MOOD),
+  right(ONB)+10,cy(ONB), left(MOOD)-10,cy(MOOD), 'main','Tap CTA');
 
-  // Render stage bands (after nodes have heights)
-  STAGES.forEach((s,i) => {
-    const nextTop = i+1 < STAGES.length ? STAGES[i+1].top : maxY;
-    const band = document.createElement('div');
-    band.className = 'stage-band';
-    band.style.top = s.top + 'px';
-    band.style.height = (nextTop - s.top) + 'px';
-    band.innerHTML = `<span class="stage-label">${s.label}</span><span class="stage-num">Stage ${s.id}</span><div class="stage-line"></div>`;
-    canvas.appendChild(band);
-  });
+// 3. Mood → Stream
+addArrow(right(MOOD),cy(MOOD), left(STR),cy(STR),
+  right(MOOD)+10,cy(MOOD), left(STR)-10,cy(STR), 'main','Select mood');
 
-}, 120);
+// 4. Stream → Detail
+addArrow(right(STR),cy(STR), left(DET),cy(DET),
+  right(STR)+10,cy(STR), left(DET)-10,cy(DET), 'main','Tap recipe');
 
-/* ── DETAIL PANEL ─────────────────────── */
-function openPanel(id) {
+// 5. Detail → Auth (branch down-right)
+addArrow(cx(DET),bot(DET), cx(AUTH),top(AUTH),
+  cx(DET),bot(DET)+50, cx(AUTH),top(AUTH)-50, 'main','Craft · guest');
+
+// 6. Detail → Crafting (already signed in — alt, big curve below)
+addArrow(right(DET),cy(DET), left(CRA),cy(CRA),
+  right(DET)+60, bot(DET)+140,
+  left(CRA)-60, bot(CRA)+140, 'alt','Already signed in');
+
+// 7. Auth → Welcome
+addArrow(right(AUTH),cy(AUTH), left(WEL),cy(WEL),
+  right(AUTH)+12,cy(AUTH), left(WEL)-12,cy(WEL), 'main','Sign in ✓');
+
+// 8. Auth → Home (guest, curves up then right)
+addArrow(left(AUTH),cy(AUTH), cx(HOM),bot(HOM),
+  left(AUTH)-80,cy(AUTH), cx(HOM)-40,bot(HOM)+60, 'alt','Guest mode');
+
+// 9. Welcome → Home (curves up-right)
+addArrow(right(WEL),cy(WEL), cx(HOM),bot(HOM),
+  right(WEL)+60,cy(WEL), cx(HOM)+30,bot(HOM)+60, 'auto','Auto · 2.5s');
+
+// 10. Home → Discover (up-right branch)
+addArrow(right(HOM),cy(HOM), left(DIS),cy(DIS),
+  right(HOM)+50, cy(HOM), left(DIS)-20, cy(DIS), 'nav','Discover tab');
+
+// 11. Home → BarBot (straight right)
+addArrow(right(HOM),cy(HOM), left(BOT),cy(BOT),
+  right(HOM)+50,cy(HOM), left(BOT)-20,cy(BOT), 'nav','BarBot tab');
+
+// 12. Home → Control (down-right branch)
+addArrow(right(HOM),cy(HOM), left(CON),cy(CON),
+  right(HOM)+50,cy(HOM), left(CON)-20,cy(CON), 'nav','Control tab');
+
+// 13. Home → Mood (big loop over the top)
+addArrow(cx(HOM),top(HOM), cx(MOOD),top(MOOD),
+  cx(HOM),-110,
+  cx(MOOD),-110, 'loop','Set occasion');
+
+// 14. Discover → Crafting
+addArrow(right(DIS),cy(DIS), left(CRA),cy(CRA),
+  right(DIS)+40,cy(DIS), left(CRA)-40,cy(CRA), 'main','Craft recipe');
+
+// 15. BarBot → Crafting
+addArrow(right(BOT),cy(BOT), left(CRA),cy(CRA),
+  right(BOT)+20,cy(BOT), left(CRA)-20,cy(CRA), 'main','Craft recipe');
+
+// 16. Control → Crafting
+addArrow(right(CON),cy(CON), left(CRA),cy(CRA),
+  right(CON)+40,cy(CON), left(CRA)-40,cy(CRA), 'nav','Quick craft');
+
+// 17. Crafting → Cheers
+addArrow(right(CRA),cy(CRA), left(CHE),cy(CHE),
+  right(CRA)+15,cy(CRA), left(CHE)-15,cy(CHE), 'main','Complete ~45s');
+
+// 18. Cheers → Home (big loop over the top)
+addArrow(cx(CHE),top(CHE), cx(HOM),top(HOM),
+  cx(CHE),-130,
+  cx(HOM),-130, 'loop','Make Another');
+
+/* ══════════════════════════════════════════════
+   ZOOM + PAN
+   ══════════════════════════════════════════════ */
+const viewport = document.getElementById('viewport');
+let scale = 1, panX = 0, panY = 0;
+let isPanning = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+
+function applyTransform(animate=false){
+  if(animate) panLayer.style.transition = 'transform .4s cubic-bezier(.16,1,.3,1)';
+  else panLayer.style.transition = 'none';
+  panLayer.style.transform = `translate(${panX}px,${panY}px) scale(${scale})`;
+  document.getElementById('zoomPct').textContent = Math.round(scale*100)+'%';
+}
+
+function fitToScreen(animate=true){
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const padding = 60;
+  const scaleX = (vw - padding*2) / CANVAS_W;
+  const scaleY = (vh - padding*2) / CANVAS_H;
+  scale = Math.min(scaleX, scaleY, 1.0);
+  const displayW = CANVAS_W * scale;
+  const displayH = CANVAS_H * scale;
+  panX = (vw - displayW) / 2;
+  panY = (vh - displayH) / 2;
+  applyTransform(animate);
+}
+
+// Initial fit
+fitToScreen(false);
+
+document.getElementById('fitBtn').onclick = () => fitToScreen(true);
+
+document.getElementById('zoomIn').onclick = () => {
+  const vw = viewport.clientWidth, vh = viewport.clientHeight;
+  const newScale = Math.min(scale * 1.2, 2.5);
+  const cx = vw/2, cyy = vh/2;
+  panX = cx - (cx - panX) * (newScale/scale);
+  panY = cyy - (cyy - panY) * (newScale/scale);
+  scale = newScale;
+  applyTransform(true);
+};
+
+document.getElementById('zoomOut').onclick = () => {
+  const vw = viewport.clientWidth, vh = viewport.clientHeight;
+  const newScale = Math.max(scale / 1.2, 0.15);
+  const cx = vw/2, cyy = vh/2;
+  panX = cx - (cx - panX) * (newScale/scale);
+  panY = cyy - (cyy - panY) * (newScale/scale);
+  scale = newScale;
+  applyTransform(true);
+};
+
+// Scroll wheel zoom
+viewport.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.1 : 0.9;
+  const newScale = Math.min(Math.max(scale*factor, 0.15), 2.5);
+  const rect = viewport.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  panX = mx - (mx - panX) * (newScale/scale);
+  panY = my - (my - panY) * (newScale/scale);
+  scale = newScale;
+  applyTransform(false);
+}, { passive:false });
+
+// Pan drag
+viewport.addEventListener('mousedown', e => {
+  if(e.target.closest('.node')) return;
+  isPanning = true;
+  startX = e.clientX; startY = e.clientY;
+  startPanX = panX; startPanY = panY;
+  viewport.classList.add('grabbing');
+});
+window.addEventListener('mousemove', e => {
+  if(!isPanning) return;
+  panX = startPanX + (e.clientX - startX);
+  panY = startPanY + (e.clientY - startY);
+  applyTransform(false);
+});
+window.addEventListener('mouseup', () => {
+  isPanning = false;
+  viewport.classList.remove('grabbing');
+});
+
+// Touch pan
+let lastTouchX=0, lastTouchY=0, touchStartDist=0, touchStartScale=1;
+viewport.addEventListener('touchstart', e => {
+  if(e.touches.length===1){
+    lastTouchX = e.touches[0].clientX;
+    lastTouchY = e.touches[0].clientY;
+  } else if(e.touches.length===2){
+    touchStartDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    touchStartScale = scale;
+  }
+},{passive:true});
+viewport.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if(e.touches.length===1){
+    panX += e.touches[0].clientX - lastTouchX;
+    panY += e.touches[0].clientY - lastTouchY;
+    lastTouchX = e.touches[0].clientX;
+    lastTouchY = e.touches[0].clientY;
+    applyTransform(false);
+  } else if(e.touches.length===2){
+    const dist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    scale = Math.min(Math.max(touchStartScale*(dist/touchStartDist),0.15),2.5);
+    applyTransform(false);
+  }
+},{passive:false});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='+' || e.key==='=') document.getElementById('zoomIn').click();
+  if(e.key==='-') document.getElementById('zoomOut').click();
+  if(e.key==='0') fitToScreen(true);
+  if(e.key==='Escape') closePanel();
+});
+
+/* ══════════════════════════════════════════════
+   DETAIL PANEL
+   ══════════════════════════════════════════════ */
+function openPanel(id){
   const n = NODES.find(x=>x.id===id);
-  if (!n) return;
+  if(!n) return;
   document.querySelectorAll('.node').forEach(el=>el.classList.remove('active'));
-  document.getElementById('node-'+id).classList.add('active');
+  document.getElementById('nd-'+id).classList.add('active');
 
-  const transitions = n.transitions.map(t=>`<div class="dp-tr"><span class="dp-tr-arrow">→</span><span>${t}</span></div>`).join('');
-  const errors = n.errors.length ? n.errors.map(e=>`<div class="dp-err">${e}</div>`).join('') : '<div style="font-size:12px;color:var(--t4);font-weight:300">No error states for this screen.</div>';
-  const ehCodes = n.ehCodes.length ? n.ehCodes.map(c=>`<span class="dp-eh">${c}</span>`).join('') : '';
+  document.getElementById('dpTop').innerHTML = `
+    <div class="dp-eyebrow">Stage ${n.stage} · ${n.stageLabel}</div>
+    <div class="dp-title"><b>${n.label}</b></div>
+    <div class="dp-sub">${n.sub}</div>`;
 
-  document.getElementById('detailContent').innerHTML = `
-    <div class="dp-stage">Stage ${n.stage} · ${STAGES.find(s=>s.id===n.stage)?.label||''}</div>
-    <div class="dp-title">${n.label.includes(' ')?n.label.replace(/^(\S+)/,'<strong>$1</strong>'):('<strong>'+n.label+'</strong>')}</div>
-    <div class="dp-sub">${n.sub}</div>
+  const transitions = n.transitions.map(t=>`<div class="dp-tr"><span class="dp-tr-a">›</span><span>${t}</span></div>`).join('');
+  const errors = n.errors.length
+    ? n.errors.map(e=>`<div class="dp-err-item">${e}</div>`).join('')
+    : '<div class="dp-no-err">No error states for this screen.</div>';
+  const ehCodes = n.ehCodes.length
+    ? `<div class="dp-section"><div class="dp-s-label">Error Handling Codes</div><div class="dp-ehs">${n.ehCodes.map(c=>`<span class="dp-eh">${c}</span>`).join('')}</div></div>`
+    : '';
+
+  document.getElementById('dpBody').innerHTML = `
     <div class="dp-section">
-      <div class="dp-section-label">Screen Details</div>
-      <ul>${n.details.map(d=>`<li>${d}</li>`).join('')}</ul>
+      <div class="dp-s-label">Screen Details</div>
+      <ul class="dp-s-list">${n.details.map(d=>`<li>${d}</li>`).join('')}</ul>
     </div>
     <div class="dp-section">
-      <div class="dp-section-label">Transitions Out</div>
-      <div class="dp-transitions">${transitions}</div>
+      <div class="dp-s-label">Transitions Out</div>
+      ${transitions}
     </div>
     <div class="dp-section">
-      <div class="dp-section-label">Error States</div>
+      <div class="dp-s-label">Error States</div>
       <div class="dp-errs">${errors}</div>
     </div>
-    ${ehCodes ? `<div class="dp-section"><div class="dp-section-label">Error Handling Codes</div><div class="dp-eh-codes">${ehCodes}</div></div>` : ''}
-  `;
+    ${ehCodes}`;
+
   document.getElementById('detailPanel').classList.add('open');
   document.getElementById('overlay').classList.add('show');
 }
-function closePanel() {
+
+function closePanel(){
   document.getElementById('detailPanel').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
   document.querySelectorAll('.node').forEach(el=>el.classList.remove('active'));
 }
-document.addEventListener('keydown', e => { if(e.key==='Escape') closePanel(); });
 </script>
 </body>
 </html>

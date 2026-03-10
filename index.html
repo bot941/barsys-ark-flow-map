@@ -23,6 +23,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 .side li a:hover{background:rgba(200,169,126,.1);color:var(--txt);border-left-color:var(--gold)}
 .side li a.active{background:rgba(200,169,126,.15);color:var(--gold);border-left-color:var(--gold);font-weight:600}
 .side .icon{width:18px;text-align:center;font-size:11px}
+.flow-diagram-btn{display:flex;align-items:center;gap:10px;margin:12px 12px 4px;padding:12px 14px;background:linear-gradient(135deg,rgba(200,169,126,.15),rgba(200,169,126,.06));border:1px solid rgba(200,169,126,.35);border-radius:10px;color:var(--gold);text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.2px;transition:var(--tr);cursor:pointer}
+.flow-diagram-btn:hover{background:linear-gradient(135deg,rgba(200,169,126,.25),rgba(200,169,126,.12));border-color:rgba(200,169,126,.55);box-shadow:0 4px 20px rgba(200,169,126,.15)}
+.flow-diagram-btn .fdb-icon{width:28px;height:28px;background:rgba(200,169,126,.2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.flow-diagram-btn .fdb-text{flex:1}
+.flow-diagram-btn .fdb-label{font-size:12px;font-weight:700;color:var(--gold);line-height:1.2}
+.flow-diagram-btn .fdb-sub{font-size:9.5px;color:rgba(200,169,126,.55);font-weight:400;margin-top:1px}
+.flow-diagram-btn .fdb-arrow{font-size:14px;color:rgba(200,169,126,.4);transition:var(--tr)}
+.flow-diagram-btn:hover .fdb-arrow{color:var(--gold);transform:translateX(2px)}
 
 /* MAIN */
 .main{margin-left:240px;width:calc(100% - 240px);height:100vh;display:flex;flex-direction:column;overflow:hidden}
@@ -132,6 +140,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 <div class="shell">
 <aside class="side">
 <div class="side-hdr"><div class="logo">BARSYS ARK</div></div>
+<a href="flow-diagram.html" class="flow-diagram-btn">
+  <div class="fdb-icon">⬡</div>
+  <div class="fdb-text">
+    <div class="fdb-label">Flow Diagram</div>
+    <div class="fdb-sub">Full birds-eye user flow</div>
+  </div>
+  <span class="fdb-arrow">›</span>
+</a>
 <div class="side-label">Mode</div>
 <ul id="modeNav">
 <li><a class="active" data-mode="iphone-dark"><span class="icon">📱</span>iPhone Dark</a></li>
