@@ -160,11 +160,11 @@ var NODE_DEFS = [
   {id:"bb8", lane:"BB", label:"Saved Recipes", sub:"view saved", x:1214, y:612},
   {id:"bb9", lane:"BB", label:"Taste Quiz", sub:"flavour quiz", x:1376, y:612},
   {id:"bb10", lane:"BB", label:"Surprise Me", sub:"random pick", x:1538, y:612},
-  {id:"bb11", lane:"BB", label:"Pairing Sug", sub:"food match", x:1700, y::612},
-  {id:"bb12", lane:"BB", label:"Recipe History", sub:"past AI picks", x:1862, y:'612},
-  {id:"bb13", lane:"BB", label:"Trending", sub:"�op drinks", x:2024, y:'612},
+  {id:"bb11", lane:"BB", label:"Pairing Sug", sub:"food match", x:1700, y:612},
+  {id:"bb12", lane:"BB", label:"Recipe History", sub:"past AI picks", x:1862, y:612},
+  {id:"bb13", lane:"BB", label:"Trending", sub:"top drinks", x:2024, y:612},
   {id:"bb14", lane:"BB", label:"Flavour Prfl", sub:"taste profile", x:2186, y:612},
-  {id:"bbs1", lane:"BB", label:"AI Feedback", sub:"��ous up/down", x:80, y:712},
+  {id:"bbs1", lane:"BB", label:"AI Feedback", sub:"thumbs up/down", x:80, y:712},
   {id:"bbs2", lane:"BB", label:"Curated List", sub:"themed picks", x:242, y:712},
   {id:"bbs3", lane:"BB", label:"Drink Queued", sub:"craft later", x:404, y:712},
   {id:"bbs4", lane:"BB", label:"Mood", sub:"from AI", x:566, y:712},
@@ -256,19 +256,19 @@ var NODE_DEFS = [
   {id:"er12", lane:"ER", label:"Maint Mode", sub:"server down", x:1862, y:2208},
   {id:"er13", lane:"ER", label:"Self Diagnose", sub:"auto-check", x:2024, y:2208},
   {id:"er14", lane:"ER", label:"Error Log", sub:"debug info", x:2186, y:2208},
-  {id:"ers1", lane:"ER", label:"Partial Pour", sub:"save partial", x:80, y::2308},
+  {id:"ers1", lane:"ER", label:"Partial Pour", sub:"save partial", x:80, y:2308},
   {id:"ers2", lane:"ER", label:"Refill Intr", sub:"mid-refill stop", x:242, y:2308},
   {id:"ers3", lane:"ER", label:"Fully Restored", sub:"all good", x:404, y:2308},
   {id:"ers4", lane:"ER", label:"Support Cntct", sub:"help desk", x:566, y:2308},
   {id:"ers5", lane:"ER", label:"Ticket Submit", sub:"send ticket", x:728, y:2308},
-  {id:"ers6", lane:"ER", label:"Known Issues", sub:"FAQ", x:890, y::2308},
+  {id:"ers6", lane:"ER", label:"Known Issues", sub:"FAQ", x:890, y:2308},
   {id:"ers7", lane:"ER", label:"Recover Opts", sub:"options", x:1052, y:2308},
   {id:"ers8", lane:"ER", label:"Factory Reset", sub:"full reset", x:1214, y:2308},
-  {id:"ers9", lane:"ER", label:"Offline Browse", sub:"limited mode", x:1376, y::2308},
-  {id:"ers10", lane:"ER", label:"Reconnecting", sub:"auto-retry", x:1538, y::2308},
+  {id:"ers9", lane:"ER", label:"Offline Browse", sub:"limited mode", x:1376, y:2308},
+  {id:"ers10", lane:"ER", label:"Reconnecting", sub:"auto-retry", x:1538, y:2308},
   {id:"bl1", lane:"BL", label:"BLE Home", sub:"scan start", x:80, y:2474},
   {id:"bl2", lane:"BL", label:"BLE Scanning", sub:"searching", x:242, y:2474},
-  {id:"bl3", lane:"BL", label:":"BLE Found", sub:"device found", x:404, y:2474},
+  {id:"bl3", lane:"BL", label:"BLE Found", sub:"device found", x:404, y:2474},
   {id:"bl4", lane:"BL", label:"BLE Pairing", sub:"connecting", x:566, y:2474},
   {id:"bl5", lane:"BL", label:"BLE Success", sub:"paired!", x:728, y:2474},
   {id:"bl6", lane:"BL", label:"BLE Failed", sub:"pair fail", x:890, y:2474},
@@ -335,8 +335,8 @@ var EDGES = [
   ["ob5", "obs2", ""],
   ["obs2", "obs3", ""],
   ["obs3", "obs5", ""],
-  ["ob5", "obs4", ""],
-  ["ob7", "ob7", ""],
+  ["obs4", "ob10", ""],
+  ["ob7", "obs4", ""],
   ["obs9", "ob14", ""],
   ["ob14", "obs9", ""],
   ["ob9", "obs3", ""],
@@ -416,8 +416,7 @@ var EDGES = [
   ["rb2", "rb3", ""],
   ["rb3", "rb4", ""],
   ["rb4", "rb5", ""],
-  ["rb5", "rb6", ""],
-  ["brb4", "rb6", ""],
+  ["rb4", "rb6", ""],
   ["rb5", "rb6", ""],
   ["sm1", "sm2", ""],
   ["sm2", "sm3", ""],
@@ -693,12 +692,12 @@ window.addEventListener("load",function(){
   var wrap = document.getElementById("canvas-wrap");
   wrap.addEventListener("wheel",function(e){e.preventDefault();var r=wrap.getBoundingClientRect();var mx=e.clientX-r.left,my=e.clientY-r.top;var delta=e.deltaY>0?0.875:1.143;var ns=Math.max(0.1,Math.min(4,scale*delta));tx=mx-(mx-tx)*(ns/scale);ty=my-(my-ty)*(ns/scale);scale=ns;applyTransform();},{passive:false});
   wrap.addEventListener("mousedown",function(e){if(e.target.closest("[data-nid]"))return;dragging=true;dragStartX=e.clientX;dragStartY=e.clientY;txStart=tx;tyStart=ty;wrap.classList.add("dragging");});
-  document.addEventListener("mousemove",function(e){if(!dragging) return;tx=txStart+(e.clientX-dragStartX);ty=tyStart+(e.clientY-dragStartY);applyTransform();});
+  document.addEventListener("mousemove",function(e){if(!dragging)return;tx=txStart+(e.clientX-dragStartX);ty=tyStart+(e.clientY-dragStartY);applyTransform();});
   document.addEventListener("mouseup",function(){dragging=false;document.getElementById("canvas-wrap").classList.remove("dragging");});
   
-  wrap.addEventListener("touchstart",function(e){if(e.touches.length===1){dragging=true;dragStartX=e.touches[0].clientX;dragStartY=e.touches[0].clientY;txStart=tx;tyStart=ty;}else if(e.touches.length===2){dragging=false;var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;ltd=Math.sqrt(dx*dx+dy*dy);ltm={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};}]},{passive:true});
-  wrap.addEventListener("touchmove",function(e){e.preventDefault();if(e.touches.length===1&&dragging){tx=txStart+(e.touches[0].clientX-dragStartX);ty=tyStart+(e.touches[0].clientY-dragStartY);applyTransform();}else if(e.touches.length===2&&ltd){var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;var dist=Math.sqrt(dx*dx+dy*dy);var d2=dist/ltd;var mid={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};var ns=Math.max(0.1,Math.min(4,scale*d2));tx=mid.x-(ltm.x-tx)*(ns/scale);ty=mid.y-(blm.y-ty)*(ns/scale);scale=ns;ltd=dist;ltm=mid;applyTransform();}},{passive:false});
-  wrap.addEventListener("touchend",function(){dragging=false;ltd=null;}});
+  wrap.addEventListener("touchstart",function(e){if(e.touches.length===1){dragging=true;dragStartX=e.touches[0].clientX;dragStartY=e.touches[0].clientY;txStart=tx;tyStart=ty;}else if(e.touches.length===2){dragging=false;var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;ltd=Math.sqrt(dx*dx+dy*dy);ltm={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};}},{passive:true});
+  wrap.addEventListener("touchmove",function(e){e.preventDefault();if(e.touches.length===1&&dragging){tx=txStart+(e.touches[0].clientX-dragStartX);ty=tyStart+(e.touches[0].clientY-dragStartY);applyTransform();}else if(e.touches.length===2&&ltd){var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;var dist=Math.sqrt(dx*dx+dy*dy);var d2=dist/ltd;var mid={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};var ns=Math.max(0.1,Math.min(4,scale*d2));tx=mid.x-(ltm.x-tx)*(ns/scale);ty=mid.y-(ltm.y-ty)*(ns/scale);scale=ns;ltd=dist;ltm=mid;applyTransform();}},{passive:false});
+  wrap.addEventListener("touchend",function(){dragging=false;ltd=null;});
   document.addEventListener("keydown",function(e){var s=40;if(e.key==="ArrowLeft"){tx+=s;applyTransform();}if(e.key==="ArrowRight"){tx-=s;applyTransform();}if(e.key==="ArrowUp"){ty+=s;applyTransform();}if(e.key==="ArrowDown"){ty-=s;applyTransform();}if(e.key==="+"||e.key==="="){scale=Math.min(4,scale*1.15);applyTransform();}if(e.key==="-"){scale=Math.max(0.1,scale*0.87);applyTransform();}if(e.key==="0"){fitToScreen();}if(e.key==="Escape"){closeDetail();}});
   
   document.getElementById("toggleLabels").addEventListener("click", toggleEdgeLabels);
