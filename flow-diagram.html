@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BarsysARK — User Flow Architecture v2.0</title>
+<title>BarsysARK — User Flow Architecture v3.0</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sans-serif;overflow:hidden;height:100vh}
 #toolbar{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(10,10,20,0.96);border-bottom:1px solid #222;display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;backdrop-filter:blur(10px)}
 #toolbar h1{font-size:15px;font-weight:700;color:#fff;letter-spacing:.5px;margin-right:8px}
-#toolbar span{font-size:12px;color:#666}
+#toolbar h2{font-size:12px;font-weight:400;color:#666;letter-spacing:.3px}
 .tbtn{background:rgba(255,255,255,0.07);border:1px solid #333;color:#ccc;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s}
 .tbtn:hover{background:rgba(255,255,255,0.13);color:#fff}
 #nodecount{margin-left:auto;font-size:11px;color:#555}
@@ -25,494 +25,685 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sa
 #detail.open{right:0}
 #detail h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
 #detail .dtag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-bottom:12px;opacity:.85}
-#detail .dsub{font-size:12px;color:#aaa;margin-bottom:14px;line-height:1.6}
-#detail .dsec{font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;margin-top:14px}
-#detail .dlink{display:flex;align-items:center;gap:6px;font-size:11px;padding:6px 8px;border-radius:5px;background:rgba(255,255,255,0.04);margin-bottom:4px;cursor:pointer;border:1px solid transparent;transition:all .15s}
-#detail .dlink:hover{background:rgba(255,255,255,0.09);border-color:#333}
-#detail .dlink .arr{font-size:9px;color:#555}
-#detail .dlink .lbl{color:#ddd}
-#detail #dclose{position:absolute;top:16px;right:16px;background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:4px}
-#detail #dclose:hover{color:#fff}
-#legend{position:fixed;bottom:16px;left:16px;background:rgba(10,10,20,0.92);border:1px solid #222;border-radius:10px;padding:12px 14px;z-index:100;backdrop-filter:blur(8px)}
-#legend h4{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
-.leg-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
-.leg-label{font-size:10px;color:#888}
-#hint{position:fixed;bottom:16px;right:16px;font-size:10px;color:#444;text-align:right;line-height:1.8}
-#flowmap{position:fixed;top:52px;left:-420px;width:400px;bottom:0;background:rgba(12,12,22,0.98);border-right:1px solid #2a2a3a;padding:20px;transition:left .25s cubic-bezier(.4,0,.2,1);z-index:200;overflow-y:auto}
-#flowmap.open{left:0}
-#flowmap h3{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
-#flowmap .fm-sub{font-size:11px;color:#555;margin-bottom:16px}
-#flowmap .fm-sec{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.8px;margin:14px 0 6px;border-top:1px solid #1a1a2a;padding-top:10px}
-#flowmap .fm-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;padding:6px;border-radius:5px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
-#flowmap .fm-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:1px}
-#flowmap .fm-arr{color:#444;font-size:11px;flex-shrink:0;margin-top:1px}
-#flowmap .fm-desc{font-size:10px;color:#999;line-height:1.5}
-#flowmap .fm-node{font-size:10px;font-weight:600;color:#ddd;margin-bottom:1px}
-#flowmap #fmclose{position:absolute;top:16px;right:16px;background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:4px}
-#flowmap #fmclose:hover{color:#fff}
+#detail .dlink{padding:8px 0;border-bottom:1px solid #222;font-size:12px;color:#aaa;display:flex;align-items:center;gap:8px;cursor:pointer;transition:color .15s}
+#detail .dlink:hover{color:#fff}
+#detail .arr{color:#666}
+#flowmap{position:fixed;bottom:20px;left:20px;width:200px;background:rgba(15,15,25,0.95);border:1px solid #333;border-radius:8px;padding:12px;z-index:150;max-height:40vh;overflow-y:auto;transition:all .25s;opacity:0;pointer-events:none}
+#flowmap.open{opacity:1;pointer-events:auto}
+.leg-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:11px;color:#888}
+.leg-swatch{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+.leg-label{flex:1}
+#zoomlbl{font-size:11px;color:#555;margin-left:auto}
+.lane-label{font-size:11px;font-weight:600;fill:#fff;opacity:0.7}
 </style>
 </head>
 <body>
 <div id="toolbar">
-  <h1>BarsysARK &#8212; User Flow Architecture v2.0</h1>
-  <span>172 screens &middot; 251 connections &middot; 8 domains &middot; 21 cross-flow links</span>
-  <button class="tbtn" onclick="fitToScreen()">Fit Screen</button>
-  <button class="tbtn" onclick="resetZoom()">100%</button>
-  <button class="tbtn" id="toggleLabels" onclick="toggleEdgeLabels()">Show Labels</button>
-  <button class="tbtn" onclick="toggleFlowMap()">Flow Map</button>
-  <span id="zoomlbl" style="font-size:11px;color:#555">100%</span>
-  <span id="nodecount"></span>
+<h1>BarsysARK — User Flow Architecture v3.0</h1>
+<h2>172+ screens · 3 devices · 12 domains</h2>
+<button class="tbtn" id="toggleLabels">Show Labels</button>
+<button class="tbtn" id="toggleFlowBtn">Flow Map</button>
+<span id="nodecount"></span>
+<span id="zoomlbl">100%</span>
 </div>
-<div id="canvas-wrap"><svg id="canvas"></svg></div>
-<div id="detail">
-  <button id="dclose" onclick="closeDetail()">&#x2715;</button>
-  <h3 id="d-title"></h3>
-  <span id="d-tag" class="dtag"></span>
-  <p id="d-sub" class="dsub"></p>
-  <div class="dsec">Leads to</div><div id="d-out"></div>
-  <div class="dsec">Reached from</div><div id="d-in"></div>
-</div>
-<div id="legend"><h4>Flow Domains</h4><div id="leg-rows"></div></div>
 <div id="flowmap">
-  <button id="fmclose" onclick="toggleFlowMap()">&#x2715;</button>
-  <h3>21 Cross-Flow Connections</h3>
-  <p class="fm-sub">Explicit navigation transitions between the 8 flow domains</p>
-  <div class="fm-sec">01 Onboard &rarr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(201,169,110,0.3);color:#C9A96E">home</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">barbot &middot; 03 BarBot</div><div class="fm-desc">BarBot AI card tap from home feed</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(201,169,110,0.3);color:#C9A96E">home</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">mood &middot; 03 BarBot</div><div class="fm-desc">Mood card tap &mdash; triggers AI recipe discovery</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(201,169,110,0.3);color:#C9A96E">home</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">craftConfirm &middot; 02 Craft</div><div class="fm-desc">Popular item &mdash; tap Craft CTA directly from home</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(201,169,110,0.3);color:#C9A96E">home</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ble &middot; 07 BLE</div><div class="fm-desc">Device status pill tap &mdash; opens BLE management</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(201,169,110,0.3);color:#C9A96E">home</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">partySetup &middot; 04 Party</div><div class="fm-desc">Party mode FAB &mdash; requires setupComplete = true</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(201,169,110,0.3);color:#C9A96E">setupWizard</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ble &middot; 07 BLE</div><div class="fm-desc">Wizard step 2 hands off to BLE pairing flow</div></div></div>
-  <div class="fm-sec">02 Craft &harr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(59,130,246,0.3);color:#3B82F6">ingredientCheck</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">station &middot; 05 Station</div><div class="fm-desc">Missing ingredient &mdash; navigate to slot assignment</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(59,130,246,0.3);color:#3B82F6">craftRating</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">barbot &middot; 03 BarBot</div><div class="fm-desc">returnToBarbotAfterCraft flag &mdash; routes back to AI</div></div></div>
-  <div class="fm-sec">03 BarBot &rarr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(139,92,246,0.3);color:#8B5CF6">moodResult</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ingredientCheck &middot; 02 Craft</div><div class="fm-desc">&ldquo;Craft this&rdquo; CTA from AI mood result</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(139,92,246,0.3);color:#8B5CF6">recipeCustomize</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">craftConfirm &middot; 02 Craft</div><div class="fm-desc">&ldquo;Craft it&rdquo; CTA from recipe customization</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(139,92,246,0.3);color:#8B5CF6">aiCelebration</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">craftConfirm &middot; 02 Craft</div><div class="fm-desc">Celebrate &rarr; craft sequence transition</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(139,92,246,0.3);color:#8B5CF6">saveAIRecipe</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">savedRecipes &middot; 06 Discover</div><div class="fm-desc">Save AI recipe &rarr; view in collection</div></div></div>
-  <div class="fm-sec">04 Party &harr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(245,158,11,0.3);color:#F59E0B">partyLobby</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ingredientCheck &middot; 02 Craft</div><div class="fm-desc">Guest order approved &rarr; craft handoff</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(245,158,11,0.3);color:#F59E0B">partySettings</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">home &middot; 01 Onboard</div><div class="fm-desc">End Party &mdash; clears partyActive, returns home</div></div></div>
-  <div class="fm-sec">05 Station &rarr; 08 Error</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(16,185,129,0.3);color:#10B981">stationDiag</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">errorLog &middot; 08 Error</div><div class="fm-desc">View full diagnostics in error recovery log</div></div></div>
-  <div class="fm-sec">06 Discover &rarr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(239,68,68,0.3);color:#EF4444">recipeDetail</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ingredientCheck &middot; 02 Craft</div><div class="fm-desc">&ldquo;Craft this&rdquo; CTA from recipe detail page</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(239,68,68,0.3);color:#EF4444">discoverFilter</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">mood &middot; 03 BarBot</div><div class="fm-desc">Mood filter &rarr; set occasion for AI discovery</div></div></div>
-  <div class="fm-sec">07 BLE &harr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(6,182,212,0.3);color:#06B6D4">bleSuccess</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">setupWizard &middot; 01 Onboard</div><div class="fm-desc">Auto-advance back to wizard step 3</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(6,182,212,0.3);color:#06B6D4">craftError (ER)</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ble &middot; 07 BLE</div><div class="fm-desc">Device disconnected mid-craft &mdash; reconnect</div></div></div>
-  <div class="fm-sec">08 Error &rarr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(249,115,22,0.3);color:#F97316">maintenanceMode</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">home &middot; 01 Onboard</div><div class="fm-desc">Exit maintenance mode &rarr; returns to home</div></div></div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(249,115,22,0.3);color:#F97316">fullyRestored</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">crafting &middot; 02 Craft</div><div class="fm-desc">System restored &mdash; resume interrupted craft</div></div></div>
+<div id="leg-rows"></div>
 </div>
-<div id="hint">Scroll to zoom &nbsp;|&nbsp; Drag to pan &nbsp;|&nbsp; Click node for details<br>Arrow keys to pan &nbsp;|&nbsp; +/- to zoom &nbsp;|&nbsp; 0 to fit</div>
+<div id="canvas-wrap">
+<svg id="canvas" width="4800" height="3300">
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+<polygon points="0 0, 10 3, 0 6" fill="#888"/>
+</marker>
+</defs>
+<g id="main-g">
+<g id="lanes"></g>
+<g id="edges"></g>
+<g id="nodes"></g>
+</g>
+</svg>
+</div>
+<div id="detail">
+<h3 id="dname"></h3>
+<div id="dtag"></div>
+<div id="dlabel"></div>
+<div id="dout"><strong>Outputs:</strong></div>
+<div id="din"><strong>Inputs:</strong></div>
+</div>
 <script>
-var CW=3800,CH=2200,NW=152,NH=66,BW=138,BH=56,showLabels=false;
-var LANES=[
-  ["OB","01 \xb7 Onboarding & Auth",22,252,"#C9A96E"],
-  ["CF","02 \xb7 Craft Flow",288,252,"#3B82F6"],
-  ["BB","03 \xb7 BarBot AI",554,252,"#8B5CF6"],
-  ["PM","04 \xb7 Party Mode",820,252,"#F59E0B"],
-  ["SM","05 \xb7 Station Mgmt",1086,252,"#10B981"],
-  ["DI","06 \xb7 Discover",1352,252,"#EF4444"],
-  ["BLE","07 \xb7 BLE & Device",1618,252,"#06B6D4"],
-  ["ER","08 \xb7 Error Recovery",1884,266,"#F97316"]
+var CW = 4800;
+var CH = 3300;
+var NW = 152;
+var NH = 66;
+var BW = 138;
+var BH = 56;
+var scale = 1, tx = 40, ty = 20;
+var dragging = false, dragStartX, dragStartY, txStart, tyStart;
+var showLabels = false;
+var ltd = null, ltm = null;
+
+var LANES = [
+  ["OB", "01 · Onboarding & Auth", 22, "#C4A882"],
+  ["CF", "02 · Craft Flow", 288, "#3B82F6"],
+  ["BB", "03 · BarBot AI", 554, "#8B5CF6"],
+  ["PM", "04 · Party Mode", 820, "#F59E0B"],
+  ["RB", "05 · Recipe Builder", 1086, "#10B981"],
+  ["SM", "06 · Station Mgmt", 1352, "#059669"],
+  ["DI", "07 · Discover", 1618, "#EF4444"],
+  ["PR", "08 · Profile", 1884, "#6366F1"],
+  ["ER", "09 · Error Recovery", 2150, "#64748B"],
+  ["BL", "10 · BLE & Device", 2416, "#4F46E5"],
+  ["SP", "Shaker Pro", 2682, "#0EA5E9"],
+  ["C2", "Coaster 2.0", 2948, "#16A34A"],
 ];
-var laneMap={};
+
+var laneMap = {};
 LANES.forEach(function(l){laneMap[l[0]]=l;});
 function mainY(k){return laneMap[k][2]+58;}
-function branchY(k){return laneMap[k][2]+163;}
-var NODE_DEFS=[
-  // 01 Onboarding & Auth - 24 screens
-  ['ob1',80,'OB',1,'Splash','Auto-advance 2.8s'],
-  ['ob2',280,'OB',1,'Age Gate','21+/18+ DOB check'],
-  ['ob3',480,'OB',1,'Privacy Policy','Accept to proceed'],
-  ['ob4',680,'OB',1,'Biometric Setup','Face/Touch ID opt-in'],
-  ['ob5',880,'OB',1,'Carousel','3-slide feature tour'],
-  ['ob6',1080,'OB',1,'Sign Up','Email/phone reg'],
-  ['ob7',1280,'OB',1,'Verify OTP','6-digit auto-submit'],
-  ['ob8',1480,'OB',1,'Profile Setup','Name & avatar'],
-  ['ob9',1680,'OB',1,'Setup Wizard','5-step device setup'],
-  ['ob10',1880,'OB',1,'Home','Main app hub'],
-  ['ob11',2080,'OB',1,'Profile View','User profile page'],
-  ['ob12',2280,'OB',1,'Settings','App preferences'],
-  ['obs1',80,'OB',0,'Age Blocked','Under-age terminal'],
-  ['obs2',280,'OB',0,'Log In','Returning user auth'],
-  ['obs3',480,'OB',0,'Phone Entry','Phone OTP entry'],
-  ['obs4',680,'OB',0,'Forgot Password','Reset link flow'],
-  ['obs5',880,'OB',0,'Reset Sent','Reset email sent'],
-  ['obs6',1080,'OB',0,'Flavour Profile','Taste preferences'],
-  ['obs7',1280,'OB',0,'Edit Profile','Update name/avatar'],
-  ['obs8',1480,'OB',0,'Notifications','Push alert settings'],
-  ['obs9',1680,'OB',0,'Payment','Billing info'],
-  ['obs10',1880,'OB',0,'Subscription','Plan management'],
-  ['obs11',2080,'OB',0,'Mood','Occasion/mood select'],
-  ['obs12',2280,'OB',0,'Mood Result','Personalised suggest'],
-  // 02 Craft Flow - 22 screens
-  ['cf1',80,'CF',1,'Ingredient Check','Stock validation'],
-  ['cf2',280,'CF',1,'Craft Confirm','Order confirmation'],
-  ['cf3',480,'CF',1,'Place Glass','Position glass prompt'],
-  ['cf4',680,'CF',1,'Crafting','Pour in progress'],
-  ['cf5',880,'CF',1,'Craft Success','Pour complete'],
-  ['cf6',1080,'CF',1,'Craft Rating','Rate the drink'],
-  ['cf7',1280,'CF',1,'Quick Flush','Flush initiate'],
-  ['cf8',1480,'CF',1,'Flush Confirm','Flush complete'],
-  ['cf9',1680,'CF',1,'Cleaning Progress','Clean in progress'],
-  ['cf10',1880,'CF',1,'Cleaning Done','Clean complete'],
-  ['cf11',2080,'CF',1,'Craft Paused','Session paused'],
-  ['cfs1',80,'CF',0,'Craft Error','Pour error modal'],
-  ['cfs2',280,'CF',0,'Strength Adjust','ABV/strength slider'],
-  ['cfs3',480,'CF',0,'Ice Options','Ice level choice'],
-  ['cfs4',680,'CF',0,'Garnish Prompt','Add garnish step'],
-  ['cfs5',880,'CF',0,'Volume Select','Pour size choice'],
-  ['cfs6',1080,'CF',0,'Temp Prefer','Temperature pref'],
-  ['cfs7',1280,'CF',0,'Guest Order','Party guest view'],
-  ['cfs8',1480,'CF',0,'Queue Position','Queue status'],
-  ['cfs9',1680,'CF',0,'Craft History','Past pours log'],
-  ['cfs10',1880,'CF',0,'History Detail','Pour detail view'],
-  ['cfs11',2080,'CF',0,'Auth Gate','Login required gate'],
-  // 03 BarBot AI - 18 screens
-  ['bb1',80,'BB',1,'BarBot Home','AI entry & prompts'],
-  ['bb2',280,'BB',1,'AI Chat','Natural language input'],
-  ['bb3',480,'BB',1,'AI Thinking','Processing response'],
-  ['bb4',680,'BB',1,'AI Result','Recipe suggestion'],
-  ['bb5',880,'BB',1,'Recipe Customize','Adjust recipe params'],
-  ['bb6',1080,'BB',1,'AI Celebration','Craft ready!'],
-  ['bb7',1280,'BB',1,'Save AI Recipe','Pin to collection'],
-  ['bb8',1480,'BB',1,'Saved Recipes','AI recipe collection'],
-  ['bb9',1680,'BB',1,'Taste Quiz','Preference quiz'],
-  ['bbs1',80,'BB',0,'Surprise Me','Random AI suggestion'],
-  ['bbs2',280,'BB',0,'Pairing Suggest','Food pairing AI'],
-  ['bbs3',480,'BB',0,'Recipe History','Past AI suggestions'],
-  ['bbs4',680,'BB',0,'Trending','Popular AI picks'],
-  ['bbs5',880,'BB',0,'AI Feedback','Rate AI result'],
-  ['bbs6',1080,'BB',0,'Curated List','Editor AI picks'],
-  ['bbs7',1280,'BB',0,'Mood (AI)','Mood for AI recipe'],
-  ['bbs8',1480,'BB',0,'Mood Result','AI mood recipe pick'],
-  ['bbs9',1680,'BB',0,'Flavour Profile','AI taste profile'],
-  // 04 Party Mode - 14 screens
-  ['pm1',80,'PM',1,'Party Setup','Create session'],
-  ['pm2',280,'PM',1,'Party QR','QR share code'],
-  ['pm3',480,'PM',1,'Party Lobby','Monitor queue'],
-  ['pm4',680,'PM',1,'Party Queue','Active order queue'],
-  ['pm5',880,'PM',1,'Guest Mgmt','Guest management'],
-  ['pm6',1080,'PM',1,'Party Settings','Session settings'],
-  ['pm7',1280,'PM',1,'Party Stats','Session analytics'],
-  ['pms1',80,'PM',0,'Session Summary','End-of-party recap'],
-  ['pms2',280,'PM',0,'Guest Join','Guest entry screen'],
-  ['pms3',480,'PM',0,'Guest Browse','Guest recipe browse'],
-  ['pms4',680,'PM',0,'Guest Confirm','Guest order confirm'],
-  ['pms5',880,'PM',0,'Guest Waiting','Queue wait screen'],
-  ['pms6',1080,'PM',0,'Host Alert','Host notification'],
-  ['pms7',1280,'PM',0,'Pour Limit','Limit reached alert'],
-  // 05 Station Management - 26 screens
-  ['sm1',80,'SM',1,'Station Home','Device overview'],
-  ['sm2',280,'SM',1,'Slot Detail','Slot info & options'],
-  ['sm3',480,'SM',1,'Bottle Assign','Assign spirit to slot'],
-  ['sm4',680,'SM',1,'Bottle Search','Find spirit by name'],
-  ['sm5',880,'SM',1,'Bottle Confirm','Confirm assignment'],
-  ['sm6',1080,'SM',1,'Bottle Swap','Replace bottle'],
-  ['sm7',1280,'SM',1,'Cleaning Menu','Clean options'],
-  ['sm8',1480,'SM',1,'Deep Clean','Full clean cycle'],
-  ['sm9',1680,'SM',1,'Clean Progress','Cleaning in progress'],
-  ['sm10',1880,'SM',1,'Calibration','Calibrate pump'],
-  ['sm11',2080,'SM',1,'Cal Done','Calibration complete'],
-  ['sm12',2280,'SM',1,'Diagnostics','Device health panel'],
-  ['sm13',2480,'SM',1,'Pump Test','Test pump cycles'],
-  ['sms1',80,'SM',0,'Fill Level','Bottle fill levels'],
-  ['sms2',280,'SM',0,'Temperature','Temp reading'],
-  ['sms3',480,'SM',0,'Maint Log','Service history'],
-  ['sms4',680,'SM',0,'Schedule Clean','Auto-clean schedule'],
-  ['sms5',880,'SM',0,'Bottle Inventory','Stock overview'],
-  ['sms6',1080,'SM',0,'Slot Overview','All slots view'],
-  ['sms7',1280,'SM',0,'Reorder Slots','Drag-reorder slots'],
-  ['sms8',1480,'SM',0,'Vol Calibrate','Volume calibration'],
-  ['sms9',1680,'SM',0,'Flow Rate','Pump flow rate'],
-  ['sms10',1880,'SM',0,'Rinse Cycle','Auto-rinse cycle'],
-  ['sms11',2080,'SM',0,'Slot Lock','Lock/unlock slot'],
-  ['sms12',2280,'SM',0,'Bulk Refill','Multi-slot refill'],
-  ['sms13',2480,'SM',0,'Station Settings','Device config'],
-  // 06 Discover - 16 screens
-  ['di1',80,'DI',1,'Discover Home','Recipe browser'],
-  ['di2',280,'DI',1,'Recipe Detail','Full recipe view'],
-  ['di3',480,'DI',1,'Filter','Browse filters'],
-  ['di4',680,'DI',1,'Search','Recipe search'],
-  ['di5',880,'DI',1,'Category','Category browse'],
-  ['di6',1080,'DI',1,'Favorites','Saved favorites'],
-  ['di7',1280,'DI',1,'Collections','Curated sets'],
-  ['di8',1480,'DI',1,'Saved Recipes','My saved collection'],
-  ['dis1',80,'DI',0,'Featured','Staff picks'],
-  ['dis2',280,'DI',0,'Seasonal','Seasonal menu'],
-  ['dis3',480,'DI',0,'New Releases','Latest recipes'],
-  ['dis4',680,'DI',0,'Spirit Guide','Spirits education'],
-  ['dis5',880,'DI',0,'Technique Tips','How-to guides'],
-  ['dis6',1080,'DI',0,'Creator Profile','Recipe creator page'],
-  ['dis7',1280,'DI',0,'Rating Submit','Submit a rating'],
-  ['dis8',1480,'DI',0,'Share Recipe','Share with friends'],
-  // 07 BLE & Device - 18 screens
-  ['ble1',80,'BLE',1,'BLE Home','Device mgmt hub'],
-  ['ble2',280,'BLE',1,'BLE Scanning','Scanning for devices'],
-  ['ble3',480,'BLE',1,'BLE Found','Device discovered'],
-  ['ble4',680,'BLE',1,'BLE Pairing','Pairing in progress'],
-  ['ble5',880,'BLE',1,'BLE Success','Paired successfully'],
-  ['ble6',1080,'BLE',1,'BLE Failed','Pairing failed'],
-  ['ble7',1280,'BLE',1,'BT Disabled','Bluetooth is off'],
-  ['ble8',1480,'BLE',1,'Reconnecting','Auto-reconnect attempt'],
-  ['ble9',1680,'BLE',1,'Device Info','Device details & status'],
-  ['bles1',80,'BLE',0,'FW Update','Firmware available'],
-  ['bles2',280,'BLE',0,'FW Progress','Updating firmware'],
-  ['bles3',480,'BLE',0,'FW Complete','Firmware updated'],
-  ['bles4',680,'BLE',0,'Network Config','WiFi / network config'],
-  ['bles5',880,'BLE',0,'Signal Strength','RSSI reading'],
-  ['bles6',1080,'BLE',0,'Forget Device','Remove paired device'],
-  ['bles7',1280,'BLE',0,'Add Device','Pair new device'],
-  ['bles8',1480,'BLE',0,'Device List','All paired devices'],
-  ['bles9',1680,'BLE',0,'BLE Timeout','Connection timed out'],
-  // 08 Error Recovery - 34 screens
-  ['er1',80,'ER',1,'Auth Error','Login/auth failed'],
-  ['er2',280,'ER',1,'Login Locked','Account locked out'],
-  ['er3',480,'ER',1,'Session Expired','Token expired'],
-  ['er4',680,'ER',1,'Network Error','No connectivity'],
-  ['er5',880,'ER',1,'Craft Error','Pour failure'],
-  ['er6',1080,'ER',1,'Jam Detected','Jam in dispenser'],
-  ['er7',1280,'ER',1,'Overflow Alert','Overflow detected'],
-  ['er8',1480,'ER',1,'Pump Fail','Pump failure'],
-  ['er9',1680,'ER',1,'Empty Bottle','Bottle depleted'],
-  ['er10',1880,'ER',1,'Low Volume','Fill level low'],
-  ['er11',2080,'ER',1,'Temp Alert','Temperature issue'],
-  ['er12',2280,'ER',1,'Maintenance Mode','Service mode active'],
-  ['er13',2480,'ER',1,'Self Diagnose','Auto-diagnosis run'],
-  ['er14',2680,'ER',1,'Partial Pour','Incomplete pour'],
-  ['er15',2880,'ER',1,'Refill Interrupt','Refill needed'],
-  ['er16',3080,'ER',1,'Fully Restored','System restored'],
-  ['er17',3280,'ER',1,'Error Log','Erros history'],
-  ['ers1',80,'ER',0,'Support Contact','Contact support'],
-  ['ers2',280,'ER',0,'Ticket Submit','Submit support ticket'],
-  ['ers3',480,'ER',0,'Known Issues','Known bugs list'],
-  ['ers4',680,'ER',0,'Recover Options','Recovery steps'],
-  ['ers5',880,'ER',0,'Factory Reset','Full device reset'],
-  ['ers6',1080,'ER',0,'Reset Confirm','Confirm factory reset'],
-  ['ers7',1280,'ER',0,'Device Offline','Device unreachable'],
-  ['ers8',1480,'ER',0,'OTA Failed','OTA update failed'],
-  ['ers9',1680,'ER',0,'Power Loss','Power interrupted'],
-  ['ers10',1880,'ER',0,'Sensor Error','Sensor malfunction'],
-  ['ers11',2080,'ER',0,'Motor Stall','Motor stuck/stalled'],
-  ['ers12',2280,'ER',0,'Clog Detected','Clog in system'],
-  ['ers13',2480,'ER',0,'Calibration Err','Calibration failed'],
-  ['ers14',2680,'ER',0,'Glass Detect Fail','No glass detected'],
-  ['ers15',2880,'ER',0,'Spill Detected','Spill sensor trigger'],
-  ['ers16',3080,'ER',0,'Safety Lock','Safety engaged'],
-  ['ers17',3280,'ER',0,'Error Summary','Incident report']
+function branchY(k){return laneMap[k][2]+158;}
+
+var NODE_DEFS = [
+  {id:"ob1", lane:"OB", label:"Splash", sub:"auto-advance", x:80, y:80},
+  {id:"ob2", lane:"OB", label:"Age Gate", sub:"21+ verify", x:242, y:80},
+  {id:"ob3", lane:"OB", label:"Privacy Policy", sub:"accept required", x:404, y:80},
+  {id:"ob4", lane:"OB", label:"Biometric Setup", sub:"Face ID / Touch ID", x:566, y:80},
+  {id:"ob5", lane:"OB", label:"Carousel", sub:"3 screens", x:728, y:80},
+  {id:"ob6", lane:"OB", label:"Sign Up", sub:"create account", x:890, y:80},
+  {id:"ob7", lane:"OB", label:"Log In", sub:"returning user", x:1052, y:80},
+  {id:"ob8", lane:"OB", label:"Phone Entry", sub:"enter number", x:1214, y:80},
+  {id:"ob9", lane:"OB", label:"Verify OTP", sub:"6-digit code", x:1376, y:80},
+  {id:"ob10", lane:"OB", label:"Profile Setup", sub:"name + avatar", x:1538, y:80},
+  {id:"ob11", lane:"OB", label:"Setup Wizard", sub:"4-step wizard", x:1700, y:80},
+  {id:"ob12", lane:"OB", label:"Flavour Profile", sub:"taste prefs", x:1862, y:80},
+  {id:"ob13", lane:"OB", label:"home", sub:"Main Hub", x:2024, y:80},
+  {id:"ob14", lane:"OB", label:"Mood", sub:"occasion select", x:2186, y:80},
+  {id:"obs1", lane:"OB", label:"Age Blocked", sub:"exit app", x:80, y:180},
+  {id:"obs2", lane:"OB", label:"Forgot Pw", sub:"phone reset", x:242, y:180},
+  {id:"obs3", lane:"OB", label:"Reset Sent", sub:"check email", x:404, y:180},
+  {id:"obs4", lane:"OB", label:"SSO Login", sub:"Google / Apple", x:566, y:180},
+  {id:"obs5", lane:"OB", label:"Email Verify", sub:"link clicked", x:728, y:180},
+  {id:"obs6", lane:"OB", label:"Acct Locked", sub:"too many tries", x:890, y:180},
+  {id:"obs7", lane:"OB", label:"Location Perm", sub:"allow / deny", x:1052, y:180},
+  {id:"obs8", lane:"OB", label:"Notif Perm", sub:"allow / deny", x:1214, y:180},
+  {id:"obs9", lane:"OB", label:"Mood Result", sub:"AI suggestion", x:1376, y:180},
+  {id:"obs10", lane:"OB", label:"Skip Device", sub:"no BLE now", x:1538, y:180},
+  {id:"cf1", lane:"CF", label:"craftConfirm", sub:"recipe confirm", x:80, y:346},
+  {id:"cf2", lane:"CF", label:"Glass Selector", sub:"choose type", x:242, y:346},
+  {id:"cf3", lane:"CF", label:"Garnish Guide", sub:"optional step", x:404, y:346},
+  {id:"cf4", lane:"CF", label:"Strength Adj", sub:"ice options", x:566, y:346},
+  {id:"cf5", lane:"CF", label:"Ingredient Chk", sub:"stock check", x:728, y:346},
+  {id:"cf6", lane:"CF", label:"Place Glass", sub:"on sensor", x:890, y:346},
+  {id:"cf7", lane:"CF", label:"Crafting", sub:"pouring", x:1052, y:346},
+  {id:"cf8", lane:"CF", label:"Craft Success", sub:"pour done", x:1214, y:346},
+  {id:"cf9", lane:"CF", label:"Cheers", sub:"celebration", x:1376, y:346},
+  {id:"cf10", lane:"CF", label:"Craft Rating", sub:"rate your drink", x:1538, y:346},
+  {id:"cf11", lane:"CF", label:"Quick Flush", sub:"fast clean", x:1700, y:346},
+  {id:"cf12", lane:"CF", label:"Cleaning Prog", sub:"in progress", x:1862, y:346},
+  {id:"cf13", lane:"CF", label:"Cleaning Done", sub:"complete", x:2024, y:346},
+  {id:"cf14", lane:"CF", label:"Craft History", sub:"past pours", x:2186, y:346},
+  {id:"cfs1", lane:"CF", label:"Missing Ingr", sub:"swap option", x:80, y:446},
+  {id:"cfs2", lane:"CF", label:"Pour Paused", sub:"mid-pour stop", x:242, y:446},
+  {id:"cfs3", lane:"CF", label:"Cancel Pour", sub:"to home", x:404, y:446},
+  {id:"cfs4", lane:"CF", label:"Restart Pour", sub:"begin again", x:566, y:446},
+  {id:"cfs5", lane:"CF", label:"Save Partial", sub:"save & exit", x:728, y:446},
+  {id:"cfs6", lane:"CF", label:"Emergency Stop", sub:"safety halt", x:890, y:446},
+  {id:"cfs7", lane:"CF", label:"Party Guest", sub:"queue mode", x:1052, y:446},
+  {id:"cfs8", lane:"CF", label:"Queued", sub:"guest waiting", x:1214, y:446},
+  {id:"cfs9", lane:"CF", label:"Flush Confirm", sub:"confirm clean", x:1376, y:446},
+  {id:"bb1", lane:"BB", label:"BarBot Home", sub:"AI hub", x:80, y:612},
+  {id:"bb2", lane:"BB", label:"AI Chat", sub:"type prompt", x:242, y:612},
+  {id:"bb3", lane:"BB", label:"AI Thinking", sub:"generating", x:404, y:612},
+  {id:"bb4", lane:"BB", label:"AI Result", sub:"recipe card", x:566, y:612},
+  {id:"bb5", lane:"BB", label:"Recipe Cust", sub:"edit recipe", x:728, y:612},
+  {id:"bb6", lane:"BB", label:"AI Celebrate", sub:"success event", x:890, y:612},
+  {id:"bb7", lane:"BB", label:"Save AI Recipe", sub:"save to hub", x:1052, y:612},
+  {id:"bb8", lane:"BB", label:"Saved Recipes", sub:"view saved", x:1214, y:612},
+  {id:"bb9", lane:"BB", label:"Taste Quiz", sub:"flavour quiz", x:1376, y:612},
+  {id:"bb10", lane:"BB", label:"Surprise Me", sub:"random pick", x:1538, y:612},
+  {id:"bb11", lane:"BB", label:"Pairing Sug", sub:"food match", x:1700, y::612},
+  {id:"bb12", lane:"BB", label:"Recipe History", sub:"past AI picks", x:1862, y:'612},
+  {id:"bb13", lane:"BB", label:"Trending", sub:"�op drinks", x:2024, y:'612},
+  {id:"bb14", lane:"BB", label:"Flavour Prfl", sub:"taste profile", x:2186, y:612},
+  {id:"bbs1", lane:"BB", label:"AI Feedback", sub:"��ous up/down", x:80, y:712},
+  {id:"bbs2", lane:"BB", label:"Curated List", sub:"themed picks", x:242, y:712},
+  {id:"bbs3", lane:"BB", label:"Drink Queued", sub:"craft later", x:404, y:712},
+  {id:"bbs4", lane:"BB", label:"Mood", sub:"from AI", x:566, y:712},
+  {id:"bbs5", lane:"BB", label:"Mood Result", sub:"suggestion", x:728, y:712},
+  {id:"bbs6", lane:"BB", label:"Hardware Stat", sub:"device check", x:890, y:712},
+  {id:"bbs7", lane:"BB", label:"Voice Input", sub:"speak prompt", x:1052, y:712},
+  {id:"pm1", lane:"PM", label:"Party Setup", sub:"create session", x:80, y:878},
+  {id:"pm2", lane:"PM", label:"Party QR", sub:"invite code", x:242, y:878},
+  {id:"pm3", lane:"PM", label:"Party Lobby", sub:"waiting room", x:404, y:878},
+  {id:"pm4", lane:"PM", label:"Party Queue", sub:"orders list", x:566, y:878},
+  {id:"pm5", lane:"PM", label:"Guest Mgmt", sub:"manage guests", x:728, y:878},
+  {id:"pm6", lane:"PM", label:"Party Settings", sub:"configure", x:890, y:878},
+  {id:"pm7", lane:"PM", label:"Party Dashboard", sub:"host view", x:1052, y:878},
+  {id:"pm8", lane:"PM", label:"Leaderboard", sub:"top crafters", x:1214, y:878},
+  {id:"pm9", lane:"PM", label:"Party History", sub:"past parties", x:1376, y:878},
+  {id:"pms1", lane:"PM", label:"Guest Join", sub:"scan QR", x:80, y:978},
+  {id:"pms2", lane:"PM", label:"Guest Select", sub:"choose drink", x:242, y:978},
+  {id:"pms3", lane:"PM", label:"Guest Home", sub:"guest view", x:404, y:978},
+  {id:"pms4", lane:"PM", label:"Guest Order", sub:"detail view", x:566, y:978},
+  {id:"pms5", lane:"PM", label:"Party Invite", sub:"extra invite", x:728, y:978},
+  {id:"rb1", lane:"RB", label:"Recipe Hub", sub:"saved recipes", x:80, y:1144},
+  {id:"rb2", lane:"RB", label:"Recipe Builder", sub:"new recipe", x:242, y:1144},
+  {id:"rb3", lane:"RB", label:"Proportions", sub:"set amounts", x:404, y:1144},
+  {id:"rb4", lane:"RB", label:"Recipe Preview", sub:"preview card", x:566, y:1144},
+  {id:"rb5", lane:"RB", label:"Share Recipe", sub:"share option", x:728, y:1144},
+  {id:"rb6", lane:"RB", label:"Recipe Saved", sub:"confirmed", x:890, y:1144},
+  {id:"sm1", lane:"SM", label:"Station Home", sub:"control panel", x:80, y:1410},
+  {id:"sm2", lane:"SM", label:"Slot Detail", sub:"slot info", x:242, y:1410},
+  {id:"sm3", lane:"SM", label:"Bottle Assign", sub:"set bottle", x:404, y:1410},
+  {id:"sm4", lane:"SM", label:"Bottle Search", sub:"find bottle", x:566, y:1410},
+  {id:"sm5", lane:"SM", label:"Bottle Confirm", sub:"confirm choice", x:728, y:1410},
+  {id:"sm6", lane:"SM", label:"Bottle Swap", sub:"change bottle", x:890, y:1410},
+  {id:"sm7", lane:"SM", label:"Cleaning Menu", sub:"clean options", x:1052, y:1410},
+  {id:"sm8", lane:"SM", label:"Deep Clean", sub:"full cycle", x:1214, y:1410},
+  {id:"sm9", lane:"SM", label:"Clean Progress", sub:"in progress", x:1376, y:1410},
+  {id:"sm10", lane:"SM", label:"Calibration", sub:"sensor cal", x:1538, y:1410},
+  {id:"sm11", lane:"SM", label:"Calibr Done", sub:"complete", x:1700, y:1410},
+  {id:"sm12", lane:"SM", label:"Diagnostics", sub:"system check", x:1862, y:1410},
+  {id:"sm13", lane:"SM", label:"Pump Test", sub:"motor check", x:2024, y:1410},
+  {id:"sm14", lane:"SM", label:"Fill Level", sub:"stock view", x:2186, y:1410},
+  {id:"sms1", lane:"SM", label:"Temperature", sub:"temp monitor", x:80, y:1510},
+  {id:"sms2", lane:"SM", label:"Maint Log", sub:"service record", x:242, y:1510},
+  {id:"sms3", lane:"SM", label:"Sched Clean", sub:"set schedule", x:404, y:1510},
+  {id:"sms4", lane:"SM", label:"Bottle Inv", sub:"full inventory", x:566, y:1510},
+  {id:"sms5", lane:"SM", label:"Slot Overview", sub:"all slots", x:728, y:1510},
+  {id:"sms6", lane:"SM", label:"Reorder Slots", sub:"rearrange", x:890, y:1510},
+  {id:"sms7", lane:"SM", label:"Station Sett", sub:"preferences", x:1052, y:1510},
+  {id:"sms8", lane:"SM", label:"Empty Alert", sub:"low stock", x:1214, y:1510},
+  {id:"di1", lane:"DI", label:"Discover Home", sub:"browse", x:80, y:1676},
+  {id:"di2", lane:"DI", label:"Recipe Detail", sub:"full recipe", x:242, y:1676},
+  {id:"di3", lane:"DI", label:"Filter", sub:"search filters", x:404, y:1676},
+  {id:"di4", lane:"DI", label:"Search", sub:"text search", x:566, y:1676},
+  {id:"di5", lane:"DI", label:"Category", sub:"by type", x:728, y:1676},
+  {id:"di6", lane:"DI", label:"Favorites", sub:"liked items", x:890, y:1676},
+  {id:"di7", lane:"DI", label:"Collections", sub:"themed sets", x:1052, y:1676},
+  {id:"di8", lane:"DI", label:"Featured", sub:"editor picks", x:1214, y:1676},
+  {id:"di9", lane:"DI", label:"Seasonal", sub:"seasonal menu", x:1376, y:1676},
+  {id:"di10", lane:"DI", label:"New Releases", sub:"latest", x:1538, y:1676},
+  {id:"dis1", lane:"DI", label:"Spirit Guide", sub:"spirit info", x:80, y:1776},
+  {id:"dis2", lane:"DI", label:"Tech Tips", sub:"how-to guide", x:242, y:1776},
+  {id:"dis3", lane:"DI", label:"Creator Prfl", sub:"maker page", x:404, y:1776},
+  {id:"dis4", lane:"DI", label:"Rating Submit", sub:"rate recipe", x:566, y:1776},
+  {id:"dis5", lane:"DI", label:"Share Recipe", sub:"share option", x:728, y:1776},
+  {id:"dis6", lane:"DI", label:"Similar Drinks", sub:"suggestions", x:890, y:1776},
+  {id:"pr1", lane:"PR", label:"Profile", sub:"account hub", x:80, y:1942},
+  {id:"pr2", lane:"PR", label:"Saved Recipes", sub:"recipe library", x:242, y:1942},
+  {id:"pr3", lane:"PR", label:"Settings", sub:"app settings", x:404, y:1942},
+  {id:"pr4", lane:"PR", label:"Notifications", sub:"alerts", x:566, y:1942},
+  {id:"pr5", lane:"PR", label:"Craft History", sub:"past pours", x:728, y:1942},
+  {id:"pr6", lane:"PR", label:"Edit Profile", sub:"name / avatar", x:890, y:1942},
+  {id:"pr7", lane:"PR", label:"Edit Prefs", sub:"taste settings", x:1052, y:1942},
+  {id:"pr8", lane:"PR", label:"Help Support", sub:"FAQ / contact", x:1214, y:1942},
+  {id:"prs1", lane:"PR", label:"About", sub:"version info", x:80, y:2042},
+  {id:"prs2", lane:"PR", label:"Delete Acct", sub:"confirm delete", x:242, y:2042},
+  {id:"prs3", lane:"PR", label:"Notif History", sub:"past alerts", x:404, y:2042},
+  {id:"prs4", lane:"PR", label:"Drink History", sub:"all time pours", x:566, y:2042},
+  {id:"prs5", lane:"PR", label:"Membership", sub:"subscription", x:728, y:2042},
+  {id:"er1", lane:"ER", label:"Auth Error", sub:"login fail", x:80, y:2208},
+  {id:"er2", lane:"ER", label:"Login Locked", sub:"too many tries", x:242, y:2208},
+  {id:"er3", lane:"ER", label:"Session Exp", sub:"need re-auth", x:404, y:2208},
+  {id:"er4", lane:"ER", label:"Network Error", sub:"no connection", x:566, y:2208},
+  {id:"er5", lane:"ER", label:"Craft Error", sub:"pour fail", x:728, y:2208},
+  {id:"er6", lane:"ER", label:"Jam Detected", sub:"blockage", x:890, y:2208},
+  {id:"er7", lane:"ER", label:"Overflow Alert", sub:"overflow", x:1052, y:2208},
+  {id:"er8", lane:"ER", label:"Pump Fail", sub:"hardware fail", x:1214, y:2208},
+  {id:"er9", lane:"ER", label:"Empty Bottle", sub:"out of stock", x:1376, y:2208},
+  {id:"er10", lane:"ER", label:"Low Volume", sub:"almost empty", x:1538, y:2208},
+  {id:"er11", lane:"ER", label:"Temp Alert", sub:"overheat", x:1700, y:2208},
+  {id:"er12", lane:"ER", label:"Maint Mode", sub:"server down", x:1862, y:2208},
+  {id:"er13", lane:"ER", label:"Self Diagnose", sub:"auto-check", x:2024, y:2208},
+  {id:"er14", lane:"ER", label:"Error Log", sub:"debug info", x:2186, y:2208},
+  {id:"ers1", lane:"ER", label:"Partial Pour", sub:"save partial", x:80, y::2308},
+  {id:"ers2", lane:"ER", label:"Refill Intr", sub:"mid-refill stop", x:242, y:2308},
+  {id:"ers3", lane:"ER", label:"Fully Restored", sub:"all good", x:404, y:2308},
+  {id:"ers4", lane:"ER", label:"Support Cntct", sub:"help desk", x:566, y:2308},
+  {id:"ers5", lane:"ER", label:"Ticket Submit", sub:"send ticket", x:728, y:2308},
+  {id:"ers6", lane:"ER", label:"Known Issues", sub:"FAQ", x:890, y::2308},
+  {id:"ers7", lane:"ER", label:"Recover Opts", sub:"options", x:1052, y:2308},
+  {id:"ers8", lane:"ER", label:"Factory Reset", sub:"full reset", x:1214, y:2308},
+  {id:"ers9", lane:"ER", label:"Offline Browse", sub:"limited mode", x:1376, y::2308},
+  {id:"ers10", lane:"ER", label:"Reconnecting", sub:"auto-retry", x:1538, y::2308},
+  {id:"bl1", lane:"BL", label:"BLE Home", sub:"scan start", x:80, y:2474},
+  {id:"bl2", lane:"BL", label:"BLE Scanning", sub:"searching", x:242, y:2474},
+  {id:"bl3", lane:"BL", label:":"BLE Found", sub:"device found", x:404, y:2474},
+  {id:"bl4", lane:"BL", label:"BLE Pairing", sub:"connecting", x:566, y:2474},
+  {id:"bl5", lane:"BL", label:"BLE Success", sub:"paired!", x:728, y:2474},
+  {id:"bl6", lane:"BL", label:"BLE Failed", sub:"pair fail", x:890, y:2474},
+  {id:"bl7", lane:"BL", label:"BT Disabled", sub:"enable BT", x:1052, y:2474},
+  {id:"bl8", lane:"BL", label:"Reconnecting", sub:"auto-reconnect", x:1214, y:2474},
+  {id:"bl9", lane:"BL", label:"Device Info", sub:"device details", x:1376, y:2474},
+  {id:"bl10", lane:"BL", label:"Firmware Upd", sub:"update avail", x:1538, y:2474},
+  {id:"bl11", lane:"BL", label:"Control Panel", sub:"device control", x:1700, y:2474},
+  {id:"bl12", lane:"BL", label:"BLE Troublesh", sub:"debug steps", x:1862, y:2474},
+  {id:"bls1", lane:"BL", label:"No Device", sub:"not found", x:80, y:2574},
+  {id:"bls2", lane:"BL", label:"Scan Timeout", sub:"expired", x:242, y:2574},
+  {id:"bls3", lane:"BL", label:"Multiple Dev", sub:"choose one", x:404, y:2574},
+  {id:"bls4", lane:"BL", label:"BLE Perms", sub:"grant access", x:566, y:2574},
+  {id:"bls5", lane:"BL", label:"Manual BLE", sub:"enter device ID", x:728, y:2574},
+  {id:"bls6", lane:"BL", label:"Pair Rejected", sub:"device denied", x:890, y:2574},
+  {id:"sp1", lane:"SP", label:"Shaker Onbrd", sub:"welcome setup", x:80, y:2740},
+  {id:"sp2", lane:"SP", label:"Flat Surface", sub:"safety tutorial", x:242, y:2740},
+  {id:"sp3", lane:"SP", label:"First Shake", sub:"ceremony", x:404, y:2740},
+  {id:"sp4", lane:"SP", label:"Flat Check", sub:"level verify", x:566, y:2740},
+  {id:"sp5", lane:"SP", label:"Motor Start", sub:"600 RPM / blue", x:728, y:2740},
+  {id:"sp6", lane:"SP", label:"Aeration 1", sub:"600 RPM / cyan", x:890, y:2740},
+  {id:"sp7", lane:"SP", label:"Aeration 2", sub:"800 RPM / yellow", x:1052, y:2740},
+  {id:"sp8", lane:"SP", label:"Aeration 3", sub:"1000 RPM / green", x:1214, y:2740},
+  {id:"sp9", lane:"SP", label:"Shake Done", sub:"LED red / complete", x:1376, y:2740},
+  {id:"sp10", lane:"SP", label:"Shake Coach", sub:"AI coaching", x:1538, y:2740},
+  {id:"sps1", lane:"SP", label:"Practice Mode", sub:"train mode", x:80, y:2840},
+  {id:"sps2", lane:"SP", label:"Streak Badge", sub:"7/30/100 days", x:242, y:2840},
+  {id:"sps3", lane:"SP", label:"Pack List", sub:"portability kit", x:404, y:2840},
+  {id:"sps4", lane:"SP", label:"Shake Queue", sub:"party mode", x:566, y:2840},
+  {id:"sps5", lane:"SP", label:"Upgrade 360", sub:"upgrade path", x:728, y:2840},
+  {id:"c1", lane:"C2", label:"Coaster Onbrd", sub:"welcome setup", x:80, y:3006},
+  {id:"c2", lane:"C2", label:"Scale Calib", sub:"11g reference", x:242, y:3006},
+  {id:"c3", lane:"C2", label:"Daily Loop", sub:"pour guide", x:404, y:3006},
+  {id:"c4", lane:"C2", label:"Glass Detect", sub:"place glass", x:566, y:3006},
+  {id:"c5", lane:"C2", label:"Ingredient 1", sub:"LED blue", x:728, y:3006},
+  {id:"c6", lane:"C2", label:"Ingredient 2", sub:"LED cyan", x:890, y:3006},
+  {id:"c7", lane:"C2", label:"Ingredient 3", sub:"LED yellow", x:1052, y:3006},
+  {id:"c8", lane:"C2", label:"Ingredient 4", sub:"LED green", x:1214, y:3006},
+  {id:"c9", lane:"C2", label:"Pour Complete", sub:"LED red", x:1376, y:3006},
+  {id:"c10", lane:"C2", label:"Accuracy Scr", sub:"score display", x:1538, y:3006},
+  {id:"c2s1", lane:"C2", label:"Pour Coach", sub:"AI coaching", x:80, y:3106},
+  {id:"c2s2", lane:"C2", label:"Bottle Scan", sub:"scan/search", x:242, y:3106},
+  {id:"c2s3", lane:"C2", label:"Auto Deplete", sub:"weight tracking", x:404, y:3106},
+  {id:"c2s4", lane:"C2", label:"Shopping List", sub:"reorder", x:566, y:3106},
+  {id:"c2s5", lane:"C2", label:"Pour Challenge", sub:"party leaderboard", x:728, y:3106},
 ];
-var EDGES=[
-  // OB
-  ['ob1','ob2','auto'],['ob2','ob3','pass'],['ob2','obs1','under-age'],
-  ['ob3','ob4','accept'],['ob3','obs2','log in'],['ob3','obs3','phone'],
-  ['obs2','obs4','forgot pwd'],['obs4','obs5','sent'],['obs5','obs2','try login'],
-  ['obs3','ob7','OTP sent'],['ob4','ob5','next'],['ob5','ob6','get started'],
-  ['ob6','ob7','next'],['ob7','ob8','verified'],['ob8','obs6','flavour setup'],
-  ['obs6','ob9','saved'],['ob9','ob10','complete'],['ob10','ob11','profile'],
-  ['ob10','ob12','settings'],['ob10','obs8','notifications'],['ob10','obs9','payment'],
-  ['ob10','obs10','subscription'],['ob10','obs11','mood tap'],['obs11','obs12','result'],
-  ['ob11','obs7','edit'],['obs7','ob11','saved'],
-  // CF
-  ['cf1','cf2','in stock'],['cf1','cfs11','auth required'],['cf1','cfs9','history'],
-  ['cfs9','cfs10','detail'],['cf2','cfs2','strength'],['cf2','cfs3','ice'],
-  ['cf2','cfs4','garnish'],['cf2','cfs5','volume'],['cf2','cfs6','temperature'],
-  ['cf2','cf3','confirm'],['cf3','cf4','glass placed'],['cf3','cfs1','device error'],
-  ['cf4','cf5','pour done'],['cf4','cfs1','error'],['cf4','cf11','pause'],
-  ['cf11','cf4','resume'],['cf5','cf6','rate'],['cf6','ob10','go home'],
-  ['cf4','cfs7','party guest'],['cfs7','cfs8','queued'],
-  ['cf7','cf8','flush done'],['cf8','cf9','start clean'],['cf9','cf10','done'],
-  ['cf10','cf1','back'],['cfs1','cf1','retry'],
-  // BB
-  ['bb1','bb2','type'],['bb2','bb3','send'],['bb3','bb4','ready'],
-  ['bb4','bb5','customize'],['bb5','bb6','craft it'],['bb6','bb7','save'],
-  ['bb7','bb8','view saved'],['bb1','bb9','taste quiz'],['bb9','bb1','done'],
-  ['bb1','bbs1','surprise me'],['bbs1','bb4','result'],['bb4','bbs2','pairing'],
-  ['bb1','bbs3','history'],['bb1','bbs4','trending'],
-  ['bb1','bbs7','mood select'],['bbs7','bbs8','result'],['bbs8','cf1','Craft this'],
-  ['bb1','bbs9','flavour'],['bbs9','bb1','saved'],
-  ['bb4','bbs5','feedback'],['bb1','bbs6','curated'],
-  // PM
-  ['pm1','pm2','create'],['pm2','pm3','guests join'],['pm3','pm4','queue'],
-  ['pm3','pm5','guests'],['pm3','pm6','settings'],['pm6','pms1','end party'],
-  ['pm2','pms2','guest QR'],['pms2','pms3','browse'],['pms3','pms4','confirm'],
-  ['pms4','pms5','waiting'],['pm4','pm7','stats'],['pm3','pms6','alert'],
-  ['pm4','pms7','limit hit'],
-  // SM
-  ['sm1','sm2','slot'],['sm2','sm3','assign'],['sm3','sm4','search'],
-  ['sm4','sm5','select'],['sm5','sm2','assigned'],['sm2','sm6','swap'],
-  ['sm6','sm2','swapped'],['sm1','sm7','clean'],['sm7','sm8','deep clean'],
-  ['sm8','sm9','start'],['sm9','sm1','done'],['sm1','sm10','calibrate'],
-  ['sm10','sm11','done'],['sm11','sm1','back'],['sm1','sm12','diagnostics'],
-  ['sm12','sm13','pump test'],['sm13','sm12','results'],
-  ['sm2','sms1','fill level'],['sm2','sms2','temp'],['sm1','sms3','log'],
-  ['sm7','sms4','schedule'],['sm1','sms5','inventory'],['sm1','sms6','all slots'],
-  ['sm1','sms7','reorder'],['sm1','sms8','vol cal'],['sm1','sms9','flow rate'],
-  ['sm7','sms10','rinse'],['sm2','sms11','lock'],['sm3','sms12','bulk refill'],
-  ['sm1','sms13','settings'],
-  // DI
-  ['di1','di2','select'],['di1','di3','filter'],['di3','di1','applied'],
-  ['di1','di4','search'],['di4','di2','result'],['di1','di5','category'],
-  ['di5','di2','select'],['di1','di6','favorites'],['di6','di2','select'],
-  ['di1','di7','collections'],['di7','di2','select'],['di1','di8','saved'],
-  ['di8','di2','select'],['di1','dis1','featured'],['di1','dis2','seasonal'],
-  ['di1','dis3','new releases'],['di1','dis4','spirits'],['di1','dis5','tips'],
-  ['di2','dis6','creator'],['di2','dis7','rate'],['di2','dis8','share'],
-  // BLE
-  ['ble1','ble2','scan'],['ble2','ble3','found'],['ble3','ble4','pair'],
-  ['ble4','ble5','success'],['ble4','ble6','failed'],['ble6','ble7','BT check'],
-  ['ble7','ble1','BT on'],['ble4','bles9','timeout'],['bles9','ble2','retry'],
-  ['ble1','ble8','reconnect'],['ble8','ble9','connected'],
-  ['ble1','bles1','FW avail'],['bles1','bles2','update'],['bles2','bles3','done'],
-  ['bles3','ble9','view'],['ble1','bles4','network'],['ble9','bles5','signal'],
-  ['ble9','bles6','forget'],['bles6','ble1','rescan'],['ble1','bles7','add'],
-  ['ble1','bles8','list'],['bles8','ble9','select'],
-  // ER
-  ['er1','er2','locked'],['er1','er3','expired'],['er1','er4','no network'],
-  ['er2','ers1','support'],['ers1','ers2','ticket'],['ers2','er17','logged'],
-  ['er3','er1','re-auth'],['er4','ers7','offline'],
-  ['er5','er6','jam'],['er5','er7','overflow'],['er5','er8','pump fail'],
-  ['er5','er9','empty'],['er5','er10','low vol'],['er5','er11','temp'],
-  ['er5','er12','maintenance'],['er5','er14','partial'],['er5','er15','refill'],
-  ['er5','ers14','no glass'],['er5','ers15','spill'],
-  ['er12','er13','diagnose'],['er13','er16','restored'],['er16','er17','log'],
-  ['er13','ers3','known issues'],['er13','ers10','sensor'],['er13','ers11','motor'],
-  ['er13','ers12','clog'],['er13','ers13','cal error'],
-  ['er16','ers4','recover'],['ers4','ers5','factory reset'],['ers5','ers6','confirm'],
-  ['er17','ers1','support'],['er17','ers17','summary'],['er12','ers16','safety'],
-  ['er6','er13','diagnose'],['er7','er13','diagnose'],['er8','er13','diagnose'],
-  ['er9','sm1','refill'],['er10','sm1','refill'],['er11','er13','diagnose'],
-  ['er14','er16','resume'],['er15','sm1','refill'],
-  // 21 Cross-flow
-  ['ob10','bb1','BarBot card tap'],
-  ['ob10','bbs7','Mood card tap'],
-  ['ob10','cf2','Popular Craft CTA'],
-  ['bbs8','cf1','Craft this'],
-  ['di2','cf1','Craft this CTA'],
-  ['bb5','cf2','Craft it CTA'],
-  ['cf6','bb1','returnToBarbot'],
-  ['ob9','ble1','BLE wizard step 2'],
-  ['ble5','ob9','back to wizard'],
-  ['ob10','ble1','Device status tap'],
-  ['cf1','sm1','Missing ingredient'],
-  ['er5','ble1','Device disconnected'],
-  ['pm3','cf1','Guest order craft'],
-  ['ob10','pm1','Party mode FAB'],
-  ['pm6','ob10','End Party'],
-  ['bb6','cf2','Celebrate craft'],
-  ['er12','ob10','Exit maintenance'],
-  ['er16','cf4','Resume craft'],
-  ['bb7','di8','Save collection'],
-  ['di3','bbs7','Mood filter'],
-  ['sm12','er17','View diagnostics']
+
+var EDGES = [
+  ["ob1", "ob2", ""],
+  ["ob2", "ob3", ""],
+  ["ob3", "ob4", ""],
+  ["ob4", "ob5", ""],
+  ["ob5", "ob6", ""],
+  ["ob5", "ob7", ""],
+  ["ob6", "ob8", ""],
+  ["ob7", "ob8", ""],
+  ["ob8", "ob9", ""],
+  ["ob9", "ob10", ""],
+  ["ob10", "ob11", ""],
+  ["ob11", "ob12", ""],
+  ["ob12", "ob13", ""],
+  ["ob13", "ob14", ""],
+  ["ob2", "obs1", ""],
+  ["ob5", "obs2", ""],
+  ["obs2", "obs3", ""],
+  ["obs3", "obs5", ""],
+  ["ob5", "obs4", ""],
+  ["ob7", "ob7", ""],
+  ["obs9", "ob14", ""],
+  ["ob14", "obs9", ""],
+  ["ob9", "obs3", ""],
+  ["obs3", "obs4", ""],
+  ["cf1", "cf2", ""],
+  ["cf1", "cf3", ""],
+  ["cf1", "cf4", ""],
+  ["cf1", "cf5", ""],
+  ["cf2", "cf1", ""],
+  ["cf3", "cf1", ""],
+  ["cf4", "cf5", ""],
+  ["cf5", "cf6", ""],
+  ["cf5", "cfs1", ""],
+  ["cf6", "cf7", ""],
+  ["cf7", "cf8", ""],
+  ["cf8", "cf9", ""],
+  ["cf9", "cf10", ""],
+  ["cf7", "cfs2", ""],
+  ["cfs2", "cf7", ""],
+  ["cfs2", "cfs3", ""],
+  ["cfs2", "cfs4", ""],
+  ["cfs2", "cfs5", ""],
+  ["cfs3", "ob13", ""],
+  ["cfs4", "cf6", ""],
+  ["cfs5", "ob13", ""],
+  ["cf7", "cfs6", ""],
+  ["cf10", "cf14", ""],
+  ["cf11", "cf12", ""],
+  ["cf12", "cf13", ""],
+  ["cf13", "sm1", ""],
+  ["cfs9", "cf12", ""],
+  ["cf11", "cfs9", ""],
+  ["bb1", "bb2", ""],
+  ["bb2", "bb3", ""],
+  ["bb3", "bb4", ""],
+  ["bb4", "bb5", ""],
+  ["bb5", "bb6", ""],
+  ["bb5", "bb7", ""],
+  ["bb6", "bb7", ""],
+  ["bb7", "bb8", ""],
+  ["bb8", "bb9", ""],
+  ["bb9", "bb10", ""],
+  ["bb10", "bb11", ""],
+  ["bb11", "bb12", ""],
+  ["bb12", "bb13", ""],
+  ["bb13", "bb14", ""],
+  ["bb1", "bb9", ""],
+  ["bb1", "bb10", ""],
+  ["bb1", "bb12", ""],
+  ["bb1", "bb13", ""],
+  ["bb1", "bb14", ""],
+  ["bb3", "bbs1", ""],
+  ["bbs1", "bb3", ""],
+  ["bbs5", "bb5", ""],
+  ["bb5", "bbs3", ""],
+  ["bbs3", "bb1", ""],
+  ["bb1", "bbs4", ""],
+  ["bbs4", "bbs5", ""],
+  ["bb1", "bbs7", ""],
+  ["bbs7", "bb3", ""],
+  ["pm1", "pm2", ""],
+  ["pm2", "pm3", ""],
+  ["pm3", "pm4", ""],
+  ["pm4", "pm5", ""],
+  ["pm5", "pm6", ""],
+  ["pm6", "pm7", ""],
+  ["pm7", "pm8", ""],
+  ["pm7", "pm9", ""],
+  ["pm7", "pm4", ""],
+  ["pm6", "pms5", ""],
+  ["pm4", "pms4", ""],
+  ["pms4", "pm4", ""],
+  ["pms1", "pms2", ""],
+  ["pms2", "pms3", ""],
+  ["pm6", "pms1", ""],
+  ["rb1", "rb2", ""],
+  ["rb2", "rb3", ""],
+  ["rb3", "rb4", ""],
+  ["rb4", "rb5", ""],
+  ["rb5", "rb6", ""],
+  ["brb4", "rb6", ""],
+  ["rb5", "rb6", ""],
+  ["sm1", "sm2", ""],
+  ["sm2", "sm3", ""],
+  ["sm3", "sm4", ""],
+  ["sm4", "sm5", ""],
+  ["sm5", "sm6", ""],
+  ["sm6", "sm2", ""],
+  ["sm1", "sm7", ""],
+  ["sm7", "sm8", ""],
+  ["sm8", "sm9", ""],
+  ["sm9", "sm10", ""],
+  ["sm10", "sm11", ""],
+  ["sm11", "sm1", ""],
+  ["sm1", "sm12", ""],
+  ["sm12", "sm13", ""],
+  ["sm13", "sm14", ""],
+  ["sm2", "sms1", ""],
+  ["sm2", "sms2", ""],
+  ["sm1", "sms3", ""],
+  ["sms3", "sm7", ""],
+  ["sm1", "sms4", ""],
+  ["sms4", "sm2", ""],
+  ["sm1", "sms5", ""],
+  ["sms5", "sm2", ""],
+  ["sm1", "sms6", ""],
+  ["sm1", "sms7", ""],
+  ["sms8", "sm2", ""],
+  ["di1", "di2", ""],
+  ["di1", "di3", ""],
+  ["di1", "di4", ""],
+  ["di1", "di5", ""],
+  ["di1", "di6", ""],
+  ["di1", "di7", ""],
+  ["di1", "di8", ""],
+  ["di1", "di9", ""],
+  ["di1", "di10", ""],
+  ["di3", "di4", ""],
+  ["di4", "di1", ""],
+  ["di5", "di2", ""],
+  ["di7", "di2", ""],
+  ["di8", "di2", ""],
+  ["di9", "di2", ""],
+  ["di10", "di2", ""],
+  ["di2", "dis1", ""],
+  ["di2", "dis2", ""],
+  ["di2", "dis3", ""],
+  ["di2", "dis4", ""],
+  ["di2", "dis5", ""],
+  ["di2", "dis6", ""],
+  ["dis6", "di2", ""],
+  ["pr1", "pr2", ""],
+  ["pr1", "pr3", ""],
+  ["pr1", "pr4", ""],
+  ["pr1", "pr5", ""],
+  ["pr1", "pr6", ""],
+  ["pr1", "pr7", ""],
+  ["pr1", "pr8", ""],
+  ["pr3", "prs1", ""],
+  ["pr1", "prs2", ""],
+  ["pr4", "prs3", ""],
+  ["pr5", "prs4", ""],
+  ["pr1", "prs5", ""],
+  ["pr6", "pr1", ""],
+  ["pr7", "pr1", ""],
+  ["er1", "er2", ""],
+  ["er2", "er3", ""],
+  ["er3", "er4", ""],
+  ["er4", "er5", ""],
+  ["er5", "er6", ""],
+  ["er6", "er7", ""],
+  ["er7", "er8", ""],
+  ["er8", "er9", ""],
+  ["er9", "er10", ""],
+  ["er10", "er11", ""],
+  ["er11", "er12", ""],
+  ["er12", "er13", ""],
+  ["er13", "er14", ""],
+  ["er5", "ers1", ""],
+  ["ers1", "er3", ""],
+  ["er8", "ers2", ""],
+  ["er12", "ers3", ""],
+  ["ers3", "ob13", ""],
+  ["er3", "ers4", ""],
+  ["ers4", "ers5", ""],
+  ["er2", "ers6", ""],
+  ["er1", "ers7", ""],
+  ["ers7", "ers8", ""],
+  ["er4", "ers9", ""],
+  ["er3", "ers10", ""],
+  ["ers10", "bl1", ""],
+  ["bl1", "bl2", ""],
+  ["bl2", "bl3", ""],
+  ["bl3", "bl4", ""],
+  ["bl4", "bl5", ""],
+  ["bl5", "bl9", ""],
+  ["bl4", "bl6", ""],
+  ["bl6", "bl1", ""],
+  ["bl7", "bl1", ""],
+  ["bl8", "bl9", ""],
+  ["bl9", "bl10", ""],
+  ["bl10", "bl11", ""],
+  ["bl11", "sm1", ""],
+  ["bl2", "bls1", ""],
+  ["bls1", "bl2", ""],
+  ["bl2", "bls2", ""],
+  ["bls2", "bl12", ""],
+  ["bl2", "bls3", ""],
+  ["bls3", "bl4", ""],
+  ["bl4", "bls4", ""],
+  ["bls4", "bl2", ""],
+  ["bl4", "bls5", ""],
+  ["bl4", "bls6", ""],
+  ["bls6", "bl2", ""],
+  ["bl1", "bls4", ""],
+  ["sp1", "sp2", ""],
+  ["sp2", "sp3", ""],
+  ["sp3", "sp4", ""],
+  ["sp4", "sp5", ""],
+  ["sp5", "sp6", ""],
+  ["sp6", "sp7", ""],
+  ["sp7", "sp8", ""],
+  ["sp8", "sp9", ""],
+  ["sp9", "cf10", ""],
+  ["sp10", "sps1", ""],
+  ["sps1", "sps2", ""],
+  ["sp1", "sp10", ""],
+  ["sps3", "sp3", ""],
+  ["sps4", "pm7", ""],
+  ["sps5", "ob13", ""],
+  ["c1", "c2", ""],
+  ["c2", "c3", ""],
+  ["c3", "c4", ""],
+  ["c4", "c5", ""],
+  ["c5", "c6", ""],
+  ["c6", "c7", ""],
+  ["c7", "c8", ""],
+  ["c8", "c9", ""],
+  ["c9", "c10", ""],
+  ["c10", "cf10", ""],
+  ["c1", "c2s1", ""],
+  ["c2s1", "c2s2", ""],
+  ["c2s2", "c2s3", ""],
+  ["c2s3", "c2s4", ""],
+  ["c2s4", "c2s5", ""],
+  ["c2s5", "pm7", ""],
+  ["ob11", "bl1", "BLE pair step"],
+  ["bl5", "ob11", "device paired"],
+  ["cf7", "er5", "BLE drop"],
+  ["cf7", "er8", "pump fail"],
+  ["cf7", "er6", "jam detect"],
+  ["cf10", "bb1", "from BarBot"],
+  ["cf10", "rb2", "from Recipe"],
+  ["bb5", "cf1", "craft now"],
+  ["bb3", "cf1", "AI result"],
+  ["bb7", "rb1", "save recipe"],
+  ["bbs6", "sm1", "hardware status"],
+  ["bbs3", "cf1", "craft now"],
+  ["pm4", "cf1", "host approves"],
+  ["rb6", "cf1", "craft it"],
+  ["rb1", "cf1", "craft"],
+  ["rb1", "di1", "discover"],
+  ["di2", "cf1", "craft this"],
+  ["di2", "bb1", "ask BarBot"],
+  ["di1", "sm1", "My Bar"],
+  ["pr2", "cf1", "re-craft"],
+  ["pr5", "cf1", "re-craft"],
+  ["pr3", "ob7", "logout"],
+  ["er3", "ob7", "re-auth"],
+  ["er5", "cf7", "resume craft"],
+  ["er8", "sm12", "diagnostics"],
+  ["bl9", "sm1", "control panel"],
+  ["bl11", "sm1", "station mgmt"],
+  ["ob13", "bb1", "BarBot card"],
+  ["ob13", "cf1", "quick craft"],
+  ["ob13", "di1", "discover"],
+  ["ob13", "pr1", "profile"],
+  ["ob13", "pm1", "party FAB"],
+  ["ob13", "rb1", "recipe hub"],
+  ["ob13", "bl1", "device mgmt"],
 ];
-var NODES=[],nodeMap={};
+
+var NODES = [];
+var nodeMap = {};
 NODE_DEFS.forEach(function(d){
-  var id=d[0],x=d[1],lKey=d[2],isMain=d[3],label=d[4],sub=d[5];
-  var w=isMain?NW:BW,h=isMain?NH:BH;
-  var y=isMain?mainY(lKey):branchY(lKey);
-  var lane=laneMap[lKey];
-  var n={id:id,x:x,y:y,w:w,h:h,label:label,sub:sub,laneKey:lKey,laneName:lane[1],isMain:isMain,color:lane[4]};
-  NODES.push(n);nodeMap[id]=n;
+  NODES.push(d);
+  nodeMap[d.id] = d;
 });
+
 function hexToRgb(h){return parseInt(h.slice(1,3),16)+","+parseInt(h.slice(3,5),16)+","+parseInt(h.slice(5,7),16);}
 function svgEl(tag,attrs){var el=document.createElementNS("http://www.w3.org/2000/svg",tag);if(attrs)Object.keys(attrs).forEach(function(k){el.setAttribute(k,attrs[k]);});return el;}
 function wrapText(label){var w=label.split(" ");if(w.length<=2)return[label,""];var m=Math.ceil(w.length/2);return[w.slice(0,m).join(" "),w.slice(m).join(" ")];}
+
 function buildSVG(){
-  var svg=document.getElementById("canvas");
-  svg.setAttribute("width",CW);svg.setAttribute("height",CH);
-  var defs=svgEl("defs");
-  var mk=svgEl("marker",{id:"ah",markerWidth:"7",markerHeight:"6",refX:"6",refY:"3",orient:"auto"});
-  mk.appendChild(svgEl("polygon",{points:"0 0, 7 3, 0 6",fill:"rgba(180,180,200,0.65)"}));
-  defs.appendChild(mk);svg.appendChild(defs);
-  var g=svgEl("g",{id:"main-g"});svg.appendChild(g);
+  var lanesG = document.getElementById("lanes");
+  var edgesG = document.getElementById("edges");
+  var nodesG = document.getElementById("nodes");
+  
   LANES.forEach(function(lane){
-    var rgb=hexToRgb(lane[4]);
-    g.appendChild(svgEl("rect",{x:18,y:lane[2],width:CW-36,height:lane[3],fill:"rgba("+rgb+",0.06)",stroke:"rgba("+rgb+",0.22)","stroke-width":"1",rx:"10"}));
-    var lt=svgEl("text",{x:32,y:lane[2]+18,fill:"rgba("+rgb+",0.70)","font-size":"10","font-weight":"700","font-family":"SF Pro Display,Segoe UI,sans-serif","letter-spacing":"1"});
-    lt.textContent=lane[1].toUpperCase();g.appendChild(lt);
+    var rect = svgEl("rect", {x:"0", y:lane[2], width:CW, height:"266", fill:"rgba(255,255,255,0.01)", stroke:"#222", "stroke-width":"1"});
+    lanesG.appendChild(rect);
+    var lbl = svgEl("text", {x:"10", y:lane[2]+20, "class":"lane-label"});
+    lbl.textContent = lane[1];
+    lanesG.appendChild(lbl);
   });
+  
   EDGES.forEach(function(e){
-    var a=nodeMap[e[0]],b=nodeMap[e[1]];if(!a||!b)return;
-    var ax,ay,bx,by,cx1,cy1,cx2,cy2;
-    var sameLane=(a.laneKey===b.laneKey),sameRow=(Math.abs(a.y-b.y)<25);
-    if(sameLane&&sameRow&&b.x>a.x){
-      ax=a.x+a.w;ay=a.y+a.h/2;bx=b.x;by=b.y+b.h/2;
-      var gap=b.x-(a.x+a.w);cx1=ax+gap*0.4;cy1=ay;cx2=bx-gap*0.4;cy2=by;
-    }else if(sameLane&&sameRow&&b.x<=a.x){
-      ax=a.x+a.w/2;ay=a.y;bx=b.x+b.w/2;by=b.y;cx1=ax;cy1=ay-48;cx2=bx;cy2=by-48;
-    }else if(sameLane&&!sameRow){
-      if(b.y>a.y){ax=a.x+a.w*0.5;ay=a.y+a.h;bx=b.x+b.w*0.5;by=b.y;}
-      else{ax=a.x+a.w*0.5;ay=a.y;bx=b.x+b.w*0.5;by=b.y+b.h;}
-      var midY=(ay+by)/2;cx1=ax;cy1=midY;cx2=bx;cy2=midY;
-    }else{
-      if(b.y>a.y){ax=a.x+a.w*0.5;ay=a.y+a.h;bx=b.x+b.w*0.5;by=b.y;}
-      else{ax=a.x+a.w*0.5;ay=a.y;bx=b.x+b.w*0.5;by=b.y+b.h;}
-      var mid=(ay+by)/2;cx1=ax;cy1=mid;cx2=bx;cy2=mid;
+    var src = nodeMap[e[0]], dst = nodeMap[e[1]];
+    if(!src || !dst) return;
+    var path = svgEl("path", {d:"M "+src.x+" "+src.y+" Q "+((src.x+dst.x)/2)+" "+((src.y+dst.y)/2)+" "+dst.x+" "+dst.y, "class":"edge-path", stroke:(laneMap[src.lane][3]||"#666"), "marker-end":"url(#arrowhead)"});
+    edgesG.appendChild(path);
+    if(e[2]){
+      var mx = (src.x + dst.x) / 2;
+      var my = (src.y + dst.y) / 2;
+      var lbl = svgEl("text", {"class":"edge-label", x:mx, y:my-6, "data-elabel":"1"});
+      lbl.textContent = e[2];
+      lbl.style.display = "none";
+      edgesG.appendChild(lbl);
     }
-    var rgb=hexToRgb(a.color);
-    var path=svgEl("path",{class:"edge-path",d:"M "+ax+","+ay+" C "+cx1+","+cy1+" "+cx2+","+cy2+" "+bx+","+by,stroke:"rgba("+rgb+",0.48)","marker-end":"url(#ah)"});
-    g.appendChild(path);
-    if(e[2]&&showLabels){var lx=(ax+bx)/2,ly=(ay+by)/2-16;var lt2=svgEl("text",{x:lx,y:ly,class:"edge-label","font-family":"SF Pro Display,Segoe UI,sans-serif","data-elabel":"1"});lt2.textContent=e[2];g.appendChild(lt2);}
   });
+  
   NODES.forEach(function(n){
-    var rgb=hexToRgb(n.color);
-    var grp=svgEl("g",{cursor:"pointer"});grp.setAttribute("data-nid",n.id);
-    grp.appendChild(svgEl("rect",{x:n.x,y:n.y,width:n.w,height:n.h,fill:n.isMain?"rgba("+rgb+",0.40)":"rgba("+rgb+",0.14)",stroke:n.isMain?"rgba("+rgb+",0.85)":"rgba("+rgb+",0.40)","stroke-width":n.isMain?"1.5":"1",rx:"8",class:"node-rect"}));
-    var cx=n.x+n.w/2,cy=n.y+n.h/2,lines=wrapText(n.label);
-    if(lines[1]){
-      var t1=svgEl("text",{x:cx,y:cy-9,class:"node-label","font-family":"SF Pro Display,Segoe UI,sans-serif"});t1.textContent=lines[0];grp.appendChild(t1);
-      var t2=svgEl("text",{x:cx,y:cy+6,class:"node-label","font-family":"SF Pro Display,Segoe UI,sans-serif"});t2.textContent=lines[1];grp.appendChild(t2);
-    }else{
-      var t1s=svgEl("text",{x:cx,y:cy-2,class:"node-label","font-family":"SF Pro Display,Segoe UI,sans-serif"});t1s.textContent=lines[0];grp.appendChild(t1s);
-    }
-    if(n.isMain&&n.sub){var sw=n.sub.split(" ");var sl=sw.slice(0,5).join(" ")+(sw.length>5?"...":"");var st=svgEl("text",{x:cx,y:cy+22,class:"node-sub","font-family":"SF Pro Display,Segoe UI,sans-serif"});st.textContent=sl;grp.appendChild(st);}
-    grp.addEventListener("click",function(){showDetail(n.id);});g.appendChild(grp);
+    var isBranch = n.id.match(/s[0-9]|2s[0-9]|ps[0-9]|rs[0-9]|ss[0-9]|ds[0-9]|es[0-9]|bs[0-9]|sps[0-9]|c2s[0-9]/) !== null;
+    var w = isBranch ? BW : NW;
+    var h = isBranch ? BH : NH;
+    var laneColor = laneMap[n.lane][3];
+    var grp = svgEl("g", {"data-nid":n.id, "class":"node-group"});
+    var rect = svgEl("rect", {"class":"node-rect", x:n.x-w/2, y:n.y-h/2, width:w, height:h, fill:laneColor, opacity:"0.85"});
+    grp.appendChild(rect);
+    var lbl = svgEl("text", {"class":"node-label", x:n.x, y:n.y-6});
+    lbl.textContent = n.label;
+    grp.appendChild(lbl);
+    var sub = svgEl("text", {"class":"node-sub", x:n.x, y:n.y+10});
+    sub.textContent = n.sub;
+    grp.appendChild(sub);
+    grp.addEventListener("click",function(){showDetail(n.id);});
+    nodesG.appendChild(grp);
   });
-  document.getElementById("nodecount").textContent=NODES.length+" nodes  |  "+EDGES.length+" connections";
 }
+
 function showDetail(id){
-  var n=nodeMap[id];if(!n)return;
-  var rgb=hexToRgb(n.color);
-  document.getElementById("d-title").textContent=n.label;
-  var tag=document.getElementById("d-tag");tag.textContent=n.laneName;tag.style.background="rgba("+rgb+",0.22)";tag.style.color=n.color;
-  document.getElementById("d-sub").textContent=n.sub;
-  var outEl=document.getElementById("d-out"),inEl=document.getElementById("d-in");
-  outEl.innerHTML="";inEl.innerHTML="";
+  var n = nodeMap[id];
+  if(!n) return;
+  document.getElementById("dname").textContent = n.label;
+  document.getElementById("dtag").innerHTML = "<span class='dtag' style='background:"+laneMap[n.lane][3]+";opacity:0.6'>"+n.lane+"</span>";
+  document.getElementById("dlabel").innerHTML = "<p style='font-size:12px;color:#aaa;margin-bottom:12px'>"+n.sub+"</p>";
+  var outEl = document.getElementById("dout");
+  var inEl = document.getElementById("din");
+  outEl.innerHTML = "<strong>Outputs:</strong>";
+  inEl.innerHTML = "<strong>Inputs:</strong>";
   EDGES.forEach(function(e){
     if(e[0]===id){var tgt=nodeMap[e[1]];if(!tgt)return;var d=document.createElement("div");d.className="dlink";d.innerHTML="<span class='arr'>&#x2192;</span><span class='lbl'>"+tgt.label+"</span><span style='margin-left:auto;font-size:10px;color:#555'>"+e[2]+"</span>";d.onclick=function(){showDetail(e[1]);};outEl.appendChild(d);}
     if(e[1]===id){var src=nodeMap[e[0]];if(!src)return;var d2=document.createElement("div");d2.className="dlink";d2.innerHTML="<span class='arr'>&#x2190;</span><span class='lbl'>"+src.label+"</span><span style='margin-left:auto;font-size:10px;color:#555'>"+e[2]+"</span>";d2.onclick=function(){showDetail(e[0]);};inEl.appendChild(d2);}
   });
-  if(!outEl.children.length)outEl.innerHTML="<div style='font-size:11px;color:#444;padding:4px 8px'>None</div>";
-  if(!inEl.children.length)inEl.innerHTML="<div style='font-size:11px;color:#444;padding:4px 8px'>None</div>";
   document.getElementById("detail").classList.add("open");
 }
+
 function closeDetail(){document.getElementById("detail").classList.remove("open");}
-function buildLegend(){var el=document.getElementById("leg-rows");LANES.forEach(function(l){var row=document.createElement("div");row.className="leg-row";row.innerHTML="<div class='leg-swatch' style='background:"+l[4]+"'></div><span class='leg-label'>"+l[1]+"</span>";el.appendChild(row);});}
-var scale=1,tx=0,ty=0,dragging=false,dragStartX,dragStartY,txStart,tyStart;
+
+function buildLegend(){var el=document.getElementById("leg-rows");LANES.forEach(function(l){var row=document.createElement("div");row.className="leg-row";row.innerHTML="<div class='leg-swatch' style='background:"+l[3]+"'></div><span class='leg-label'>"+l[1]+"</span>";el.appendChild(row);});}
+
 function applyTransform(){var g=document.getElementById("main-g");if(g)g.setAttribute("transform","translate("+tx+","+ty+") scale("+scale+")");document.getElementById("zoomlbl").textContent=Math.round(scale*100)+"%";}
 function fitToScreen(){var w=document.getElementById("canvas-wrap");var vw=w.offsetWidth,vh=w.offsetHeight;scale=Math.min((vw-40)/CW,(vh-40)/CH);tx=(vw-CW*scale)/2;ty=20;applyTransform();}
 function resetZoom(){scale=1;tx=40;ty=20;applyTransform();}
-function toggleEdgeLabels(){showLabels=!showLabels+document.querySelectorAll("[data-elabel]").forEach(function(el){el.style.display=showLabels?"":"none";});document.getElementById("toggleLabels").textContent=showLabels?"Hide Labels":"Show Labels";}
+function toggleEdgeLabels(){showLabels=!showLabels;document.querySelectorAll("[data-elabel]").forEach(function(el){el.style.display=showLabels?"":"none";});document.getElementById("toggleLabels").textContent=showLabels?"Hide Labels":"Show Labels";}
 function toggleFlowMap(){document.getElementById('flowmap').classList.toggle('open');}
+
 window.addEventListener("load",function(){
-  buildSVG();buildLegend();
-  var wrap=document.getElementById("canvas-wrap");
+  document.getElementById("nodecount").textContent = NODES.length + " nodes · " + EDGES.length + " connections";
+  buildSVG();
+  buildLegend();
+  fitToScreen();
+  
+  var wrap = document.getElementById("canvas-wrap");
   wrap.addEventListener("wheel",function(e){e.preventDefault();var r=wrap.getBoundingClientRect();var mx=e.clientX-r.left,my=e.clientY-r.top;var delta=e.deltaY>0?0.875:1.143;var ns=Math.max(0.1,Math.min(4,scale*delta));tx=mx-(mx-tx)*(ns/scale);ty=my-(my-ty)*(ns/scale);scale=ns;applyTransform();},{passive:false});
   wrap.addEventListener("mousedown",function(e){if(e.target.closest("[data-nid]"))return;dragging=true;dragStartX=e.clientX;dragStartY=e.clientY;txStart=tx;tyStart=ty;wrap.classList.add("dragging");});
-  document.addEventListener("mousemove",function(e){if(!dragging)return;tx=txStart+(e.clientX-dragStartX);ty=tyStart+(e.clientY-dragStartY);applyTransform();});
+  document.addEventListener("mousemove",function(e){if(!dragging) return;tx=txStart+(e.clientX-dragStartX);ty=tyStart+(e.clientY-dragStartY);applyTransform();});
   document.addEventListener("mouseup",function(){dragging=false;document.getElementById("canvas-wrap").classList.remove("dragging");});
-  var ltd=null,ltm=null;
-  wrap.addEventListener("touchstart",function(e){if(e.touches.length===1){dragging=true;dragStartX=e.touches[0].clientX;dragStartY=e.touches[0].clientY;txStart=tx;tyStart=ty;}else if(e.touches.length===2){dragging=false;var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;ltd=Math.sqrt(dx*dx+dy*dy);ltm={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};}},{passive:true});
-  wrap.addEventListener("touchmove",function(e){e.preventDefault();if(e.touches.length===1&&dragging){tx=txStart+(e.touches[0].clientX-dragStartX);ty=tyStart+(e.touches[0].clientY-dragStartY);applyTransform();}else if(e.touches.length===2&&ltd){var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;var dist=Math.sqrt(dx*dx+dy*dy);var d2=dist/ltd;var mid={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};var ns=Math.max(0.1,Math.min(4,scale*d2));tx=mid.x-(ltm.x-tx)*(ns/scale);ty=mid.y-(ltm.y-ty)*(ns/scale);scale=ns;ltd=dist;ltm=mid;applyTransform();}},{passive:false});
-  wrap.addEventListener("touchend",function(){dragging=false;ltd=null;});
+  
+  wrap.addEventListener("touchstart",function(e){if(e.touches.length===1){dragging=true;dragStartX=e.touches[0].clientX;dragStartY=e.touches[0].clientY;txStart=tx;tyStart=ty;}else if(e.touches.length===2){dragging=false;var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;ltd=Math.sqrt(dx*dx+dy*dy);ltm={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};}]},{passive:true});
+  wrap.addEventListener("touchmove",function(e){e.preventDefault();if(e.touches.length===1&&dragging){tx=txStart+(e.touches[0].clientX-dragStartX);ty=tyStart+(e.touches[0].clientY-dragStartY);applyTransform();}else if(e.touches.length===2&&ltd){var dx=e.touches[0].clientX-e.touches[1].clientX;var dy=e.touches[0].clientY-e.touches[1].clientY;var dist=Math.sqrt(dx*dx+dy*dy);var d2=dist/ltd;var mid={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2};var ns=Math.max(0.1,Math.min(4,scale*d2));tx=mid.x-(ltm.x-tx)*(ns/scale);ty=mid.y-(blm.y-ty)*(ns/scale);scale=ns;ltd=dist;ltm=mid;applyTransform();}},{passive:false});
+  wrap.addEventListener("touchend",function(){dragging=false;ltd=null;}});
   document.addEventListener("keydown",function(e){var s=40;if(e.key==="ArrowLeft"){tx+=s;applyTransform();}if(e.key==="ArrowRight"){tx-=s;applyTransform();}if(e.key==="ArrowUp"){ty+=s;applyTransform();}if(e.key==="ArrowDown"){ty-=s;applyTransform();}if(e.key==="+"||e.key==="="){scale=Math.min(4,scale*1.15);applyTransform();}if(e.key==="-"){scale=Math.max(0.1,scale*0.87);applyTransform();}if(e.key==="0"){fitToScreen();}if(e.key==="Escape"){closeDetail();}});
-  setTimeout(fitToScreen,100);
+  
+  document.getElementById("toggleLabels").addEventListener("click", toggleEdgeLabels);
+  document.getElementById("toggleFlowBtn").addEventListener("click", toggleFlowMap);
+  document.getElementById("detail").addEventListener("click", function(e){if(e.target === this) closeDetail();});
 });
 </script>
 </body>
