@@ -39,6 +39,20 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sa
 .leg-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
 .leg-label{font-size:10px;color:#888}
 #hint{position:fixed;bottom:16px;right:16px;font-size:10px;color:#444;text-align:right;line-height:1.8}
+
+#flowmap{position:fixed;top:52px;left:-420px;width:400px;bottom:0;background:rgba(12,12,22,0.98);border-right:1px solid #2a2a3a;padding:20px;transition:left .25s cubic-bezier(.4,0,.2,1);z-index:200;overflow-y:auto}
+#flowmap.open{left:0}
+#flowmap h3{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+#flowmap .fm-sub{font-size:11px;color:#555;margin-bottom:16px}
+#flowmap .fm-sec{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.8px;margin:14px 0 6px;border-top:1px solid #1a1a2a;padding-top:10px}
+#flowmap .fm-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;padding:6px;border-radius:5px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
+#flowmap .fm-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+#flowmap .fm-arr{color:#444;font-size:11px;flex-shrink:0;margin-top:1px}
+#flowmap .fm-desc{font-size:10px;color:#999;line-height:1.5}
+#flowmap .fm-node{font-size:10px;font-weight:600;color:#ddd;margin-bottom:1px}
+#flowmap #fmclose{position:absolute;top:16px;right:16px;background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:4px}
+#flowmap #fmclose:hover{color:#fff}
+
 </style>
 </head>
 <body>
@@ -47,7 +61,8 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sa
   <span>172 screens · 251 connections · 8 domains · 21 cross-flow links</span>
   <button class="tbtn" onclick="fitToScreen()">Fit Screen</button>
   <button class="tbtn" onclick="resetZoom()">100%</button>
-  <button class="tbtn" id="toggleLabels" onclick="toggleEdgeLabels()">Hide Labels</button>
+  <button class="tbtn" id="toggleLabels" onclick="toggleEdgeLabels()">Show Labels</button>
+  <button class="tbtn" onclick="toggleFlowMap()">Flow Map</button>
   <span id="zoomlbl" style="font-size:11px;color:#555">100%</span>
   <span id="nodecount"></span>
 </div>
@@ -68,9 +83,58 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sa
   <h4>Swim Lanes</h4>
   <div id="leg-rows"></div>
 </div>
+  <div id="flowmap">
+  <button id="fmclose" onclick="toggleFlowMap()">&#x2715;</button>
+  <h3>Cross-Flow Connections</h3>
+  <p class="fm-sub">How the 8 domains interconnect — 21+ transitions</p>
+
+  <div class="fm-sec">🟣 Onboarding → Navigation</div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(108,99,255,0.3);color:#6C63FF">ob19</span><span class="fm-arr">→</span><div><div class="fm-node">nav1 Home</div><div class="fm-desc">Setup Complete: user finishes onboarding wizard and enters the main app for the first time</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(108,99,255,0.3);color:#6C63FF">obs6</span><span class="fm-arr">→</span><div><div class="fm-node">nav1 Home</div><div class="fm-desc">Skip Device: user skips hardware pairing entirely, enters app without an ARK station</div></div></div>
+
+  <div class="fm-sec">🔵 BLE & Pairing ↔ Onboarding / Navigation</div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(0,188,212,0.3);color:#00BCD4">ble5</span><span class="fm-arr">→</span><div><div class="fm-node">ob15 Build Your Bar</div><div class="fm-desc">Connected (new user): first-time pairing routes to bottle assignment wizard</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(0,188,212,0.3);color:#00BCD4">ble5</span><span class="fm-arr">→</span><div><div class="fm-node">nav4 Station Detail</div><div class="fm-desc">Connected (returning user): existing users skip setup and go straight to station dashboard</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(0,188,212,0.3);color:#00BCD4">ble8</span><span class="fm-arr">→</span><div><div class="fm-node">nav4 Station Detail</div><div class="fm-desc">Restored: auto-reconnect after BLE drop preserves session state and resumes at station view</div></div></div>
+
+  <div class="fm-sec">🤖 BarBot AI → Navigation / Recipe / Station</div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(233,30,99,0.3);color:#E91E63">bb4</span><span class="fm-arr">→</span><div><div class="fm-node">nav6 Craft Confirm</div><div class="fm-desc">Drink Suggestion: AI recommends a drink, user taps Craft to enter the pour confirmation flow</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(233,30,99,0.3);color:#E91E63">bb8</span><span class="fm-arr">→</span><div><div class="fm-node">nav7 Active Pour</div><div class="fm-desc">Drink Queued: camera-scanned bottle IDs result in a queued drink that goes straight to pour</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(233,30,99,0.3);color:#E91E63">bbs6</span><span class="fm-arr">→</span><div><div class="fm-node">rec11 Recipe Saved</div><div class="fm-desc">Save AI Recipe: pin a BarBot-suggested drink to My Bar for future use</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(233,30,99,0.3);color:#E91E63">bbs7</span><span class="fm-arr">→</span><div><div class="fm-node">sm10 Clean Cycle</div><div class="fm-desc">Clean Triggered: camera AI detects residue on nozzle and automatically initiates a clean cycle</div></div></div>
+
+  <div class="fm-sec">🟠 Recipe Flow ↔ Navigation / Errors</div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,152,0,0.3);color:#FF9800">recs3</span><span class="fm-arr">→</span><div><div class="fm-node">nav2 Discover</div><div class="fm-desc">All Missing: zero in-stock ingredients for selected recipe — redirects to discover alternatives</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,152,0,0.3);color:#FF9800">recs7</span><span class="fm-arr">→</span><div><div class="fm-node">nav1 Home</div><div class="fm-desc">Skip Rating: user dismisses the post-pour rating screen and returns to the home feed</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,152,0,0.3);color:#FF9800">rec5</span><span class="fm-arr">→</span><div><div class="fm-node">re2 Missing Ingredient</div><div class="fm-desc">Ingredient Check fails: missing required spirit triggers the runtime error missing-ingredient flow</div></div></div>
+
+  <div class="fm-sec">🟣 Station Management ↔ Recipe / Errors</div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(156,39,176,0.3);color:#9C27B0">sm5</span><span class="fm-arr">→</span><div><div class="fm-node">re2 Missing Ingredient</div><div class="fm-desc">Empty Slot Alert: a slot runs completely empty and blocks any pour requiring that spirit</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(156,39,176,0.3);color:#9C27B0">sm10</span><span class="fm-arr">→</span><div><div class="fm-node">re4 Clean Required</div><div class="fm-desc">Clean Cycle active: cleaning in progress blocks any concurrent pour attempts</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(156,39,176,0.3);color:#9C27B0">sms3</span><span class="fm-arr">→</span><div><div class="fm-node">rec4 Recipe Detail</div><div class="fm-desc">Alt Recipes: low-stock slot suggests compatible recipes that use less of the depleted spirit</div></div></div>
+
+  <div class="fm-sec">🔴 Auth & Network Errors ↔ All Domains</div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(244,67,54,0.3);color:#F44336">ae9</span><span class="fm-arr">→</span><div><div class="fm-node">ble1 BLE Scan</div><div class="fm-desc">Emergency Stop: after an auth-triggered reset, station must be re-paired from scratch</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(244,67,54,0.3);color:#F44336">ae11</span><span class="fm-arr">→</span><div><div class="fm-node">nav1 Home</div><div class="fm-desc">Fully Restored: session fully recovered silently — user is returned to the home screen</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(244,67,54,0.3);color:#F44336">aes4</span><span class="fm-arr">→</span><div><div class="fm-node">nav2 Discover</div><div class="fm-desc">Offline Browse: cached read-only mode lets users browse recipes without connectivity</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(244,67,54,0.3);color:#F44336">aes6</span><span class="fm-arr">→</span><div><div class="fm-node">ob1 Splash Screen</div><div class="fm-desc">Manual Reset: factory reset wipes all local data and restarts the full onboarding flow</div></div></div>
+
+  <div class="fm-sec">🟤 Runtime Errors → Recovery Destinations</div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">re3</span><span class="fm-arr">→</span><div><div class="fm-node">ble1 BLE Scan</div><div class="fm-desc">BLE Lost Mid-Pour: station drops during an active pour — must reconnect or switch stations</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">re4</span><span class="fm-arr">→</span><div><div class="fm-node">sm10 Clean Cycle</div><div class="fm-desc">Clean Required: a dirty-station error routes the user to the full cleaning workflow</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">re7</span><span class="fm-arr">→</span><div><div class="fm-node">rec4 Recipe Detail</div><div class="fm-desc">Recipe Alts: when a pour fails, the system suggests substitute recipes using available spirits</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">re11</span><span class="fm-arr">→</span><div><div class="fm-node">nav8 Drink Complete</div><div class="fm-desc">Error Resolved: once the runtime error is cleared, the pour completes and shows the cheers screen</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res1</span><span class="fm-arr">→</span><div><div class="fm-node">nav1 Home</div><div class="fm-desc">Cancel Craft: user abandons the pour entirely and is sent back to the home feed</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res2</span><span class="fm-arr">→</span><div><div class="fm-node">ble1 BLE Scan</div><div class="fm-desc">Different Station: error recovery option to route the drink to an alternate paired ARK station</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res3</span><span class="fm-arr">→</span><div><div class="fm-node">sm10 Clean Cycle</div><div class="fm-desc">Auto Clean: dirty-station recovery automatically initiates a cleaning cycle before retry</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res4</span><span class="fm-arr">→</span><div><div class="fm-node">nav8 Drink Complete</div><div class="fm-desc">Save Partial: interrupted pour is saved as complete so the user still gets the completion screen</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res5</span><span class="fm-arr">→</span><div><div class="fm-node">bb2 Text Chat</div><div class="fm-desc">Retry BarBot: after an AI timeout, resend the original prompt to BarBot's text chat</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res6</span><span class="fm-arr">→</span><div><div class="fm-node">rec1 Recipe Hub</div><div class="fm-desc">Browse Manually: dismiss the AI entirely and navigate to the manual recipe browsing flow</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res8</span><span class="fm-arr">→</span><div><div class="fm-node">rec11 Recipe Saved</div><div class="fm-desc">Save Modified: save the recipe with the skipped ingredient noted, for future reference</div></div></div>
+</div>
 <div id="hint">Scroll to zoom &nbsp;|&nbsp; Drag to pan &nbsp;|&nbsp; Click node for details<br>Arrow keys to pan &nbsp;|&nbsp; +/- to zoom &nbsp;|&nbsp; 0 to fit</div>
 <script>
-var CW = 4200, CH = 2420;
+var CW = 5000, CH = 2420;
 var NW = 152, NH = 66, BW = 138, BH = 56;
 
 var LANES = [
@@ -92,156 +156,156 @@ function branchY(lKey){ return laneMap[lKey][2] + 163; }
 function laneColor(lKey){ return laneMap[lKey][4]; }
 
 var NODE_DEFS = [
-  ['ob1', 100, 'OB', 1, 'Splash Screen', 'Gold halo animation · auto-advance 2.8s'],
-  ['ob2', 268, 'OB', 1, 'Welcome', 'Tagline carousel · Sign In / Create Account'],
-  ['ob3', 436, 'OB', 1, 'Sign In', 'Email + password · forgot password link'],
-  ['ob4', 604, 'OB', 1, 'Create Account', 'Name, email, password fields'],
-  ['ob5', 772, 'OB', 1, 'Verify Email', '6-digit code auto-fill · resend option'],
-  ['ob6', 940, 'OB', 1, 'Profile Setup', 'Display name, photo, username'],
-  ['ob7', 1108, 'OB', 1, 'Age Verification', 'Date of birth · 21+ gate · D-03: needs exit'],
-  ['ob8', 1276, 'OB', 1, 'Taste Profile', 'Spirit + flavor preference chips'],
-  ['ob9', 1444, 'OB', 1, 'Dietary Prefs', 'Allergens + dietary restrictions'],
-  ['ob10', 1612, 'OB', 1, 'Terms & Privacy', 'Accept ToS + Privacy Policy'],
-  ['ob11', 1780, 'OB', 1, 'Notifications', 'Push permission · pour-ready alerts'],
-  ['ob12', 1948, 'OB', 1, 'Device Scan', 'BLE scan · 3 pulsing gold rings · 30s'],
-  ['ob13', 2116, 'OB', 1, 'Device Found', 'Station name + signal strength'],
-  ['ob14', 2284, 'OB', 1, 'Pairing Station', 'Handshake progress · connecting'],
-  ['ob15', 2452, 'OB', 1, 'Build Your Bar', 'CROSS-IN ble5 · 6 slot cards from paired device'],
-  ['ob16', 2620, 'OB', 1, 'Assign Slot 1', 'Spirit-to-slot assignment · slot 1'],
-  ['ob17', 2788, 'OB', 1, 'Assign Slot 2', 'Spirit-to-slot assignment · slot 2'],
-  ['ob18', 2956, 'OB', 1, 'Assign Slot 3+', 'Remaining slots · skip option'],
-  ['ob19', 3124, 'OB', 1, 'Setup Complete', 'CROSS-OUT nav1 · Confetti · enter app'],
-  ['obs1', 268, 'OB', 0, 'SSO Login', 'Google / Apple / Facebook sign-in modal'],
-  ['obs2', 436, 'OB', 0, 'Forgot Password', 'Reset link sent · back to Sign In'],
-  ['obs3', 1108, 'OB', 0, 'Age Blocked', 'Under-21 terminal · D-03: needs Exit CTA'],
-  ['obs4', 772, 'OB', 0, 'Resend Verify', 'Resend verification email'],
-  ['obs5', 940, 'OB', 0, 'No Device Found', 'Dead-end after failed scan · retry or skip'],
-  ['obs6', 1612, 'OB', 0, 'Skip Device', 'CROSS-OUT nav1 · deviceConnected=false'],
-  ['obs7', 2116, 'OB', 0, 'Scan Timeout', '30s timeout · retry returns to ob12'],
-  ['obs8', 2284, 'OB', 0, 'Pairing Failed', 'Pair rejected · retry pair or skip station'],
-  ['obs9', 2956, 'OB', 0, 'Skip Bottles', 'Skip remaining slot assignments'],
-  ['ble1', 100, 'BLE', 1, 'BLE Scan', 'CROSS-IN ae9/re3/res2 · Scan for stations'],
-  ['ble2', 268, 'BLE', 1, 'Station Found', 'Single station · SSID + signal strength'],
-  ['ble3', 436, 'BLE', 1, 'Multiple Found', 'Station picker list · select one'],
-  ['ble4', 604, 'BLE', 1, 'Pairing', 'Handshake connecting · progress bar'],
-  ['ble5', 772, 'BLE', 1, 'Connected', 'CROSS-OUT nav4/ob15 · isNewUser gate'],
-  ['ble6', 940, 'BLE', 1, 'Connection Lost', 'BLE dropped · auto-reconnect begins'],
-  ['ble7', 1108, 'BLE', 1, 'Reconnecting', 'Auto-reconnect · 3 max tries'],
-  ['ble8', 1276, 'BLE', 1, 'Restored', 'CROSS-OUT nav4 · session state preserved'],
-  ['ble9', 1444, 'BLE', 1, 'Troubleshoot', 'Manual steps · move closer · restart ARK'],
-  ['bles1', 100, 'BLE', 0, 'BT Disabled', 'Bluetooth off · prompt to enable in Settings'],
-  ['bles2', 268, 'BLE', 0, 'Scan Timeout', 'No station found after 30 seconds'],
-  ['bles3', 436, 'BLE', 0, 'Wrong Station', 'Wrong device paired · disconnect + rescan'],
-  ['bles4', 604, 'BLE', 0, 'Pair Rejected', 'Station refused pairing · try again'],
-  ['bles5', 940, 'BLE', 0, 'Lost Banner', 'Passive banner · connection dropped'],
-  ['bles6', 1108, 'BLE', 0, 'Retry 2 of 3', 'Second auto-reconnect attempt'],
-  ['bles7', 1444, 'BLE', 0, 'Contact Support', 'D-12: needs diagnostic log export first'],
-  ['nav1', 100, 'NAV', 1, 'Home', 'CROSS-IN ob19/ae11/res1/recs7/obs6'],
-  ['nav2', 268, 'NAV', 1, 'Discover', 'CROSS-IN aes4/recs3 · Trending, categories'],
-  ['nav3', 436, 'NAV', 1, 'My Bar', 'Saved recipes, history, preferences'],
-  ['nav4', 604, 'NAV', 1, 'Station Detail', 'CROSS-IN ble5/ble8 · ARK status + slots'],
-  ['nav5', 772, 'NAV', 1, 'Recipe Detail', 'CROSS-IN re7/sms3 · Full recipe card'],
-  ['nav6', 940, 'NAV', 1, 'Craft Confirm', 'CROSS-IN bb4/nav4 · D-02: gate deviceConnected'],
-  ['nav7', 1108, 'NAV', 1, 'Active Pour', 'CROSS-IN bb8 · Live pour · 4 error flows'],
-  ['nav8', 1276, 'NAV', 1, 'Drink Complete', 'CROSS-IN re11/res4 · Cheers · rating'],
-  ['nav9', 1444, 'NAV', 1, 'Search Results', 'Filtered search with facet chips'],
-  ['navs1', 100, 'NAV', 0, 'Category Browse', 'Browse by spirit, occasion, mood'],
-  ['navs2', 268, 'NAV', 0, 'Similar Drinks', 'Recommendations from selected recipe'],
-  ['navs3', 436, 'NAV', 0, 'Reviews', 'D-11: read-only, needs back nav to nav5'],
-  ['navs4', 940, 'NAV', 0, 'Cancel Pour', 'Stop active pour · confirmation dialog'],
-  ['navs5', 1108, 'NAV', 0, 'Full History', 'Complete pour log · date filters'],
-  ['navs6', 1276, 'NAV', 0, 'Trending Grid', 'Top 50 drinks · sortable grid view'],
-  ['rec1', 100, 'REC', 1, 'Recipe Hub', 'CROSS-IN res6 · Browse, search, recommended'],
-  ['rec2', 268, 'REC', 1, 'Browse Recipes', 'Grid view · filter chips · sort options'],
-  ['rec3', 436, 'REC', 1, 'Search Recipes', 'Type to search · live suggestions'],
-  ['rec4', 604, 'REC', 1, 'Recipe Detail', 'CROSS-IN re7/sms3 · Full recipe + ingredients'],
-  ['rec5', 772, 'REC', 1, 'Ingredient Check', 'In-stock vs missing · D-07: needs partial state'],
-  ['rec6', 940, 'REC', 1, 'Customize', 'Adjust ABV, sweetness, ice, garnish'],
-  ['rec7', 1108, 'REC', 1, 'Craft Confirm', 'Final review · confirm station + glass'],
-  ['rec8', 1276, 'REC', 1, 'Pour Progress', 'Real-time pour UI · step countdown'],
-  ['rec9', 1444, 'REC', 1, 'Pour Complete', 'Success · D-14: consolidate with nav8'],
-  ['rec10', 1612, 'REC', 1, 'Rate Drink', '1-5 stars · optional tasting notes'],
-  ['rec11', 1780, 'REC', 1, 'Recipe Saved', 'CROSS-IN bbs6/res8 · Saved to My Bar'],
-  ['recs1', 268, 'REC', 0, 'Save Bookmark', 'Heart recipe → saved to My Bar'],
-  ['recs2', 436, 'REC', 0, 'Filter Results', 'By spirit, dietary, occasion, ABV'],
-  ['recs3', 772, 'REC', 0, 'All Missing', 'CROSS-OUT nav2 · zero-ingredient match'],
-  ['recs4', 940, 'REC', 0, 'Change Station', 'Select different paired station'],
-  ['recs5', 1108, 'REC', 0, 'Skip Customize', 'Use default recipe settings'],
-  ['recs6', 1276, 'REC', 0, 'Cancel Pour', 'Mid-pour cancel · waste warning'],
-  ['recs7', 1444, 'REC', 0, 'Skip Rating', 'CROSS-OUT nav1 · dismiss rating, go home'],
-  ['recs8', 1612, 'REC', 0, 'Make Another', 'Re-queue same recipe · back to rec7'],
-  ['bb1', 100, 'BB', 1, 'BarBot Home', 'AI entry · suggested prompts · mic + camera'],
-  ['bb2', 268, 'BB', 1, 'Text Chat', 'CROSS-IN res5 · Type message to BarBot'],
-  ['bb3', 436, 'BB', 1, 'AI Streaming', 'BarBot generating · live streaming response'],
-  ['bb4', 604, 'BB', 1, 'Drink Suggestion', 'CROSS-OUT nav6 · AI recipe + ingredient match'],
-  ['bb5', 772, 'BB', 1, 'Voice Input', 'Mic active · waveform · voice to text'],
-  ['bb6', 940, 'BB', 1, 'Camera Scan', 'Point camera at bottles · AI detection'],
-  ['bb7', 1108, 'BB', 1, 'Bottles ID\'d', 'AI lists detected spirits · confirm'],
-  ['bb8', 1276, 'BB', 1, 'Drink Queued', 'CROSS-OUT nav7 · Queued · D-08: needs safety check'],
-  ['bbs1', 100, 'BB', 0, 'Demo Mode', 'Try BarBot without station paired'],
-  ['bbs2', 268, 'BB', 0, 'Suggested Prompts', 'Quick-tap starter prompts shown'],
-  ['bbs3', 436, 'BB', 0, 'AI Error', 'BarBot failed to respond · retry CTA'],
-  ['bbs4', 604, 'BB', 0, 'Refine Request', 'Adjust or re-query AI suggestion'],
-  ['bbs5', 772, 'BB', 0, 'Voice Review', 'Review + edit voice-to-text transcript'],
-  ['bbs6', 940, 'BB', 0, 'Save AI Recipe', 'CROSS-OUT rec11 · Pin BarBot recipe to bar'],
-  ['bbs7', 1108, 'BB', 0, 'Clean Triggered', 'CROSS-OUT sm10 · Camera detects residue'],
-  ['bbs8', 1276, 'BB', 0, 'Share Session', 'Share or screenshot BarBot conversation'],
-  ['sm1', 100, 'SM', 1, 'Station Hub', 'All connected stations overview list'],
-  ['sm2', 268, 'SM', 1, 'Station Overview', 'Health, slot levels, active recipes'],
-  ['sm3', 436, 'SM', 1, 'Liquid Levels', 'Per-slot fill percentage chart'],
-  ['sm4', 604, 'SM', 1, 'Low Level Alert', 'Slot below 20% · refill prompt'],
-  ['sm5', 772, 'SM', 1, 'Empty Slot Alert', 'CROSS-OUT re2 · Slot empty · pour blocked'],
-  ['sm6', 940, 'SM', 1, 'Quick Flush', 'Initiate quick purge cycle'],
-  ['sm7', 1108, 'SM', 1, 'Bottle Manager', 'All slots list · swap or reassign'],
-  ['sm8', 1276, 'SM', 1, 'Assign Spirit', 'Search + select spirit for slot'],
-  ['sm9', 1444, 'SM', 1, 'Station Health', 'Diagnostics: temp, pressure, errors'],
-  ['sm10', 1612, 'SM', 1, 'Clean Cycle', 'CROSS-IN bbs7/res3/re4 · CROSS-OUT re4'],
-  ['sm11', 1780, 'SM', 1, 'Maintenance Done', 'D-13: needs station restart screen'],
-  ['sms1', 268, 'SM', 0, 'Slot Detail', 'Tap slot · brand, fill level, pour history'],
-  ['sms2', 436, 'SM', 0, 'Reorder Slots', 'Drag to reorder spirit slot assignments'],
-  ['sms3', 772, 'SM', 0, 'Alt Recipes', 'CROSS-OUT rec4 · Recipes for low-stock slot'],
-  ['sms4', 940, 'SM', 0, 'Flush Confirm', 'Confirm flush · waste warning shown'],
-  ['sms5', 1108, 'SM', 0, 'Remove Bottle', 'Mark slot empty · update inventory'],
-  ['sms6', 1276, 'SM', 0, 'Manual Volume', 'Override spirit volume manually'],
-  ['sms7', 1444, 'SM', 0, 'Diagnostics Log', 'Full sensor readout · error codes export'],
-  ['sms8', 1612, 'SM', 0, 'Firmware Update', 'OTA update available · D-13: needs restart'],
-  ['sms9', 1780, 'SM', 0, 'Schedule Clean', 'Set recurring cleaning reminder'],
-  ['ae1', 100, 'AE', 1, 'Login Attempt', 'User submits credentials for auth'],
-  ['ae2', 268, 'AE', 1, 'Auth Failed', 'Wrong credentials error shown'],
-  ['ae3', 436, 'AE', 1, 'Session Expired', 'Token expired · auto refresh begins'],
-  ['ae4', 604, 'AE', 1, 'Provider Down', 'SSO / OAuth provider unreachable'],
-  ['ae5', 772, 'AE', 1, 'Network Offline', 'No internet · offline mode banner'],
-  ['ae6', 940, 'AE', 1, 'Auto Recovery', 'Background token refresh attempt'],
-  ['ae7', 1108, 'AE', 1, 'Request Failed', 'API call failed with error code'],
-  ['ae8', 1276, 'AE', 1, 'Auth Restored', 'Session re-established silently'],
-  ['ae9', 1444, 'AE', 1, 'Emergency Stop', 'CROSS-OUT ble1/ob1 · D-04: needs confirm dialog'],
-  ['ae10', 1612, 'AE', 1, 'Reconnect BLE', 'Re-pair station after auth restore'],
-  ['ae11', 1780, 'AE', 1, 'Fully Restored', 'CROSS-OUT nav1 · All systems green'],
-  ['aes1', 268, 'AE', 0, 'Account Locked', 'Too many attempts · account locked'],
-  ['aes2', 436, 'AE', 0, 'Reset Email Sent', 'Password reset email dispatched'],
-  ['aes3', 604, 'AE', 0, 'Try SSO', 'Attempt different social login provider'],
-  ['aes4', 772, 'AE', 0, 'Offline Browse', 'CROSS-OUT nav2 · Cached read-only mode'],
-  ['aes5', 1108, 'AE', 0, 'Error Details', 'Full error log · trace · copy to clipboard'],
-  ['aes6', 1612, 'AE', 0, 'Manual Reset', 'CROSS-OUT ob1 · Factory reset · D-09: BLE unbond'],
-  ['re1', 100, 'RE', 1, 'Pour Requested', 'CROSS-IN nav6/rec7 · Pour attempt initiated'],
-  ['re2', 268, 'RE', 1, 'Missing Ingredient', 'CROSS-IN rec5/sm5 · Required spirit absent'],
-  ['re3', 436, 'RE', 1, 'BLE Lost Mid-Pour', 'CROSS-OUT ble1 · Station dropped mid-pour'],
-  ['re4', 604, 'RE', 1, 'Clean Required', 'CROSS-IN/OUT sm10 · Cleaning blocks pour'],
-  ['re5', 772, 'RE', 1, 'Pour Interrupted', 'CROSS-IN rec8 · Unexpected stop mid-pour'],
-  ['re6', 940, 'RE', 1, 'AI Timeout', 'BarBot did not respond in time'],
-  ['re7', 1108, 'RE', 1, 'Recipe Alts', 'CROSS-OUT rec4 · Show substitute recipes'],
-  ['re8', 1276, 'RE', 1, 'Pour Paused', 'User paused · D-10: needs 5-min timeout'],
-  ['re9', 1444, 'RE', 1, 'Skip Ingredient', 'Confirm omit non-critical ingredient'],
-  ['re10', 1612, 'RE', 1, 'Restart Pour', 'Re-attempt pour from beginning'],
-  ['re11', 1780, 'RE', 1, 'Error Resolved', 'CROSS-OUT nav8 · Error cleared · pour done'],
-  ['res1', 268, 'RE', 0, 'Cancel Craft', 'CROSS-OUT nav1 · Abandon pour entirely'],
-  ['res2', 436, 'RE', 0, 'Different Station', 'CROSS-OUT ble1 · Route to alternate station'],
-  ['res3', 604, 'RE', 0, 'Auto Clean', 'CROSS-OUT sm10 · Auto-initiate clean cycle'],
-  ['res4', 772, 'RE', 0, 'Save Partial', 'CROSS-OUT nav8 · Save what was poured'],
-  ['res5', 940, 'RE', 0, 'Retry BarBot', 'CROSS-OUT bb2 · Resend after AI timeout'],
-  ['res6', 1108, 'RE', 0, 'Browse Manually', 'CROSS-OUT rec1 · Dismiss AI, go to recipes'],
-  ['res7', 1276, 'RE', 0, 'Extend Pause', 'Keep pour paused · extend pause timer'],
-  ['res8', 1612, 'RE', 0, 'Save Modified', 'CROSS-OUT rec11 · Save without skipped item'],
+  ['ob1', 80, 'OB', 1, 'Splash Screen', 'Gold halo animation · auto-advance 2.8s'],
+  ['ob2', 280, 'OB', 1, 'Welcome', 'Tagline carousel · Sign In / Create Account'],
+  ['ob3', 480, 'OB', 1, 'Sign In', 'Email + password · forgot password link'],
+  ['ob4', 680, 'OB', 1, 'Create Account', 'Name, email, password fields'],
+  ['ob5', 880, 'OB', 1, 'Verify Email', '6-digit code auto-fill · resend option'],
+  ['ob6', 1080, 'OB', 1, 'Profile Setup', 'Display name, photo, username'],
+  ['ob7', 1280, 'OB', 1, 'Age Verification', 'Date of birth · 21+ gate · D-03: needs exit'],
+  ['ob8', 1480, 'OB', 1, 'Taste Profile', 'Spirit + flavor preference chips'],
+  ['ob9', 1680, 'OB', 1, 'Dietary Prefs', 'Allergens + dietary restrictions'],
+  ['ob10', 1880, 'OB', 1, 'Terms & Privacy', 'Accept ToS + Privacy Policy'],
+  ['ob11', 2080, 'OB', 1, 'Notifications', 'Push permission · pour-ready alerts'],
+  ['ob12', 2280, 'OB', 1, 'Device Scan', 'BLE scan · 3 pulsing gold rings · 30s'],
+  ['ob13', 2480, 'OB', 1, 'Device Found', 'Station name + signal strength'],
+  ['ob14', 2680, 'OB', 1, 'Pairing Station', 'Handshake progress · connecting'],
+  ['ob15', 2880, 'OB', 1, 'Build Your Bar', 'CROSS-IN ble5 · 6 slot cards from paired device'],
+  ['ob16', 3080, 'OB', 1, 'Assign Slot 1', 'Spirit-to-slot assignment · slot 1'],
+  ['ob17', 3280, 'OB', 1, 'Assign Slot 2', 'Spirit-to-slot assignment · slot 2'],
+  ['ob18', 3480, 'OB', 1, 'Assign Slot 3+', 'Remaining slots · skip option'],
+  ['ob19', 3680, 'OB', 1, 'Setup Complete', 'CROSS-OUT nav1 · Confetti · enter app'],
+  ['obs1', 280, 'OB', 0, 'SSO Login', 'Google / Apple / Facebook sign-in modal'],
+  ['obs2', 480, 'OB', 0, 'Forgot Password', 'Reset link sent · back to Sign In'],
+  ['obs3', 1280, 'OB', 0, 'Age Blocked', 'Under-21 terminal · D-03: needs Exit CTA'],
+  ['obs4', 880, 'OB', 0, 'Resend Verify', 'Resend verification email'],
+  ['obs5', 1080, 'OB', 0, 'No Device Found', 'Dead-end after failed scan · retry or skip'],
+  ['obs6', 1880, 'OB', 0, 'Skip Device', 'CROSS-OUT nav1 · deviceConnected=false'],
+  ['obs7', 2480, 'OB', 0, 'Scan Timeout', '30s timeout · retry returns to ob12'],
+  ['obs8', 2680, 'OB', 0, 'Pairing Failed', 'Pair rejected · retry pair or skip station'],
+  ['obs9', 3480, 'OB', 0, 'Skip Bottles', 'Skip remaining slot assignments'],
+  ['ble1', 80, 'BLE', 1, 'BLE Scan', 'CROSS-IN ae9/re3/res2 · Scan for stations'],
+  ['ble2', 280, 'BLE', 1, 'Station Found', 'Single station · SSID + signal strength'],
+  ['ble3', 480, 'BLE', 1, 'Multiple Found', 'Station picker list · select one'],
+  ['ble4', 680, 'BLE', 1, 'Pairing', 'Handshake connecting · progress bar'],
+  ['ble5', 880, 'BLE', 1, 'Connected', 'CROSS-OUT nav4/ob15 · isNewUser gate'],
+  ['ble6', 1080, 'BLE', 1, 'Connection Lost', 'BLE dropped · auto-reconnect begins'],
+  ['ble7', 1280, 'BLE', 1, 'Reconnecting, 'Auto-reconnect · 3 max tries'],
+  ['ble8', 1480, 'BLE', 1, 'Restored', 'CROSS-OUT nav4 · session state preserved'],
+  ['ble9', 1680, 'BLE', 1, 'Troubleshoot', 'Manual steps · move closer · restart ARK'],
+  ['bles1', 80, 'BLE', 0, 'BT Disabled', 'Bluetooth off · prompt to enable in Settings'],
+  ['bles2', 280, 'BLE', 0, 'Scan Timeout', 'No station found after 30 seconds'],
+  ['bles3', 480, 'BLE', 0, 'Wrong Station', 'Wrong device paired · disconnect + rescan'],
+  ['bles4', 680, 'BLE', 0, 'Pair Rejected', 'Station refused pairing · try again'],
+  ['bles5', 1080, 'BLE', 0, 'Lost Banner', 'Passive banner · connection dropped'],
+  ['bles6', 1280, 'BLE', 0, 'Retry 2 of 3', 'Second auto-reconnect attempt'],
+  ['bles7', 1680, 'BLE', 0, 'Contact Support', 'D-12: needs diagnostic log export first'],
+  ['nav1', 80, 'NAV', 1, 'Home', 'CROSS-IN ob19/ae11/res1/recs7/obs6'],
+  ['nav2', 280, 'NAV', 1, 'Discover', 'CROSS-IN aes4/recs3 · Trending, categories'],
+  ['nav3', 480, 'NAV', 1, 'My Bar', 'Saved recipes, history, preferences'],
+  ['nav4', 680, 'NAV', 1, 'Station Detail', 'CROSS-IN ble5/ble8 · ARK status + slots'],
+  ['nav5', 880, 'NAV', 1, 'Recipe Detail', 'CROSS-IN re7/sms3 · Full recipe card'],
+  ['nav6', 1080, 'NAV', 1, 'Craft Confirm', 'CROSS-IN bb4/nav4 · D-02: gate deviceConnected'],
+  ['nav7', 1280, 'NAV', 1, 'Active Pour', 'CROSS-IN bb8 · Live pour · 4 error flows'],
+  ['nav8', 1480, 'NAV', 1, 'Drink Complete', 'CROSS-IN re11/res4 · Cheers · rating'],
+  ['nav9', 1680, 'NAV', 1, 'Search Results', 'Filtered search with facet chips'],
+  ['navs1', 80, 'NAV', 0, 'Category Browse', 'Browse by spirit, occasion, mood'],
+  ['navs2', 280, 'NAV', 0, 'Similar Drinks', 'Recommendations from selected recipe'],
+  ['navs3', 480, 'NAV', 0, 'Reviews', 'D-11: read-only, needs back nav to nav5'],
+  ['navs4', 1080, 'NAV', 0, 'Cancel Pour', 'Stop active pour · confirmation dialog'],
+  ['navs5', 1280, 'NAV', 0, 'Full History', 'Complete pour log · date filters'],
+  ['navs6', 1480, 'NAV', 0, 'Trending Grid', 'Top 50 drinks · sortable grid view'],
+  ['rec1', 80, 'REC', 1, 'Recipe Hub', 'CROSS-IN res6 · Browse, search, recommended'],
+  ['rec2', 280, 'REC', 1, 'Browse Recipes', 'Grid view · filter chips · sort options'],
+  ['rec3', 480, 'REC', 1, 'Search Recipes', 'Type to search · live suggestions'],
+  ['rec4', 680, 'REC', 1, 'Recipe Detail', 'CROSS-IN re7/sms3 · Full recipe + ingredients'],
+  ['rec5', 880, 'REC', 1, 'Ingredient Check', 'In-stock vs missing · D-07: needs partial state'],
+  ['rec6', 1080, 'REC', 1, 'Customize', 'Adjust ABV, sweetness, ice, garnish'],
+  ['rec7', 1280, 'REC', 1, 'Craft Confirm', 'Final review · confirm station + glass'],
+  ['rec8', 1480, 'REC', 1, 'Pour Progress', 'Real-time pour UI · step countdown'],
+  ['rec9', 1680, 'REC', 1, 'Pour Complete', 'Success · D-14: consolidate with nav8'],
+  ['rec10', 1880, 'REC', 1, 'Rate Drink', '1-5 stars · optional tasting notes'],
+  ['rec11', 2080, 'REC', 1, 'Recipe Saved', 'CROSS-IN bbs6/res8 · Saved to My Bar'],
+  ['recs1', 280, 'REC', 0, 'Save Bookmark', 'Heart recipe → saved to My Bar'],
+  ['recs2', 480, 'REC', 0, 'Filter Results', 'By spirit, dietary, occasion, ABV'],
+  ['recs3', 880, 'REC', 0, 'All Missing', 'CROSS-OUT nav2 · zero-ingredient match'],
+  ['recs4', 1080, 'REC', 0, 'Change Station', 'Select different paired station'],
+  ['recs5', 1280, 'REC', 0, 'Skip Customize', 'Use default recipe settings'],
+  ['recs6', 1480, 'REC', 0, 'Cancel Pour', 'Mid-pour cancel · waste warning'],
+  ['recs7', 1680, 'REC', 0, 'Skip Rating', 'CROSS-OUT nav1 · dismiss rating, go home'],
+  ['recs8', 1880, 'REC', 0, 'Make Another', 'Re-queue same recipe · back to rec7'],
+  ['bb1', 80, 'BB', 1, 'BarBot Home', 'AI entry · suggested prompts · mic + camera'],
+  ['bb2', 280, 'BB', 1, 'Text Chat', 'CROSS-IN res5 · Type message to BarBot'],
+  ['bb3', 480, 'BB', 1, 'AI Streaming', 'BarBot generating · live streaming response'],
+  ['bb4', 680, 'BB', 1, 'Drink Suggestion', 'CROSS-OUT nav6 · AI recipe + ingredient match'],
+  ['bb5', 880, 'BB', 1, 'Voice Input', 'Mic active · waveform · voice to text'],
+  ['bb6', 1080, 'BB', 1, 'Camera Scan', 'Point camera at bottles · AI detection'],
+  ['bb7', 1280, 'BB', 1, 'Bottles ID\'d', 'AI lists detected spirits · confirm'],
+  ['bb8', 1480, 'BB', 1, 'Drink Queued', 'CROSS-OUT nav7 · Queued · D-08: needs safety check'],
+  ['bbs1', 80, 'BB', 0, 'Demo Mode', 'Try BarBot without station paired'],
+  ['bbs2', 280, 'BB', 0, 'Suggested Prompts', 'Quick-tap starter prompts shown'],
+  ['bbs3', 480, 'BB', 0, 'AI Error', 'BarBot failed to respond · retry CTA'],
+  ['bbs4', 680, 'BB', 0, 'Refine Request', 'Adjust or re-query AI suggestion'],
+  ['bbs5', 880, 'BB', 0, 'Voice Review', 'Review + edit voice-to-text transcript'],
+  ['bbs6', 1080, 'BB', 0, 'Save AI Recipe', 'CROSS-OUT rec11 · Pin BarBot recipe to bar'],
+  ['bbs7', 1280, 'BB', 0, 'Clean Triggered', 'CROSS-OUT sm10 · Camera detects residue'],
+  ['bbs8', 1480, 'BB', 0, 'Share Session', 'Share or screenshot BarBot conversation'],
+  ['sm1', 80, 'SM', 1, 'Station Hub', 'All connected stations overview list'],
+  ['sm2', 280, 'SM', 1, 'Station Overview', 'Health, slot levels, active recipes'],
+  ['sm3', 480, 'SM', 1, 'Liquid Levels', 'Per-slot fill percentage chart'],
+  ['sm4', 680, 'SM', 1, 'Low Level Alert', 'Slot below 20% · refill prompt'],
+  ['sm5', 880, 'SM', 1, 'Empty Slot Alert', 'CROSS-OUT re2 · Slot empty · pour blocked'],
+  ['sm6', 1080, 'SM', 1, 'Quick Flush', 'Initiate quick purge cycle'],
+  ['sm7', 1280, 'SM', 1, 'Bottle Manager', 'All slots list · swap or reassign'],
+  ['sm8', 1480, 'SM', 1, 'Assign Spirit', 'Search + select spirit for slot'],
+  ['sm9', 1680, 'SM', 1, 'Station Health', 'Diagnostics: temp, pressure, errors'],
+  ['sm10', 1880, 'SM', 1, 'Clean Cycle', 'CROSS-IN bbs7/res3/re4 · CROSS-OUT re4'],
+  ['sm11', 2080, 'SM', 1, 'Maintenance Done', 'D-13: needs station restart screen'],
+  ['sms1', 280, 'SM', 0, 'Slot Detail', 'Tap slot · brand, fill level, pour history'],
+  ['sms2', 480, 'SM', 0, 'Reorder Slots', 'Drag to reorder spirit slot assignments'],
+  ['sms3', 880, 'SM', 0, 'Alt Recipes', 'CROSS-OUT rec4 · Recipes for low-stock slot'],
+  ['sms4', 1080, 'SM', 0, 'Flush Confirm', 'Confirm flush · waste warning shown'],
+  ['sms5', 1280, 'SM', 0, 'Remove Bottle', 'Mark slot empty · update inventory'],
+  ['sms6', 1480, 'SM', 0, 'Manual Volume', 'Override spirit volume manually'],
+  ['sms7', 1680, 'SM', 0, 'Diagnostics Log', 'Full sensor readout · error codes export'],
+  ['sms8', 1880, 'SM', 0, 'Firmware Update', 'OTA update available · D-13: needs restart'],
+  ['sms9', 2080, 'SM', 0, 'Schedule Clean', 'Set recurring cleaning reminder'],
+  ['ae1', 80, 'AE', 1, 'Login Attempt', 'User submits credentials for auth'],
+  ['ae2', 280, 'AE', 1, 'Auth Failed', 'Wrong credentials error shown'],
+  ['ae3', 480, 'AE', 1, 'Session Expired', 'Token expired · auto refresh begins'],
+  ['ae4', 680, 'AE', 1, 'Provider Down', 'SSO / OAuth provider unreachable'],
+  ['ae5', 880, 'AE', 1, 'Network Offline', 'No internet · offline mode banner'],
+  ['ae6', 1080, 'AE', 1, 'Auto Recovery', 'Background token refresh attempt'],
+  ['ae7', 1280, 'AE', 1, 'Request Failed', 'API call failed with error code'],
+  ['ae8', 1480, 'AE', 1, 'Auth Restored', 'Session re-established silently'],
+  ['ae9', 1680, 'AE', 1, 'Emergency Stop', 'CROSS-OUT ble1/ob1 · D-04: needs confirm dialog'],
+  ['ae10', 1880, 'AE', 1, 'Reconnect BLE', 'Re-pair station after auth restore'],
+  ['ae11', 2080, 'AE', 1, 'Fully Restored', 'CROSS-OUT nav1 · All systems green'],
+  ['aes1', 280, 'AE', 0, 'Account Locked', 'Too many attempts · account locked'],
+  ['aes2', 480, 'AE', 0, 'Reset Email Sent', 'Password reset email dispatched'],
+  ['aes3', 680, 'AE', 0, 'Try SSO', 'Attempt different social login provider'],
+  ['aes4', 880, 'AE', 0, 'Offline Browse', 'CROSS-OUT nav2 · Cached read-only mode'],
+  ['aes5', 1280, 'AE', 0, 'Error Details', 'Full error log · trace · copy to clipboard'],
+  ['aes6', 1880, 'AE', 0, 'Manual Reset', 'CROSS-OUT ob1 · Factory reset · D-09: BLE unbond'],
+  ['re1', 80, 'RE', 1, 'Pour Requested', 'CROSS-IN nav6/rec7 · Pour attempt initiated'],
+  ['re2', 280, 'RE', 1, 'Missing Ingredient', 'CROSS-IN rec5/sm5 · Required spirit absent'],
+  ['re3', 480, 'RE', 1, 'BLE Lost Mid-Pour', 'CROSS-OUT ble1 · Station dropped mid-pour'],
+  ['re4', 680, 'RE', 1, 'Clean Required', 'CROSS-IN/OUT sm10 · Cleaning blocks pour'],
+  ['re5', 880, 'RE', 1, 'Pour Interrupted', 'CROSS-IN rec8 · Unexpected stop mid-pour'],
+  ['re6', 1080, 'RE', 1, 'AI Timeout', 'BarBot did not respond in time'],
+  ['re7', 1280, 'RE', 1, 'Recipe Alts', 'CROSS-OUT rec4 · Show substitute recipes'],
+  ['re8', 1480, 'RE', 1, 'Pour Paused', 'User paused · D-10: needs 5-min timeout'],
+  ['re9', 1680, 'RE', 1, 'Skip Ingredient', 'Confirm omit non-critical ingredient'],
+  ['re10', 1880, 'RE', 1, 'Restart Pour', 'Re-attempt pour from beginning'],
+  ['re11', 2080, 'RE', 1, 'Error Resolved', 'CROSS-OUT nav8 · Error cleared · pour done'],
+  ['res1', 280, 'RE', 0, 'Cancel Craft', 'CROSS-OUT nav1 · Abandon pour entirely'],
+  ['res2', 480, 'RE', 0, 'Different Station', 'CROSS-OUT ble1 · Route to alternate station'],
+  ['res3', 680, 'RE', 0, 'Auto Clean', 'CROSS-OUT sm10 · Auto-initiate clean cycle'],
+  ['res4', 880, 'RE', 0, 'Save Partial', 'CROSS-OUT nav8 · Save what was poured'],
+  ['res5', 1080, 'RE', 0, 'Retry BarBot', 'CROSS-OUT bb2 · Resend after AI timeout'],
+  ['res6', 1280, 'RE', 0, 'Browse Manually', 'CROSS-OUT rec1 · Dismiss AI, go to recipes'],
+  ['res7', 1480, 'RE', 0, 'Extend Pause', 'Keep pour paused · extend pause timer'],
+  ['res8', 1880, 'RE', 0, 'Save Modified', 'CROSS-OUT rec11 · Save without skipped item'],
 ];
 
 var EDGES = [
@@ -498,7 +562,7 @@ NODE_DEFS.forEach(function(d) {
   nodeMap[id] = n;
 });
 
-var showLabels = true;
+var showLabels = false;
 
 function hexToRgb(hex) {
   return parseInt(hex.slice(1,3),16)+","+parseInt(hex.slice(3,5),16)+","+parseInt(hex.slice(5,7),16);
@@ -525,7 +589,6 @@ function buildSVG() {
   svg.setAttribute("height", CH);
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
-  // Defs: arrowhead
   var defs = svgEl("defs");
   var mk = svgEl("marker", {id:"ah", markerWidth:"7", markerHeight:"6", refX:"6", refY:"3", orient:"auto"});
   var poly = svgEl("polygon", {points:"0 0, 7 3, 0 6", fill:"rgba(180,180,200,0.65)"});
@@ -536,7 +599,6 @@ function buildSVG() {
   var g = svgEl("g", {id:"main-g"});
   svg.appendChild(g);
 
-  // Lane backgrounds
   LANES.forEach(function(lane) {
     var rgb = hexToRgb(lane[4]);
     var bg = svgEl("rect", {x:18, y:lane[2], width:CW-36, height:lane[3],
@@ -549,7 +611,6 @@ function buildSVG() {
     g.appendChild(lt);
   });
 
-  // Edges
   EDGES.forEach(function(e) {
     var a = nodeMap[e[0]], b = nodeMap[e[1]];
     if (!a || !b) return;
@@ -558,20 +619,17 @@ function buildSVG() {
     var sameRow = (Math.abs(a.y - b.y) < 25);
 
     if (sameLane && sameRow && b.x > a.x) {
-      // Forward same row
       ax = a.x + a.w; ay = a.y + a.h/2;
       bx = b.x; by = b.y + b.h/2;
       var gap = b.x - (a.x + a.w);
       cx1 = ax + gap*0.4; cy1 = ay;
       cx2 = bx - gap*0.4; cy2 = by;
     } else if (sameLane && sameRow && b.x <= a.x) {
-      // Backward same row: arc above
       ax = a.x + a.w/2; ay = a.y;
       bx = b.x + b.w/2; by = b.y;
       cx1 = ax; cy1 = ay - 48;
       cx2 = bx; cy2 = by - 48;
     } else if (sameLane && !sameRow) {
-      // Cross-row same lane (main <-> branch)
       if (b.y > a.y) {
         ax = a.x + a.w*0.5; ay = a.y + a.h;
         bx = b.x + b.w*0.5; by = b.y;
@@ -583,7 +641,6 @@ function buildSVG() {
       cx1 = ax; cy1 = midY;
       cx2 = bx; cy2 = midY;
     } else {
-      // Cross-lane S-curve
       if (b.y > a.y) {
         ax = a.x + a.w*0.5; ay = a.y + a.h;
         bx = b.x + b.w*0.5; by = b.y;
@@ -606,7 +663,7 @@ function buildSVG() {
     g.appendChild(path);
 
     if (e[2] && showLabels) {
-      var lx = (ax+bx)/2, ly = (ay+by)/2 - 5;
+      var lx = (ax+bx)/2, ly = (ay+by)/2 - 16;
       var lt2 = svgEl("text", {x:lx, y:ly, class:"edge-label",
         "font-family":"SF Pro Display,Segoe UI,sans-serif", "data-elabel":"1"});
       lt2.textContent = e[2];
@@ -614,7 +671,6 @@ function buildSVG() {
     }
   });
 
-  // Nodes
   NODES.forEach(function(n) {
     var rgb = hexToRgb(n.color);
     var grp = svgEl("g", {cursor:"pointer"});
@@ -715,7 +771,6 @@ function buildLegend() {
   });
 }
 
-// Zoom / Pan
 var scale=1, tx=0, ty=0, dragging=false, dragStartX, dragStartY, txStart, tyStart;
 
 function applyTransform() {
@@ -743,6 +798,10 @@ function toggleEdgeLabels() {
     el.style.display = showLabels ? "" : "none";
   });
   document.getElementById("toggleLabels").textContent = showLabels ? "Hide Labels" : "Show Labels";
+}
+
+function toggleFlowMap() {
+  document.getElementById('flowmap').classList.toggle('open');
 }
 
 window.addEventListener("load", function() {
