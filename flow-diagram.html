@@ -132,6 +132,7 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sa
   <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res6</span><span class="fm-arr">→</span><div><div class="fm-node">rec1 Recipe Hub</div><div class="fm-desc">Browse Manually: dismiss the AI entirely and navigate to the manual recipe browsing flow</div></div></div>
   <div class="fm-row"><span class="fm-badge" style="background:rgba(255,87,34,0.3);color:#FF5722">res8</span><span class="fm-arr">→</span><div><div class="fm-node">rec11 Recipe Saved</div><div class="fm-desc">Save Modified: save the recipe with the skipped ingredient noted, for future reference</div></div></div>
 </div>
+  
 <div id="hint">Scroll to zoom &nbsp;|&nbsp; Drag to pan &nbsp;|&nbsp; Click node for details<br>Arrow keys to pan &nbsp;|&nbsp; +/- to zoom &nbsp;|&nbsp; 0 to fit</div>
 <script>
 var CW = 5000, CH = 2420;
@@ -190,7 +191,7 @@ var NODE_DEFS = [
   ['ble4', 680, 'BLE', 1, 'Pairing', 'Handshake connecting · progress bar'],
   ['ble5', 880, 'BLE', 1, 'Connected', 'CROSS-OUT nav4/ob15 · isNewUser gate'],
   ['ble6', 1080, 'BLE', 1, 'Connection Lost', 'BLE dropped · auto-reconnect begins'],
-  ['ble7', 1280, 'BLE', 1, 'Reconnecting, 'Auto-reconnect · 3 max tries'],
+  ['ble7', 1280, 'BLE', 1, 'Reconnecting', 'Auto-reconnect · 3 max tries'],
   ['ble8', 1480, 'BLE', 1, 'Restored', 'CROSS-OUT nav4 · session state preserved'],
   ['ble9', 1680, 'BLE', 1, 'Troubleshoot', 'Manual steps · move closer · restart ARK'],
   ['bles1', 80, 'BLE', 0, 'BT Disabled', 'Bluetooth off · prompt to enable in Settings'],
@@ -240,7 +241,7 @@ var NODE_DEFS = [
   ['bb4', 680, 'BB', 1, 'Drink Suggestion', 'CROSS-OUT nav6 · AI recipe + ingredient match'],
   ['bb5', 880, 'BB', 1, 'Voice Input', 'Mic active · waveform · voice to text'],
   ['bb6', 1080, 'BB', 1, 'Camera Scan', 'Point camera at bottles · AI detection'],
-  ['bb7', 1280, 'BB', 1, 'Bottles ID\'d', 'AI lists detected spirits · confirm'],
+  ['bb7', 1280, 'BB', 1, "Bottles ID'd", 'AI lists detected spirits · confirm'],
   ['bb8', 1480, 'BB', 1, 'Drink Queued', 'CROSS-OUT nav7 · Queued · D-08: needs safety check'],
   ['bbs1', 80, 'BB', 0, 'Demo Mode', 'Try BarBot without station paired'],
   ['bbs2', 280, 'BB', 0, 'Suggested Prompts', 'Quick-tap starter prompts shown'],
@@ -589,6 +590,7 @@ function buildSVG() {
   svg.setAttribute("height", CH);
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
+  // Defs: arrowhead
   var defs = svgEl("defs");
   var mk = svgEl("marker", {id:"ah", markerWidth:"7", markerHeight:"6", refX:"6", refY:"3", orient:"auto"});
   var poly = svgEl("polygon", {points:"0 0, 7 3, 0 6", fill:"rgba(180,180,200,0.65)"});
@@ -599,6 +601,7 @@ function buildSVG() {
   var g = svgEl("g", {id:"main-g"});
   svg.appendChild(g);
 
+  // Lane backgrounds
   LANES.forEach(function(lane) {
     var rgb = hexToRgb(lane[4]);
     var bg = svgEl("rect", {x:18, y:lane[2], width:CW-36, height:lane[3],
@@ -611,6 +614,7 @@ function buildSVG() {
     g.appendChild(lt);
   });
 
+  // Edges
   EDGES.forEach(function(e) {
     var a = nodeMap[e[0]], b = nodeMap[e[1]];
     if (!a || !b) return;
@@ -619,17 +623,20 @@ function buildSVG() {
     var sameRow = (Math.abs(a.y - b.y) < 25);
 
     if (sameLane && sameRow && b.x > a.x) {
+      // Forward same row
       ax = a.x + a.w; ay = a.y + a.h/2;
       bx = b.x; by = b.y + b.h/2;
       var gap = b.x - (a.x + a.w);
       cx1 = ax + gap*0.4; cy1 = ay;
       cx2 = bx - gap*0.4; cy2 = by;
     } else if (sameLane && sameRow && b.x <= a.x) {
+      // Backward same row: arc above
       ax = a.x + a.w/2; ay = a.y;
       bx = b.x + b.w/2; by = b.y;
       cx1 = ax; cy1 = ay - 48;
       cx2 = bx; cy2 = by - 48;
     } else if (sameLane && !sameRow) {
+      // Cross-row same lane (main <-> branch)
       if (b.y > a.y) {
         ax = a.x + a.w*0.5; ay = a.y + a.h;
         bx = b.x + b.w*0.5; by = b.y;
@@ -641,6 +648,7 @@ function buildSVG() {
       cx1 = ax; cy1 = midY;
       cx2 = bx; cy2 = midY;
     } else {
+      // Cross-lane S-curve
       if (b.y > a.y) {
         ax = a.x + a.w*0.5; ay = a.y + a.h;
         bx = b.x + b.w*0.5; by = b.y;
@@ -671,6 +679,7 @@ function buildSVG() {
     }
   });
 
+  // Nodes
   NODES.forEach(function(n) {
     var rgb = hexToRgb(n.color);
     var grp = svgEl("g", {cursor:"pointer"});
@@ -771,6 +780,7 @@ function buildLegend() {
   });
 }
 
+// Zoom / Pan
 var scale=1, tx=0, ty=0, dragging=false, dragStartX, dragStartY, txStart, tyStart;
 
 function applyTransform() {
@@ -798,10 +808,6 @@ function toggleEdgeLabels() {
     el.style.display = showLabels ? "" : "none";
   });
   document.getElementById("toggleLabels").textContent = showLabels ? "Hide Labels" : "Show Labels";
-}
-
-function toggleFlowMap() {
-  document.getElementById('flowmap').classList.toggle('open');
 }
 
 window.addEventListener("load", function() {
@@ -888,6 +894,10 @@ window.addEventListener("load", function() {
 
   setTimeout(fitToScreen, 100);
 });
+
+function toggleFlowMap() {
+  document.getElementById('flowmap').classList.toggle('open');
+}
 </script>
 </body>
 </html>
