@@ -55,7 +55,7 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sa
 </head>
 <body>
 <div id="toolbar">
-  <h1>BarSysARK &#8212; User Flow Architecture v2.0</h1>
+  <h1>BarsysARK &#8212; User Flow Architecture v2.0</h1>
   <span>172 screens &middot; 251 connections &middot; 8 domains &middot; 21 cross-flow links</span>
   <button class="tbtn" onclick="fitToScreen()">Fit Screen</button>
   <button class="tbtn" onclick="resetZoom()">100%</button>
@@ -102,7 +102,8 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:'SF Pro Display','Segoe UI',sa
   <div class="fm-row"><span class="fm-badge" style="background:rgba(239,68,68,0.3);color:#EF4444">recipeDetail</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ingredientCheck &middot; 02 Craft</div><div class="fm-desc">&ldquo;Craft this&rdquo; CTA from recipe detail page</div></div></div>
   <div class="fm-row"><span class="fm-badge" style="background:rgba(239,68,68,0.3);color:#EF4444">discoverFilter</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">mood &middot; 03 BarBot</div><div class="fm-desc">Mood filter &rarr; set occasion for AI discovery</div></div></div>
   <div class="fm-sec">07 BLE &harr; Other Domains</div>
-  <div class="fm-row"><span class="fm-badge" style="background:rgba(6,182,212,0.3);color:#06B6D4">bleSuccess</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">setupWizard &middot; 01 Onboard</div><div class="fm-desc">Auto-advance back to wizard step 3</div></div></div>  <div class="fm-row"><span class="fm-badge" style="background:rgba(6,182,212,0.3);color:#06B6D4">craftError (ER)</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ble &middot; 07 BLE</div><div class="fm-desc">Device disconnected mid-craft &mdash; reconnect</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(6,182,212,0.3);color:#06B6D4">bleSuccess</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">setupWizard &middot; 01 Onboard</div><div class="fm-desc">Auto-advance back to wizard step 3</div></div></div>
+  <div class="fm-row"><span class="fm-badge" style="background:rgba(6,182,212,0.3);color:#06B6D4">craftError (ER)</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">ble &middot; 07 BLE</div><div class="fm-desc">Device disconnected mid-craft &mdash; reconnect</div></div></div>
   <div class="fm-sec">08 Error &rarr; Other Domains</div>
   <div class="fm-row"><span class="fm-badge" style="background:rgba(249,115,22,0.3);color:#F97316">maintenanceMode</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">home &middot; 01 Onboard</div><div class="fm-desc">Exit maintenance mode &rarr; returns to home</div></div></div>
   <div class="fm-row"><span class="fm-badge" style="background:rgba(249,115,22,0.3);color:#F97316">fullyRestored</span><span class="fm-arr">&rarr;</span><div><div class="fm-node">crafting &middot; 02 Craft</div><div class="fm-desc">System restored &mdash; resume interrupted craft</div></div></div>
@@ -206,7 +207,8 @@ var NODE_DEFS=[
   ['pms4',680,'PM',0,'Guest Confirm','Guest order confirm'],
   ['pms5',880,'PM',0,'Guest Waiting','Queue wait screen'],
   ['pms6',1080,'PM',0,'Host Alert','Host notification'],
-  ['pms7',1280,'PM',0,'Pour Limit','Limit reached alert'],  // 05 Station Management - 26 screens
+  ['pms7',1280,'PM',0,'Pour Limit','Limit reached alert'],
+  // 05 Station Management - 26 screens
   ['sm1',80,'SM',1,'Station Home','Device overview'],
   ['sm2',280,'SM',1,'Slot Detail','Slot info & options'],
   ['sm3',480,'SM',1,'Bottle Assign','Assign spirit to slot'],
@@ -286,7 +288,7 @@ var NODE_DEFS=[
   ['er14',2680,'ER',1,'Partial Pour','Incomplete pour'],
   ['er15',2880,'ER',1,'Refill Interrupt','Refill needed'],
   ['er16',3080,'ER',1,'Fully Restored','System restored'],
-  ['er17',3280,'ER',1,'Error Log','Error history'],
+  ['er17',3280,'ER',1,'Error Log','Erros history'],
   ['ers1',80,'ER',0,'Support Contact','Contact support'],
   ['ers2',280,'ER',0,'Ticket Submit','Submit support ticket'],
   ['ers3',480,'ER',0,'Known Issues','Known bugs list'],
@@ -310,13 +312,14 @@ var EDGES=[
   ['ob1','ob2','auto'],['ob2','ob3','pass'],['ob2','obs1','under-age'],
   ['ob3','ob4','accept'],['ob3','obs2','log in'],['ob3','obs3','phone'],
   ['obs2','obs4','forgot pwd'],['obs4','obs5','sent'],['obs5','obs2','try login'],
-  ['obs3','ob7','OTP sent'],['ob4','ob5','next'],['ob5','ob6','get started'],  ['ob6','ob7','next'],['ob7','ob8','verified'],['ob8','obs6','flavour setup'],
+  ['obs3','ob7','OTP sent'],['ob4','ob5','next'],['ob5','ob6','get started'],
+  ['ob6','ob7','next'],['ob7','ob8','verified'],['ob8','obs6','flavour setup'],
   ['obs6','ob9','saved'],['ob9','ob10','complete'],['ob10','ob11','profile'],
   ['ob10','ob12','settings'],['ob10','obs8','notifications'],['ob10','obs9','payment'],
   ['ob10','obs10','subscription'],['ob10','obs11','mood tap'],['obs11','obs12','result'],
   ['ob11','obs7','edit'],['obs7','ob11','saved'],
   // CF
-  ['cf1','cf2','in stock'],['cf1','cfs11','auth required'],['cf1','cfs9','lhistory'],
+  ['cf1','cf2','in stock'],['cf1','cfs11','auth required'],['cf1','cfs9','history'],
   ['cfs9','cfs10','detail'],['cf2','cfs2','strength'],['cf2','cfs3','ice'],
   ['cf2','cfs4','garnish'],['cf2','cfs5','volume'],['cf2','cfs6','temperature'],
   ['cf2','cf3','confirm'],['cf3','cf4','glass placed'],['cf3','cfs1','device error'],
@@ -329,11 +332,11 @@ var EDGES=[
   ['bb1','bb2','type'],['bb2','bb3','send'],['bb3','bb4','ready'],
   ['bb4','bb5','customize'],['bb5','bb6','craft it'],['bb6','bb7','save'],
   ['bb7','bb8','view saved'],['bb1','bb9','taste quiz'],['bb9','bb1','done'],
-  ['bb1','bbs1",'surprise me'],['bbs1','bb4','result'],['bb4','bbs2','pairing'],
+  ['bb1','bbs1','surprise me'],['bbs1','bb4','result'],['bb4','bbs2','pairing'],
   ['bb1','bbs3','history'],['bb1','bbs4','trending'],
   ['bb1','bbs7','mood select'],['bbs7','bbs8','result'],['bbs8','cf1','Craft this'],
   ['bb1','bbs9','flavour'],['bbs9','bb1','saved'],
-  ['bb4','bbs5','feedback'],['bb1','bbs6",'curated'],
+  ['bb4','bbs5','feedback'],['bb1','bbs6','curated'],
   // PM
   ['pm1','pm2','create'],['pm2','pm3','guests join'],['pm3','pm4','queue'],
   ['pm3','pm5','guests'],['pm3','pm6','settings'],['pm6','pms1','end party'],
@@ -342,7 +345,7 @@ var EDGES=[
   ['pm4','pms7','limit hit'],
   // SM
   ['sm1','sm2','slot'],['sm2','sm3','assign'],['sm3','sm4','search'],
-  ['sm4','cm','select'],['sm5','sm2','assigned'],['sm2','sm6','swap'],
+  ['sm4','sm5','select'],['sm5','sm2','assigned'],['sm2','sm6','swap'],
   ['sm6','sm2','swapped'],['sm1','sm7','clean'],['sm7','sm8','deep clean'],
   ['sm8','sm9','start'],['sm9','sm1','done'],['sm1','sm10','calibrate'],
   ['sm10','sm11','done'],['sm11','sm1','back'],['sm1','sm12','diagnostics'],
@@ -372,7 +375,7 @@ var EDGES=[
   // ER
   ['er1','er2','locked'],['er1','er3','expired'],['er1','er4','no network'],
   ['er2','ers1','support'],['ers1','ers2','ticket'],['ers2','er17','logged'],
-  ['er3','er1','re-auth'],['er4','ers7",'offline'],
+  ['er3','er1','re-auth'],['er4','ers7','offline'],
   ['er5','er6','jam'],['er5','er7','overflow'],['er5','er8','pump fail'],
   ['er5','er9','empty'],['er5','er10','low vol'],['er5','er11','temp'],
   ['er5','er12','maintenance'],['er5','er14','partial'],['er5','er15','refill'],
@@ -414,7 +417,8 @@ NODE_DEFS.forEach(function(d){
   var w=isMain?NW:BW,h=isMain?NH:BH;
   var y=isMain?mainY(lKey):branchY(lKey);
   var lane=laneMap[lKey];
-  var n={id:id,x:x,y:y,w:w,h:h,label:label,sub:sub,laneKey:lKey,laneName:lane[1],isMain:isMain,color:lane[4]};  NODES.push(n);nodeMap[id]=n;
+  var n={id:id,x:x,y:y,w:w,h:h,label:label,sub:sub,laneKey:lKey,laneName:lane[1],isMain:isMain,color:lane[4]};
+  NODES.push(n);nodeMap[id]=n;
 });
 function hexToRgb(h){return parseInt(h.slice(1,3),16)+","+parseInt(h.slice(3,5),16)+","+parseInt(h.slice(5,7),16);}
 function svgEl(tag,attrs){var el=document.createElementNS("http://www.w3.org/2000/svg",tag);if(attrs)Object.keys(attrs).forEach(function(k){el.setAttribute(k,attrs[k]);});return el;}
@@ -494,7 +498,7 @@ var scale=1,tx=0,ty=0,dragging=false,dragStartX,dragStartY,txStart,tyStart;
 function applyTransform(){var g=document.getElementById("main-g");if(g)g.setAttribute("transform","translate("+tx+","+ty+") scale("+scale+")");document.getElementById("zoomlbl").textContent=Math.round(scale*100)+"%";}
 function fitToScreen(){var w=document.getElementById("canvas-wrap");var vw=w.offsetWidth,vh=w.offsetHeight;scale=Math.min((vw-40)/CW,(vh-40)/CH);tx=(vw-CW*scale)/2;ty=20;applyTransform();}
 function resetZoom(){scale=1;tx=40;ty=20;applyTransform();}
-function toggleEdgeLabels(){showLabels=!showLabels;]ocument.querySelectorAll("[data-elabel]").forEach(function(el){el.style.display=showLabels?"":"none";});document.getElementById("toggleLabels").textContent=showLabels?"Hide Labels":"Show Labels";}
+function toggleEdgeLabels(){showLabels=!showLabels+document.querySelectorAll("[data-elabel]").forEach(function(el){el.style.display=showLabels?"":"none";});document.getElementById("toggleLabels").textContent=showLabels?"Hide Labels":"Show Labels";}
 function toggleFlowMap(){document.getElementById('flowmap').classList.toggle('open');}
 window.addEventListener("load",function(){
   buildSVG();buildLegend();
